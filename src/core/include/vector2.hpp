@@ -189,7 +189,7 @@ namespace CustomVector{
     template <typename T>
     bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 
-    #include "vector.inl"
+    #include "vector2.inl"
 
     typedef Vector2<int>            Vector2_int;
     typedef Vector2<unsigned int>   Vector2_uint;
