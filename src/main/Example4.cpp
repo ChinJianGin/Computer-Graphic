@@ -8,28 +8,73 @@
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
-#define M_PI 3.14159265358979323846
-#define RADIUS 0.8f
-const int NumPoints = 500;
-const char* WindowTitle = "Example 1";
+#define DEGREETORADIUS M_PI/180.0
+//#define USING_STRIP 1
 
-glm::vec2 points[NumPoints];
+#ifndef USING_STRIP
+const int NumPoints = 6;
+#else
+const int NumPoints = 4;
+#endif
+
+const char* WindowTitle = "Draw two colored triangles";
+
+float angle = DEGREETORADIUS * 0.1f;
+
+glm::vec3 points[NumPoints] =
+{
+    glm::vec3(-.9f,  .9f, 0.f),
+    glm::vec3( .9f,  .9f, 0.f),
+    glm::vec3( .9f, -.9f, 0.f),
+    glm::vec3(-.9f,  .9f, 0.f),
+    glm::vec3( .9f, -.9f, 0.f),
+    glm::vec3(-.9f, -.9f, 0.f)
+};
+
+glm::vec3 colors[NumPoints] =
+{
+    glm::vec3(1.f, 0.f, 0.f),
+    glm::vec3(0.f, 1.f, 0.f),
+    glm::vec3(0.f, 0.f, 1.f),
+    glm::vec3(1.f, 0.f, 0.f),
+    glm::vec3(0.f, 0.f, 1.f),
+    glm::vec3(1.f, 0.f, 1.f)
+};
 
 void GLFWErrorCallback(int Error, const char* Description)
 {
 	std::cout << "**GLFW ERROR Error : " << Error << "Description : " << Description << std::endl;
 }
 
+
+
 void init( void )
 {
-    for( int i = 0; i < NumPoints; i++)
-    {
-        points[i].x = RADIUS * cosf(M_PI * 2.f * i / NumPoints);
-        points[i].y = RADIUS * sinf(M_PI * 2.f * i / NumPoints);
-    }
+    VAO VAO1;
+    VAO1.Bind();
+
+    VBO VBO1(sizeof(points) + sizeof(colors));
+    VBO1.LoadRealData(0, sizeof(points), points);
+    VBO1.LoadRealData(sizeof(points), sizeof(colors), colors);
+
+    VAO1.LinkAttribute(VBO1, 0, 3, GL_FLOAT, 0, (void*)0);
+    VAO1.LinkAttribute(VBO1, 1, 3, GL_FLOAT, 0, (void*)(sizeof(points)));
+    VBO1.Bind();
 }
 
-
+void Display( void )
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    for(int i = 0; i < NumPoints; i++)
+    {
+        float x = points[i].x * cosf(angle) - points[i].y * sinf(angle);
+        float y = points[i].x * sinf(angle) + points[i].y * cosf(angle);
+        points[i].x = x;
+        points[i].y = y;
+    }
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);
+    glDrawArrays(GL_TRIANGLES, 0, NumPoints);
+}
 
 int main()
 {
@@ -61,40 +106,23 @@ int main()
 
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+    Shader ShaderProgram("../src/shader/Example4.vert", "../src/shader/Example4.frag");
+
     init();
-
-    Shader ShaderProgram("../src/shader/Example1.vert", "../src/shader/Example1.frag");
-
-
-
-    VAO VAO1;
-    VAO1.Bind();
-
-    VBO VBO1(points, sizeof(points));
-
-    
-    VAO1.LinkAttribute(VBO1, 0, 2, GL_FLOAT, 0, (void*)0);
-    VAO1.UnBind();
 
     while (!glfwWindowShouldClose(window->_Window))
     {
         glClearColor(0.f, 0.f, 0.f, 1.f);
-        glClear( GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         ShaderProgram.Activate();
-
-        VAO1.Bind();
-
-        //glDrawArrays(GL_POINTS, 0, NumPoints);
-        glDrawArrays(GL_LINES, 0, NumPoints);
-
+        Display();
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit( EXIT_SUCCESS );
 
         glfwSwapBuffers(window->_Window);
         glfwPollEvents();
     }
 
-    VAO1.Delete();
-    VBO1.Delete();
+    
     ShaderProgram.Delete();
 
     CustomSpace::Window::FreeWindow(window);

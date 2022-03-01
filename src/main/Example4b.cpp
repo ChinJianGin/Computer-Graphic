@@ -8,28 +8,64 @@
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
-#define M_PI 3.14159265358979323846
-#define RADIUS 0.8f
-const int NumPoints = 500;
-const char* WindowTitle = "Example 1";
+#define DEGREETORADIUS M_PI/180.0
 
-glm::vec2 points[NumPoints];
+const int NumPoints = 6;
+
+const char* WindowTitle = "Draw two colored triangles";
+
+float angle = 0;
+GLuint angleLoc;
+glm::vec3 originalPoints[NumPoints];
+
+glm::vec3 points[NumPoints] =
+{
+    glm::vec3(-.9f,  .9f, 0.f),
+    glm::vec3( .9f,  .9f, 0.f),
+    glm::vec3( .9f, -.9f, 0.f),
+    glm::vec3(-.9f,  .9f, 0.f),
+    glm::vec3( .9f, -.9f, 0.f),
+    glm::vec3(-.9f, -.9f, 0.f)
+};
+
+glm::vec3 colors[NumPoints] =
+{
+    glm::vec3(1.f, 0.f, 0.f),
+    glm::vec3(0.f, 1.f, 0.f),
+    glm::vec3(0.f, 0.f, 1.f),
+    glm::vec3(1.f, 0.f, 0.f),
+    glm::vec3(0.f, 0.f, 1.f),
+    glm::vec3(1.f, 0.f, 1.f)
+};
 
 void GLFWErrorCallback(int Error, const char* Description)
 {
 	std::cout << "**GLFW ERROR Error : " << Error << "Description : " << Description << std::endl;
 }
 
+
+
 void init( void )
 {
-    for( int i = 0; i < NumPoints; i++)
-    {
-        points[i].x = RADIUS * cosf(M_PI * 2.f * i / NumPoints);
-        points[i].y = RADIUS * sinf(M_PI * 2.f * i / NumPoints);
-    }
+    for(int i = 0; i < NumPoints; i++) originalPoints[i] = points[i];
+    VAO VAO1;
+    VAO1.Bind();
+
+    VBO VBO1(sizeof(points) + sizeof(colors));
+    VBO1.LoadRealData(0, sizeof(points), points);
+    VBO1.LoadRealData(sizeof(points), sizeof(colors), colors);
+
+    VAO1.LinkAttribute(VBO1, 0, 3, GL_FLOAT, 0, (void*)0);
+    VAO1.LinkAttribute(VBO1, 1, 3, GL_FLOAT, 0, (void*)(sizeof(points)));
+    VBO1.Bind();
 }
 
-
+void Display( void )
+{
+    glUniform1f(angleLoc, angle);
+    angle += .1f;
+    glDrawArrays(GL_TRIANGLES, 0, NumPoints);
+}
 
 int main()
 {
@@ -61,40 +97,25 @@ int main()
 
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+    Shader ShaderProgram("../src/shader/Example4b.vert", "../src/shader/Example4b.frag");
+
     init();
 
-    Shader ShaderProgram("../src/shader/Example1.vert", "../src/shader/Example1.frag");
-
-
-
-    VAO VAO1;
-    VAO1.Bind();
-
-    VBO VBO1(points, sizeof(points));
-
-    
-    VAO1.LinkAttribute(VBO1, 0, 2, GL_FLOAT, 0, (void*)0);
-    VAO1.UnBind();
+    angleLoc = glGetUniformLocation(ShaderProgram.ID, "angle");
 
     while (!glfwWindowShouldClose(window->_Window))
     {
         glClearColor(0.f, 0.f, 0.f, 1.f);
-        glClear( GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         ShaderProgram.Activate();
-
-        VAO1.Bind();
-
-        //glDrawArrays(GL_POINTS, 0, NumPoints);
-        glDrawArrays(GL_LINES, 0, NumPoints);
-
+        Display();
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit( EXIT_SUCCESS );
 
         glfwSwapBuffers(window->_Window);
         glfwPollEvents();
     }
 
-    VAO1.Delete();
-    VBO1.Delete();
+    
     ShaderProgram.Delete();
 
     CustomSpace::Window::FreeWindow(window);

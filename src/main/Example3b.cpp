@@ -25,24 +25,24 @@ void GLFWErrorCallback(int Error, const char* Description)
 
 void init( void )
 {
-    using namespace CustomVector;
+    using namespace glm;
     #ifndef USING_STRIP
-        Vector3_float points[NumPoints] = 
+        vec3 points[NumPoints] = 
         {
-            Vector3_float(-0.9f, -0.9f, 0.0),
-            Vector3_float( 0.9f, -0.9f, 0.0),
-            Vector3_float( 0.9f,  0.9f, 0.0),
-            Vector3_float(-0.9f, -0.9f, 0.0),
-            Vector3_float( 0.9f,  0.9f, 0.0),
-            Vector3_float(-0.9f,  0.9f, 0.0)
+            vec3(-0.9f, -0.9f, 0.0),
+            vec3( 0.9f, -0.9f, 0.0),
+            vec3( 0.9f,  0.9f, 0.0),
+            vec3(-0.9f, -0.9f, 0.0),
+            vec3( 0.9f,  0.9f, 0.0),
+            vec3(-0.9f,  0.9f, 0.0)
         };
     #else
-        Vector3_float points[NumPoints] = 
+        vec3 points[NumPoints] = 
         {
-            Vector3_float(-0.9f,  0.9f, 0.0),
-            Vector3_float(-0.9f, -0.9f, 0.0),
-            Vector3_float( 0.9f,  0.9f, 0.0),
-            Vector3_float( 0.9f, -0.9f, 0.0)
+            vec3(-0.9f,  0.9f, 0.0),
+            vec3(-0.9f, -0.9f, 0.0),
+            vec3( 0.9f,  0.9f, 0.0),
+            vec3( 0.9f, -0.9f, 0.0)
         };
     #endif
 

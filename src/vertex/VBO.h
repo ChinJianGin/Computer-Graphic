@@ -1,8 +1,7 @@
 #pragma once
 
+#include"../core/include/Core.h"
 #include<glad/glad.h>
-#include"../core/include/vector2.hpp"
-#include"../core/include/vector3.hpp"
 
 class VBO
 {
@@ -14,7 +13,8 @@ public:
 
     VBO(GLsizeiptr size);
 
-    void LoadRealData(GLsizeiptr size_1, GLsizeiptr size_2,const CustomVector::Vector3_float* data);
+    template <typename T>
+    void LoadRealData(GLsizeiptr size_1, GLsizeiptr size_2,const T* data);
     void Bind();
     void UnBind();
     void Delete();
@@ -27,4 +27,10 @@ inline VBO::VBO(T vertices, GLsizeiptr size)
     glGenBuffers(1, &ID);
     glBindBuffer(GL_ARRAY_BUFFER, ID);
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+}
+
+template <typename T>
+inline void VBO::LoadRealData(GLsizeiptr size_1, GLsizeiptr size_2,const T* data)
+{
+    glBufferSubData(GL_ARRAY_BUFFER, size_1, size_2, data);
 }
