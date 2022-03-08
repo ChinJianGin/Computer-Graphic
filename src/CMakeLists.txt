@@ -4,6 +4,7 @@ add_subdirectory(main)
 add_subdirectory(shader)
 add_subdirectory(vertex)
 add_subdirectory(core)
+add_subdirectory(game)
 
 project(Practice1)
 

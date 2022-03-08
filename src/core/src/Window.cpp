@@ -1,4 +1,5 @@
 #include "../include/Window.h"
+#include "../include/WindowInstance.h"
 #include "../include/Input.h"
 
 namespace CustomSpace
@@ -66,5 +67,10 @@ namespace CustomSpace
             glfwDestroyWindow(window->_Window);
             delete window;
         }
+    }
+
+    Scope<Windows> Windows::CreateWindow(const WindowProps& props)
+    {
+        return CreateScope<WindowInstance>(props);
     }
 }

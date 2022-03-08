@@ -1,6 +1,5 @@
 #pragma once
 
-#include"../core/include/Core.h"
 #include<glad/glad.h>
 
 class VBO
