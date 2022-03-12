@@ -4,4 +4,4 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 project(vertex)
 
-add_library(vertex VBO.cpp VAO.cpp EBO.cpp)
+add_library(vertex VAO.cpp EBO.cpp VBO.cpp)

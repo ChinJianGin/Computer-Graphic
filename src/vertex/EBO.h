@@ -1,14 +1,20 @@
 #pragma once
-
+#include"../core/include/Core.h"
 #include<glad/glad.h>
 
 class EBO
 {
 public:
-    GLuint ID;
     EBO(GLuint* indices, GLsizeiptr size);
 
-    void Bind();
-    void UnBind();
+    void Bind() const;
+    void UnBind() const;
     void Delete();
+
+    GLuint GetCount() const { return m_size; }
+
+    static CustomSpace::Ref<EBO> Create(GLuint* indices, GLsizeiptr size);
+private:
+    GLuint ID;
+    GLsizeiptr m_size;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include"../../core/include/Core.h"
+#include"../../vertex/VAO.h"
 
 class ShootingGame
 {
@@ -10,6 +11,9 @@ public:
     void Run();
 
     void Close();
+private:
+    CustomSpace::Ref<VAO> TriangleVAO;
+    CustomSpace::Ref<Shader> TriangleShaderProgram;
 private:
     static ShootingGame* Instance;
     CustomSpace::Scope<CustomSpace::Windows> M_Window;

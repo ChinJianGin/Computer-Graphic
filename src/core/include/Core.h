@@ -49,6 +49,3 @@ namespace CustomSpace
 #include"./RenderContext.h"
 #include"./OpenGLContext.h"
 #include"../../shader/ShaderClass.h"
-#include"../../vertex/VAO.h"
-#include"../../vertex/VBO.h"
-#include"../../vertex/EBO.h"
