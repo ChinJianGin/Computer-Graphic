@@ -19,6 +19,14 @@ void main(){
         0.f, 0.f, 0.f, 1.f
     );
 
-    gl_Position = rz * vec4(vPosition, 1.f);
+    mat4 tm = mat4
+    (
+          1,  0,  0, 0,
+          0,  1,  0, 0,
+          0,  0,  1, 0,
+        .5f, .5f, 0, 1
+    );
+
+    gl_Position = tm * rz * vec4(vPosition.xyz * .25f, 1.f);
     color = vec4( vColor, 1.f);
 }

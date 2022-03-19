@@ -7,6 +7,8 @@
 #include<iostream>
 #include<cerrno>
 
+#include"../core/include/Core.h"
+
 std::string get_file_contents(const char* filename);
 
 class Shader
@@ -17,6 +19,8 @@ class Shader
 
         void Activate();
         void Delete();
+
+        void UpdateUniform(const char* name, const glm::mat4 matrix);
     private:
         void CompileErrors(unsigned int shader, const char* type);
 };

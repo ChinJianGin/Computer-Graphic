@@ -20,6 +20,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace CustomSpace
 {
@@ -49,3 +50,4 @@ namespace CustomSpace
 #include"./RenderContext.h"
 #include"./OpenGLContext.h"
 #include"../../shader/ShaderClass.h"
+#include"./OrthoCamera.h"
