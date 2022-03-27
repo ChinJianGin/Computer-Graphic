@@ -1,5 +1,16 @@
 #pragma once
 
+//#define USING_VSYNC
+//#define DISPLAY_FPS
+
+#ifndef USING_VSYNC
+    #define VSYNC false
+    #define TARGET_FRAMERATE 60
+#else
+    #define VSYNC true
+    #define TARGET_FRAMERATE 60
+#endif
+
 // Glad and GLFW
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
@@ -12,6 +23,7 @@
 #include<stdio.h>
 #include<string>
 #include<memory>
+
 
 // GLM
 #define GLM_EXT_INCLUDED
@@ -44,6 +56,7 @@ namespace CustomSpace
 // Custom
 //#include"vector2.hpp"
 //#include"vector3.hpp"
+#include"./Log.h"
 #include"./Input.h"
 #include"./Window.h"
 #include"./Timer.h"

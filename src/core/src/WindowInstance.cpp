@@ -67,7 +67,7 @@ namespace CustomSpace
         if(M_Window != nullptr)
         {
             glfwSetKeyCallback(M_Window, Input::KeyCallback);
-            glfwSetCursorPosCallback(M_Window, Input::MouseCallback);
+            glfwSetCursorPosCallback(M_Window, Input::MousePosCallback);
             glfwSetMouseButtonCallback(M_Window, Input::MouseButtonCallback);
             glfwSetWindowSizeCallback(M_Window, ResizeCallback);
         }

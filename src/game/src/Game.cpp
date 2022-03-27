@@ -8,8 +8,20 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     Instance = this;
     M_Window = Windows::CreateWindow(WindowProps(width, height, title, screen, vsync));
 
-    m_Camera = CreateRef<OrthoCamera>(-1.f, 1.f, -1.f, 1.f);
+    //Renderer::Init();
 
+    m_Timer = CreateScope<CoreTimer>(TARGET_FRAMERATE);
+
+    m_Camera = CreateRef<OrthoCamera>(-2.f, 2.f, -2.f, 2.f);
+
+    m_Camera->SetPosition(glm::vec3(0, 0, -.5f));
+    CameraPosition = m_Camera->GetPosition();
+    CameraRotation = m_Camera->GetRotation();
+
+    //m_Triangle = CreateRef<Triangle>();
+    /***
+     * Create a shape progress
+    ***/
     TriangleVAO = VAO::Create();
 
     glm::vec3 TrianglePoints[] = 
@@ -38,8 +50,11 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
 
     CustomSpace::Ref<EBO> TriangleEBO = EBO::Create(TriangleIndices, sizeof(TriangleIndices));
     TriangleVAO->SetEBO(TriangleEBO);
+    //----------------------------------------------------
 
-    TriangleShaderProgram = CustomSpace::CreateRef<Shader>(Shader("../src/shader/2DGame.vert", "../src/shader/2DGame.frag"));;
+
+    
+    TriangleShaderProgram = CustomSpace::CreateRef<Shader>(Shader("../src/shader/2DGame.vert", "../src/shader/2DGame.frag"));
 }
 
 void ShootingGame::Close()
@@ -53,20 +68,42 @@ void ShootingGame::Run()
     {
         B_Running = !glfwWindowShouldClose((GLFWwindow*)M_Window->GetWindow());
         glClearColor(0.f, 1.f, .7f, 1.f);
-        glClear( GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        m_Camera->SetPosition(glm::vec3(0.f, 0.f, -.5f));
+        m_Timer->CalculateTimer();
+
+/***
+ * Draw
+***/
         TriangleShaderProgram->Activate();
         TriangleVAO->Bind();
-        TriangleShaderProgram->UpdateUniform("uVP", m_Camera->GetVPMatrix());
+        TriangleShaderProgram->SetMat4("uVP", m_Camera->GetVPMatrix());
         glDrawElements(GL_TRIANGLES, (TriangleVAO->GetEBO()->GetCount() / sizeof(GLuint)), GL_UNSIGNED_INT, 0);
-
+///----------------------------------------
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit(EXIT_SUCCESS);
+    
+        CameraPosition = m_Camera->GetPosition();
+        CameraRotation = m_Camera->GetRotation();
+
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_A))
+            CameraPosition.x -= (float)CameraMoveSpeed * m_Timer->GetTick();
+        else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_D))
+            CameraPosition.x += (float)CameraMoveSpeed * m_Timer->GetTick();
+
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
+            CameraPosition.y += (float)CameraMoveSpeed * m_Timer->GetTick();
+        else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_S))
+            CameraPosition.y -= (float)CameraMoveSpeed * m_Timer->GetTick();
+
+        m_Camera->SetPosition(CameraPosition);
+
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_E))
-        {
-            Angle += 0.01;
-            m_Camera->SetRotation(Angle);
-        } 
+            CameraRotation += (float)CameraRotationSpeed * m_Timer->GetTick();
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_Q))
+            CameraRotation -= (float)CameraRotationSpeed * m_Timer->GetTick();
+
+        m_Camera->SetRotation(CameraRotation);
+
         M_Window->Update();        
     }
 }

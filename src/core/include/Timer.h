@@ -15,15 +15,19 @@ private:
     double currentTime;
     double accumulator;    
 
+    double FrameTime;
+
     bool Continue = false;
 
+    unsigned int FPS = 0;
 public:
-    CoreTimer(const int framerate = 30);
+    CoreTimer(const int framerate = 60);
 
     void Init();
 
     bool CalculateTimer();
 
-    double GetTick();
-    double GetDeltaTick();
+    double GetTick() const;
+    double GetDeltaTick() const;
+    double GetFrameTime() const;
 };

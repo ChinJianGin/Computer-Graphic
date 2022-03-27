@@ -19,7 +19,7 @@ namespace CustomSpace
             }
         }
 
-        void MouseCallback(GLFWwindow* window, double x_pos, double y_pos)
+        void MousePosCallback(GLFWwindow* window, double x_pos, double y_pos)
         {
             MouseX = (float)x_pos;
             MouseY = (float)y_pos;

@@ -14,7 +14,7 @@ namespace CustomSpace
         extern float MouseScrollY;
         
         void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-        void MouseCallback(GLFWwindow* window, double x_pos, double y_pos);
+        void MousePosCallback(GLFWwindow* window, double x_pos, double y_pos);
         void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
         void MouseScrollCallback(GLFWwindow* window, double x_offset, double y_offset);
 

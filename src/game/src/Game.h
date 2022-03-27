@@ -16,10 +16,18 @@ private:
     CustomSpace::Ref<Shader> TriangleShaderProgram;
 
     CustomSpace::Ref<CustomSpace::OrthoCamera> m_Camera;
+
+    CustomSpace::Scope<CoreTimer> m_Timer;
 private:
     static ShootingGame* Instance;
     CustomSpace::Scope<CustomSpace::Windows> M_Window;
     bool B_Running = true;
 
-    float Angle = 0.f;    
+    //CustomSpace::Ref<CustomSpace::Triangle> m_Triangle;
+
+    glm::vec3 CameraPosition;
+
+    float CameraRotation = 0.f;
+    float CameraRotationSpeed = 10.f;    
+    float CameraMoveSpeed = 1.f;
 };

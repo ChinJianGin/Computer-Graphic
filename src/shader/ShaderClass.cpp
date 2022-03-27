@@ -97,3 +97,91 @@ void Shader::CompileErrors(unsigned int shader, const char* type)
 		}
 	}
 }
+
+void Shader::SetInt(const char* name, int value)
+{
+	UpdateUniformInt(name, value);
+}
+
+void Shader::SetIntArray(const char* name, int* values, uint32_t count)
+{
+	UpdateUniformIntArray(name, values, count);
+}
+
+void Shader::SetFloat(const char* name, float value)
+{
+	UpdateUniformFloat(name, value);
+}
+
+void Shader::SetFloat2(const char* name, const glm::vec2& value)
+{
+	UpdateUniformFloat2(name, value);
+}
+
+void Shader::SetFloat3(const char* name, const glm::vec3& value)
+{
+	UpdateUniformFloat3(name, value);
+}
+
+void Shader::SetFloat4(const char* name, const glm::vec4& value)
+{
+	UpdateUniformFloat4(name, value);
+}
+
+void Shader::SetMat3(const char* name, const glm::mat3& value)
+{
+	UpdateUniformMat3(name, value);
+}
+
+void Shader::SetMat4(const char* name, const glm::mat4& value)
+{
+	UpdateUniformMat4(name, value);
+}
+
+void Shader::UpdateUniformInt(const char* name, int value)
+{
+	GLint location = glGetUniformLocation(ID, name);
+	glUniform1i(location, value);
+}
+
+void Shader::UpdateUniformIntArray(const char* name, int* values, uint32_t count)
+{
+	GLint location = glGetUniformLocation(ID, name);
+	glUniform1iv(location, count, values);
+}
+
+void Shader::UpdateUniformFloat(const char* name, float value)
+{
+	GLint location = glGetUniformLocation(ID, name);
+	glUniform1f(location, value);
+}
+
+void Shader::UpdateUniformFloat2(const char* name, const glm::vec2& value)
+{
+	GLint location = glGetUniformLocation(ID, name);
+	glUniform2f(location, value.x, value.y);
+}
+
+void Shader::UpdateUniformFloat3(const char* name, const glm::vec3& value)
+{
+	GLint location = glGetUniformLocation(ID, name);
+	glUniform3f(location, value.x, value.y, value.z);
+}
+
+void Shader::UpdateUniformFloat4(const char* name, const glm::vec4& value)
+{
+	GLint location = glGetUniformLocation(ID, name);
+	glUniform4f(location, value.x, value.y, value.z, value.w);
+}
+
+void Shader::UpdateUniformMat3(const char* name, const glm::mat3& matrix)
+{
+	GLint location = glGetUniformLocation(ID, name);
+	glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void Shader::UpdateUniformMat4(const char* name, const glm::mat4& matrix)
+{
+	GLint location = glGetUniformLocation(ID, name);
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+}

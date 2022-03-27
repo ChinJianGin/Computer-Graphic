@@ -6,7 +6,7 @@ namespace CustomSpace
     class OrthoCamera
     {
         public:
-            OrthoCamera(float left, float right, float bottom, float top);
+            OrthoCamera(float left, float right, float bottom, float top, float near = -1.f, float far = 1.f);
 
             void SetPosition(const glm::vec3& position) { m_Position = position; LocalUpdate(); }
             void SetRotation(float rotation) { m_Rotation = rotation; LocalUpdate(); }

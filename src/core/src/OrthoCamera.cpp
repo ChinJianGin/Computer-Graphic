@@ -2,8 +2,8 @@
 
 namespace CustomSpace
 {
-    OrthoCamera::OrthoCamera(float left, float right, float bottom, float top)
-    : m_ProjectionMatrix(glm::ortho(left, right, bottom, top, -1.f, 1.f))
+    OrthoCamera::OrthoCamera(float left, float right, float bottom, float top, float near, float far)
+    : m_ProjectionMatrix(glm::ortho(left, right, bottom, top, near, far))
     {
         m_VPMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }
