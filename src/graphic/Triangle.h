@@ -26,7 +26,7 @@ namespace CustomSpace
             
 
         private:
-
+            virtual void LocalUpdate() override;
 
     };
 }

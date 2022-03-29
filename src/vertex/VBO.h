@@ -46,6 +46,14 @@ namespace  CustomSpace
           Offset(0)
         {}
 
+        BufferElements(ShaderDataType type,const uint32_t element, const char* name, bool normalized = false)
+        : Type(type),
+          Name(name),
+          Size(ShaderDataTypeSize(type) * element),
+          Normalized(normalized),
+          Offset(0)
+        {}
+
         uint32_t GetNumComponent() const
         {
             switch (Type)
@@ -84,6 +92,7 @@ namespace  CustomSpace
             std::vector<BufferElements>::const_iterator end() const { return m_Elements.end(); }
         private:
             void CalculateOffsetAndStride();
+            void CalculateTightOffset();
         private:
             std::vector<BufferElements> m_Elements;
             GLuint m_Stride = 0;

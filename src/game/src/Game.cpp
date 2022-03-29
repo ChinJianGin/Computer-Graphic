@@ -15,24 +15,27 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     m_Camera = CreateRef<OrthoCamera>(-2.f, 2.f, -2.f, 2.f);
 
     m_Camera->SetPosition(glm::vec3(0, 0, -.5f));
-    CameraPosition = m_Camera->GetPosition();
-    CameraRotation = m_Camera->GetRotation();
+    m_Rotation = 0;
+    Transform = glm::vec3(0);
 
-    //m_Triangle = CreateRef<Triangle>();
+    m_Triangle = CreateRef<Triangle>();
     /***
      * Create a shape progress
     ***/
     TriangleVAO = VAO::Create();
 
-    glm::vec3 TrianglePoints[] = 
-    {
-        glm::vec3(-.5f, -.5f * float(sqrt(3)) / 3, 0.f),        glm::vec3(1.f, 0.f, 0.f),
-        glm::vec3( .5f, -.5f * float(sqrt(3)) / 3, 0.f),        glm::vec3(.2f, .3f, .8f),
-        glm::vec3( 0.f,  .5f * float(sqrt(3)) * 2 / 3, 0.f),    glm::vec3(.8f, .8f, .2f),
-        glm::vec3( 0.f, -.5f * float(sqrt(3)) * 2 / 3, 0.f),    glm::vec3(.35f, .9f, .1f)
-    };
+    // glm::vec3 TrianglePoints[] = 
+    // {
+    //     glm::vec3(-.5f, -.5f * float(sqrt(3)) / 3, 0.f),        glm::vec3(1.f, 0.f, 0.f),
+    //     glm::vec3( .5f, -.5f * float(sqrt(3)) / 3, 0.f),        glm::vec3(.2f, .3f, .8f),
+    //     glm::vec3( 0.f,  .5f * float(sqrt(3)) * 2 / 3, 0.f),    glm::vec3(.8f, .8f, .2f),
+    //     glm::vec3( 0.f, -.5f * float(sqrt(3)) * 2 / 3, 0.f),    glm::vec3(.35f, .9f, .1f)
+    // };
 
-    CustomSpace::Ref<VBO> TriangleVBO = VBO::Create(TrianglePoints, sizeof(TrianglePoints));
+    //CustomSpace::Ref<VBO> TriangleVBO = VBO::Create(TrianglePoints, sizeof(TrianglePoints));
+    glm::vec3 Points[] = {m_Triangle->GetVertexData()->Points[0], m_Triangle->GetVertexData()->Points[1], m_Triangle->GetVertexData()->Points[2], m_Triangle->GetVertexData()->Points[3], m_Triangle->GetVertexData()->Points[4], m_Triangle->GetVertexData()->Points[5]};
+
+    CustomSpace::Ref<VBO> TriangleVBO = VBO::Create(Points, sizeof(Points));
 
     CustomSpace::BufferLayout TriangleLayout = 
     {
@@ -44,8 +47,7 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
 
     GLuint TriangleIndices[] =
     {
-        0, 1, 2,
-        0, 1, 3
+        0, 1, 2
     };
 
     CustomSpace::Ref<EBO> TriangleEBO = EBO::Create(TriangleIndices, sizeof(TriangleIndices));
@@ -77,33 +79,40 @@ void ShootingGame::Run()
 ***/
         TriangleShaderProgram->Activate();
         TriangleVAO->Bind();
+        TriangleShaderProgram->SetMat4("uMV", m_Triangle->GetTransform()->m_ModelMatrix);
         TriangleShaderProgram->SetMat4("uVP", m_Camera->GetVPMatrix());
         glDrawElements(GL_TRIANGLES, (TriangleVAO->GetEBO()->GetCount() / sizeof(GLuint)), GL_UNSIGNED_INT, 0);
 ///----------------------------------------
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit(EXIT_SUCCESS);
-    
-        CameraPosition = m_Camera->GetPosition();
-        CameraRotation = m_Camera->GetRotation();
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_A))
-            CameraPosition.x -= (float)CameraMoveSpeed * m_Timer->GetTick();
+            Transform.x -= (float)m_MoveSpeed * m_Timer->GetTick();
         else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_D))
-            CameraPosition.x += (float)CameraMoveSpeed * m_Timer->GetTick();
+            Transform.x += (float)m_MoveSpeed * m_Timer->GetTick();
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
-            CameraPosition.y += (float)CameraMoveSpeed * m_Timer->GetTick();
+            Transform.y += (float)m_MoveSpeed * m_Timer->GetTick();
         else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_S))
-            CameraPosition.y -= (float)CameraMoveSpeed * m_Timer->GetTick();
+            Transform.y -= (float)m_MoveSpeed * m_Timer->GetTick();
 
-        m_Camera->SetPosition(CameraPosition);
+        m_Triangle->SetPosition(Transform);
+        //m_Camera->SetPosition(CameraPosition);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_E))
-            CameraRotation += (float)CameraRotationSpeed * m_Timer->GetTick();
+            m_Rotation -= (float)m_RotationSpeed * m_Timer->GetTick();
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_Q))
-            CameraRotation -= (float)CameraRotationSpeed * m_Timer->GetTick();
+            m_Rotation += (float)m_RotationSpeed * m_Timer->GetTick();
 
-        m_Camera->SetRotation(CameraRotation);
+        //m_Camera->SetRotation(CameraRotation);
+        m_Triangle->SetRotation(m_Rotation);
 
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_UP))
+            m_Scale += (float)m_Timer->GetTick();
+
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_DOWN))
+            m_Scale -= (float)m_Timer->GetTick();
+            
+        m_Triangle->SetScale(m_Scale);
         M_Window->Update();        
     }
 }

@@ -6,6 +6,7 @@ namespace CustomSpace
 {
     struct Transform
     {
+        glm::mat4 m_ModelMatrix;
         glm::vec3 m_Position;
         float m_Rotation;
         float m_Scale;
@@ -13,19 +14,19 @@ namespace CustomSpace
         Transform(const glm::vec3& pos = glm::vec3(0), float rotation = 0, float scale = 1)
         : m_Position(pos), m_Rotation(rotation), m_Scale(scale)
         {
+            m_ModelMatrix = glm::translate(glm::mat4(1.f), pos)
+             * glm::rotate(glm::mat4(1.f), m_Rotation, glm::vec3(1, 1, 1))
+             * glm::scale(glm::mat4(1.f), glm::vec3(m_Scale));
         }
     };
 
     struct VertexData
     {
-        glm::vec3 Points[0];
+        const glm::vec3* Points;
 
-        VertexData(const glm::vec3 point[], uint32_t count)
+        VertexData(const glm::vec3* point)
         {
-            for(int i = 0; i < count; i++)
-            {
-                Points[i] = point[i];
-            }            
+            Points = point;
         }
     };
    
@@ -53,6 +54,6 @@ namespace CustomSpace
 
             glm::vec4 m_Color[4];
         private:
-            
+            virtual void LocalUpdate() = 0;
     };
 } // namespace CustomSpace

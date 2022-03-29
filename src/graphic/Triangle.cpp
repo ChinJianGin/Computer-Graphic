@@ -8,15 +8,15 @@ namespace CustomSpace
     }
 
     void Triangle::Init()
-    {
+    {CORE_WARN("Create Triangle");
         m_Transform = CreateRef<Transform>();
         glm::vec3 Points[] =
         {
-            glm::vec3(-.5f, -.5f * float(sqrt(3)) / 3, 0.f),
-            glm::vec3( .5f, -.5f * float(sqrt(3)) / 3, 0.f),
-            glm::vec3( 0.f,  .5f * float(sqrt(3)) * 2 / 3, 0.f)
+            glm::vec3(-.5f, -.5f * float(sqrt(3)) / 3, 0.f), glm::vec3(1.f, 0.f, 0.f),
+            glm::vec3( .5f, -.5f * float(sqrt(3)) / 3, 0.f), glm::vec3(.2f, .3f, .8f),
+            glm::vec3( 0.f,  .5f * float(sqrt(3)) * 2 / 3, 0.f), glm::vec3(.35f, .9f, .1f)
         };
-        m_VertexData = CreateRef<VertexData>(Points, (uint32_t)(sizeof(Points) / sizeof(glm::vec3)));
+        m_VertexData = CreateRef<VertexData>(Points);
 
         glm::vec4 Colors[] =
         {
@@ -31,16 +31,19 @@ namespace CustomSpace
     void Triangle::SetPoints(const Ref<VertexData>& data)
     {
         m_VertexData = data;
+        this->LocalUpdate();
     }
     
     void Triangle::SetTransform(const Ref<Transform>& trans)
     {
         m_Transform = trans;
+        this->LocalUpdate();
     }
 
     void Triangle::SetPosition(const glm::vec3& pos)
     {
         m_Transform->m_Position = pos;
+        this->LocalUpdate();
     }
 
     void Triangle::SetColor(const glm::vec4 color[])
@@ -54,10 +57,19 @@ namespace CustomSpace
     void Triangle::SetRotation(const float rotation)
     {
         m_Transform->m_Rotation = rotation;
+        this->LocalUpdate();
     }
 
     void Triangle::SetScale(const float scale)
     {
         m_Transform->m_Scale = scale;
+        this->LocalUpdate();
+    }
+
+    void Triangle::LocalUpdate()
+    {
+        this->GetTransform()->m_ModelMatrix = glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)
+             * glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, glm::vec3(0, 0, 1))
+             * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
     }
 }

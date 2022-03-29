@@ -2,6 +2,7 @@
 
 #include"../../core/include/Core.h"
 #include"../../vertex/VAO.h"
+#include"../../graphic/Renderer.h"
 
 class ShootingGame
 {
@@ -23,11 +24,13 @@ private:
     CustomSpace::Scope<CustomSpace::Windows> M_Window;
     bool B_Running = true;
 
-    //CustomSpace::Ref<CustomSpace::Triangle> m_Triangle;
+    CustomSpace::Ref<CustomSpace::Triangle> m_Triangle;
 
     glm::vec3 CameraPosition;
+    glm::vec3 Transform;
 
-    float CameraRotation = 0.f;
-    float CameraRotationSpeed = 10.f;    
-    float CameraMoveSpeed = 1.f;
+    float m_Rotation = 0.f;
+    float m_RotationSpeed = 1.f;    
+    float m_MoveSpeed = 1.f;
+    float m_Scale = 1;
 };

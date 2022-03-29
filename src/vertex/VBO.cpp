@@ -13,6 +13,16 @@ namespace CustomSpace
             m_Stride += element.Size;
         }
     }
+
+    void BufferLayout::CalculateTightOffset()
+    {
+        GLuint offset = 0;
+        for(auto& element : m_Elements)
+        {
+            element.Offset = offset;
+            offset += element.Size;
+        }
+    }
 }
 
 
