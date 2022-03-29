@@ -1,6 +1,6 @@
 #include"Renderer.h"
 #include"Render2D.h"
-#include"RenderCommand.h"
+
 namespace CustomSpace
 {
     Scope<Renderer::SceneData> Renderer::m_SceneData = CreateScope<Renderer::SceneData>();
@@ -30,6 +30,9 @@ namespace CustomSpace
     {
         shader->Activate();
         shader->SetMat4("uVP", m_SceneData->VPMatrix);
+        shader->SetMat4("uMV", shape->GetTransform()->m_ModelMatrix);
+
+        
 
         
     }

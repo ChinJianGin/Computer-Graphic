@@ -24,6 +24,6 @@ namespace CustomSpace
 
     void Render2D::RenderTarget(const Ref<Shape>& shape)
     {
-
+        
     }
 }

@@ -16,7 +16,7 @@ namespace CustomSpace
             glm::vec3( .5f, -.5f * float(sqrt(3)) / 3, 0.f), glm::vec3(.2f, .3f, .8f),
             glm::vec3( 0.f,  .5f * float(sqrt(3)) * 2 / 3, 0.f), glm::vec3(.35f, .9f, .1f)
         };
-        m_VertexData = CreateRef<VertexData>(Points);
+        m_PointsData = CreateRef<PointsData>(Points);
 
         glm::vec4 Colors[] =
         {
@@ -28,9 +28,9 @@ namespace CustomSpace
         SetColor(Colors);
     }
 
-    void Triangle::SetPoints(const Ref<VertexData>& data)
+    void Triangle::SetPoints(const Ref<PointsData>& data)
     {
-        m_VertexData = data;
+        m_PointsData = data;
         this->LocalUpdate();
     }
     

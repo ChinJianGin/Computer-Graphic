@@ -8,7 +8,7 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     Instance = this;
     M_Window = Windows::CreateWindow(WindowProps(width, height, title, screen, vsync));
 
-    //Renderer::Init();
+    Renderer::Init();
 
     m_Timer = CreateScope<CoreTimer>(TARGET_FRAMERATE);
 
@@ -33,7 +33,7 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     // };
 
     //CustomSpace::Ref<VBO> TriangleVBO = VBO::Create(TrianglePoints, sizeof(TrianglePoints));
-    glm::vec3 Points[] = {m_Triangle->GetVertexData()->Points[0], m_Triangle->GetVertexData()->Points[1], m_Triangle->GetVertexData()->Points[2], m_Triangle->GetVertexData()->Points[3], m_Triangle->GetVertexData()->Points[4], m_Triangle->GetVertexData()->Points[5]};
+    glm::vec3 Points[] = {m_Triangle->GetPointsData()->Points[0], m_Triangle->GetPointsData()->Points[1], m_Triangle->GetPointsData()->Points[2], m_Triangle->GetPointsData()->Points[3], m_Triangle->GetPointsData()->Points[4], m_Triangle->GetPointsData()->Points[5]};
 
     CustomSpace::Ref<VBO> TriangleVBO = VBO::Create(Points, sizeof(Points));
 
@@ -69,8 +69,8 @@ void ShootingGame::Run()
     while(B_Running)
     {
         B_Running = !glfwWindowShouldClose((GLFWwindow*)M_Window->GetWindow());
-        glClearColor(0.f, 1.f, .7f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        CustomSpace::RenderCommand::SetClearColor(glm::vec4(0.f, 1.f, .7f, 1.f));
+        CustomSpace::RenderCommand::Clear();        
 
         m_Timer->CalculateTimer();
 

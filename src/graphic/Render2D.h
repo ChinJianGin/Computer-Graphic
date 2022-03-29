@@ -1,6 +1,7 @@
 #pragma once
 #include"../core/include/Core.h"
 #include"../vertex/VAO.h"
+#include"./RenderCommand.h"
 #include"./Shape.h"
 
 namespace CustomSpace

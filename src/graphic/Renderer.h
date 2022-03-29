@@ -1,6 +1,7 @@
 #pragma once
 #include "../core/include/OrthoCamera.h"
 #include "../shader/ShaderClass.h"
+#include"RenderCommand.h"
 #include "./OpenGLRenderCommand.h"
 #include "Shape.h"
 #include "Triangle.h"
