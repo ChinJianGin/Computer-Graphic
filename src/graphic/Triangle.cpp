@@ -9,9 +9,9 @@ namespace CustomSpace
 
     void Triangle::Init()
     {   
-        CORE_WARN("Create Triangle");
         m_Type = Shape::ShapeType::Triangle;
         m_Transform = CreateRef<Transform>();
+        m_VertexData = CreateRef<VertexData>();
         std::vector<glm::vec3> Points =
         {
             glm::vec3(-.5f, -.5f * float(sqrt(3)) / 3, 0.f), glm::vec3(1.f, 0.f, 0.f),
@@ -29,6 +29,7 @@ namespace CustomSpace
             glm::vec4(.35f, .9f, .1f, 1.f)
         };
         SetColor(Colors);
+        CORE_WARN("Create Triangle");
     }
 
     void Triangle::SetPoints(const Ref<PointsData>& data)

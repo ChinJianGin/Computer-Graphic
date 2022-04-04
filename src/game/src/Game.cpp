@@ -18,45 +18,11 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     m_Rotation = 0;
     Transform = glm::vec3(0);
 
-    m_Triangle = CreateRef<Triangle>();
-    /***
-     * Create a shape progress
-    ***/
-    TriangleVAO = VAO::Create();
+    m_Factory = CreateRef<ShapeFactory>();
 
-    // glm::vec3 TrianglePoints[] = 
-    // {
-    //     glm::vec3(-.5f, -.5f * float(sqrt(3)) / 3, 0.f),        glm::vec3(1.f, 0.f, 0.f),
-    //     glm::vec3( .5f, -.5f * float(sqrt(3)) / 3, 0.f),        glm::vec3(.2f, .3f, .8f),
-    //     glm::vec3( 0.f,  .5f * float(sqrt(3)) * 2 / 3, 0.f),    glm::vec3(.8f, .8f, .2f),
-    //     glm::vec3( 0.f, -.5f * float(sqrt(3)) * 2 / 3, 0.f),    glm::vec3(.35f, .9f, .1f)
-    // };
-
-    //CustomSpace::Ref<VBO> TriangleVBO = VBO::Create(TrianglePoints, sizeof(TrianglePoints));
-    glm::vec3 Points[m_Triangle->GetPointsData()->Points.size()];
-    std::copy(m_Triangle->GetPointsData()->Points.begin(), m_Triangle->GetPointsData()->Points.end(), Points);
-
-    CustomSpace::Ref<VBO> TriangleVBO = VBO::Create(&(m_Triangle->GetPointsData()->Points.front()), sizeof(glm::vec3) * m_Triangle->GetPointsData()->Points.size());
-    CustomSpace::BufferLayout TriangleLayout = 
-    {
-        {CustomSpace::ShaderDataType::f_Vec3, "vPosition"},
-        {CustomSpace::ShaderDataType::f_Vec3, "vColor"}
-    };
-    TriangleVBO->SetLayout(TriangleLayout);
-    TriangleVAO->AddVBO(TriangleVBO);
-
-    GLuint TriangleIndices[] =
-    {
-        0, 1, 2
-    };
-
-    CustomSpace::Ref<EBO> TriangleEBO = EBO::Create(TriangleIndices, sizeof(TriangleIndices));
-    TriangleVAO->SetEBO(TriangleEBO);
-    //----------------------------------------------------
-
-
+    m_Triangle = m_Factory->ShapeCreator<Triangle>();
     
-    TriangleShaderProgram = CustomSpace::CreateRef<Shader>(Shader("../src/shader/2DGame.vert", "../src/shader/2DGame.frag"));
+    CORE_WARN("Shooting game constructor done");
 }
 
 void ShootingGame::Close()
@@ -77,11 +43,11 @@ void ShootingGame::Run()
 /***
  * Draw
 ***/
-        TriangleShaderProgram->Activate();
-        TriangleVAO->Bind();
-        TriangleShaderProgram->SetMat4("uMV", m_Triangle->GetTransform()->m_ModelMatrix);
-        TriangleShaderProgram->SetMat4("uVP", m_Camera->GetVPMatrix());
-        glDrawElements(GL_TRIANGLES, (TriangleVAO->GetEBO()->GetCount() / sizeof(GLuint)), GL_UNSIGNED_INT, 0);
+        m_Triangle->GetVertexData()->m_Shader->Activate();
+        m_Triangle->GetVertexData()->m_VAO->Bind();
+        m_Triangle->GetVertexData()->m_Shader->SetMat4("uMV", m_Triangle->GetTransform()->m_ModelMatrix);
+        m_Triangle->GetVertexData()->m_Shader->SetMat4("uVP", m_Camera->GetVPMatrix());
+        glDrawElements(GL_TRIANGLES, m_Triangle->GetVertexData()->m_VAO->GetEBO()->GetCount() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
 ///----------------------------------------
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit(EXIT_SUCCESS);
 

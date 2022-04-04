@@ -1,9 +1,8 @@
 #pragma once
 
 #include"../../core/include/Core.h"
-#include"../../vertex/VAO.h"
 #include"../../graphic/Renderer.h"
-
+#include"../../client/include/Creator.h"
 class ShootingGame
 {
 public:
@@ -13,8 +12,8 @@ public:
 
     void Close();
 private:
-    CustomSpace::Ref<VAO> TriangleVAO;
-    CustomSpace::Ref<Shader> TriangleShaderProgram;
+    //CustomSpace::Ref<VAO> TriangleVAO;
+    //CustomSpace::Ref<Shader> TriangleShaderProgram;
 
     CustomSpace::Ref<CustomSpace::OrthoCamera> m_Camera;
 
@@ -24,8 +23,9 @@ private:
     CustomSpace::Scope<CustomSpace::Windows> M_Window;
     bool B_Running = true;
 
-    CustomSpace::Ref<CustomSpace::Triangle> m_Triangle;
+    CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
 
+    CustomSpace::Ref<CustomSpace::ShapeFactory> m_Factory;
     glm::vec3 CameraPosition;
     glm::vec3 Transform;
 
