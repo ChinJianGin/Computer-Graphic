@@ -24,10 +24,12 @@ private:
     bool B_Running = true;
 
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
+    CustomSpace::Ref<CustomSpace::Shape> m_Triangle_2;
 
     CustomSpace::Ref<CustomSpace::ShapeFactory> m_Factory;
     glm::vec3 CameraPosition;
     glm::vec3 Transform;
+    glm::vec3 Transform2;
 
     float m_Rotation = 0.f;
     float m_RotationSpeed = 1.f;    

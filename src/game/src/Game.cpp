@@ -14,14 +14,18 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
 
     m_Camera = CreateRef<OrthoCamera>(-2.f, 2.f, -2.f, 2.f);
 
-    m_Camera->SetPosition(glm::vec3(0, 0, -.5f));
+    m_Camera->SetPosition(glm::vec3(0, 0, -1.f));
     m_Rotation = 0;
     Transform = glm::vec3(0);
+    Transform2 = glm::vec3(.5f, .5f, 0.f);
 
     m_Factory = CreateRef<ShapeFactory>();
 
     m_Triangle = m_Factory->ShapeCreator<Triangle>();
-    
+    m_Triangle_2 = m_Factory->ShapeCreator<Triangle>();
+    CORE_WARN("Triangle   position : {}", fmt::ptr(&(m_Triangle->GetVertexData()->m_VAO))); 
+    CORE_WARN("Triangle 2 position : {}", fmt::ptr(&(m_Triangle_2->GetVertexData()->m_VAO))); 
+
     CORE_WARN("Shooting game constructor done");
 }
 
@@ -48,7 +52,12 @@ void ShootingGame::Run()
         m_Triangle->GetVertexData()->m_Shader->SetMat4("uMV", m_Triangle->GetTransform()->m_ModelMatrix);
         m_Triangle->GetVertexData()->m_Shader->SetMat4("uVP", m_Camera->GetVPMatrix());
         glDrawElements(GL_TRIANGLES, m_Triangle->GetVertexData()->m_VAO->GetEBO()->GetCount() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
-///----------------------------------------
+        m_Triangle_2->GetVertexData()->m_Shader->Activate();
+        m_Triangle_2->GetVertexData()->m_VAO->Bind();
+        m_Triangle_2->GetVertexData()->m_Shader->SetMat4("uMV", m_Triangle_2->GetTransform()->m_ModelMatrix);
+        m_Triangle_2->GetVertexData()->m_Shader->SetMat4("uVP", m_Camera->GetVPMatrix());
+        glDrawElements(GL_TRIANGLES, m_Triangle_2->GetVertexData()->m_VAO->GetEBO()->GetCount(), GL_UNSIGNED_INT, nullptr);
+       ///----------------------------------------
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit(EXIT_SUCCESS);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_A))
@@ -62,7 +71,8 @@ void ShootingGame::Run()
             Transform.y -= (float)m_MoveSpeed * m_Timer->GetTick();
 
         m_Triangle->SetPosition(Transform);
-        //m_Camera->SetPosition(CameraPosition);
+        m_Triangle_2->SetPosition(Transform2);
+        // m_Camera->SetPosition(CameraPosition);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_E))
             m_Rotation -= (float)m_RotationSpeed * m_Timer->GetTick();
