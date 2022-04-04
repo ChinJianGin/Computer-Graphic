@@ -22,18 +22,14 @@ namespace CustomSpace
 
     struct PointsData
     {
-        const glm::vec3* Points;
-
-        PointsData(const glm::vec3* point)
-        {
-            Points = point;
-        }
+        std::vector<glm::vec3> Points;
     };
 
     struct VertexData
     {
         Ref<VAO> m_VAO;
         Ref<VBO> m_VBO;
+        Ref<Shader> m_Shader;
     };
    
     class Shape
@@ -52,15 +48,25 @@ namespace CustomSpace
             virtual Ref<PointsData> GetPointsData() const = 0;
             virtual Ref<VertexData> GetVertexData() const = 0;   
             virtual void GetColor(glm::vec4 colors[]) = 0; 
+
+            enum class ShapeType
+            {
+                None = 0, Point = 1, Line = 2, Sphere = 3, Triangle = 4, Quad = 5 
+            };
+
             Shape();
 
             virtual ~Shape() = default;      
+
+            ShapeType GetType() { return m_Type; }
         protected:
             Ref<Transform> m_Transform;
             Ref<PointsData> m_PointsData;
             Ref<VertexData> m_VertexData;
 
             glm::vec4 m_Color[4];
+
+            ShapeType m_Type;
         private:
             virtual void LocalUpdate() = 0;
     };

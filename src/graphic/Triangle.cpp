@@ -8,15 +8,18 @@ namespace CustomSpace
     }
 
     void Triangle::Init()
-    {CORE_WARN("Create Triangle");
+    {   
+        CORE_WARN("Create Triangle");
+        m_Type = Shape::ShapeType::Triangle;
         m_Transform = CreateRef<Transform>();
-        glm::vec3 Points[] =
+        std::vector<glm::vec3> Points =
         {
             glm::vec3(-.5f, -.5f * float(sqrt(3)) / 3, 0.f), glm::vec3(1.f, 0.f, 0.f),
             glm::vec3( .5f, -.5f * float(sqrt(3)) / 3, 0.f), glm::vec3(.2f, .3f, .8f),
             glm::vec3( 0.f,  .5f * float(sqrt(3)) * 2 / 3, 0.f), glm::vec3(.35f, .9f, .1f)
         };
-        m_PointsData = CreateRef<PointsData>(Points);
+        m_PointsData = CreateRef<PointsData>();
+        m_PointsData->Points.assign(Points.begin(), Points.end());
 
         glm::vec4 Colors[] =
         {

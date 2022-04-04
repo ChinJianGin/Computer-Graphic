@@ -33,10 +33,10 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     // };
 
     //CustomSpace::Ref<VBO> TriangleVBO = VBO::Create(TrianglePoints, sizeof(TrianglePoints));
-    glm::vec3 Points[] = {m_Triangle->GetPointsData()->Points[0], m_Triangle->GetPointsData()->Points[1], m_Triangle->GetPointsData()->Points[2], m_Triangle->GetPointsData()->Points[3], m_Triangle->GetPointsData()->Points[4], m_Triangle->GetPointsData()->Points[5]};
+    glm::vec3 Points[m_Triangle->GetPointsData()->Points.size()];
+    std::copy(m_Triangle->GetPointsData()->Points.begin(), m_Triangle->GetPointsData()->Points.end(), Points);
 
-    CustomSpace::Ref<VBO> TriangleVBO = VBO::Create(Points, sizeof(Points));
-
+    CustomSpace::Ref<VBO> TriangleVBO = VBO::Create(&(m_Triangle->GetPointsData()->Points.front()), sizeof(glm::vec3) * m_Triangle->GetPointsData()->Points.size());
     CustomSpace::BufferLayout TriangleLayout = 
     {
         {CustomSpace::ShaderDataType::f_Vec3, "vPosition"},
