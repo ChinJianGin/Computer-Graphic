@@ -25,6 +25,7 @@ private:
 
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle_2;
+    CustomSpace::Ref<CustomSpace::Shape> m_Quad;
 
     CustomSpace::Ref<CustomSpace::ShapeFactory> m_Factory;
     glm::vec3 CameraPosition;

@@ -67,14 +67,27 @@ namespace CustomSpace
         Ref<VBO> TempVBO = VBO::Create(&(TemShape->GetPointsData()->Points.front()), sizeof(glm::vec3) * TemShape->GetPointsData()->Points.size());
 
     CORE_WARN("Create vbo");
+    if(TemShape->GetType() == Shape::ShapeType::Triangle)
+    {
         BufferLayout TempLayout = 
         {
-           {ShaderDataType::f_Vec3, "vPosition"},
-           {ShaderDataType::f_Vec3, "vColor"}
+            {ShaderDataType::f_Vec3, "vPosition"},
+            {ShaderDataType::f_Vec3, "vColor"}
         };
-
-    CORE_WARN("Create Layout");
         TempVBO->SetLayout(TempLayout);
+        CORE_WARN("Create Triangles");
+    }
+    else
+    {
+        CORE_INFO("Create Quad");
+        BufferLayout TempLayout =
+        {
+            {ShaderDataType::f_Vec3, "vPosition"},
+            {ShaderDataType::f_Vec3, "vColor"}
+        };
+        TempVBO->SetLayout(TempLayout);
+    }
+
     CORE_WARN("Set layout");
         TempVAO->AddVBO(TempVBO);
     CORE_WARN("Add vbo");

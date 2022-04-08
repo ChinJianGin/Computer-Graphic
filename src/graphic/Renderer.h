@@ -5,6 +5,7 @@
 #include "./OpenGLRenderCommand.h"
 #include "Shape.h"
 #include "Triangle.h"
+#include "Quad.h"
 
 namespace CustomSpace
 {
