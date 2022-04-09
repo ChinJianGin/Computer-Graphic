@@ -47,9 +47,9 @@ namespace CustomSpace
             indices.push_back(0);
             indices.push_back(1);
             indices.push_back(2);
-            indices.push_back(1);
             indices.push_back(2);
             indices.push_back(3);
+            indices.push_back(1);
             break;
         default:
             break;
@@ -63,13 +63,25 @@ namespace CustomSpace
 
         Ref<VAO> TempVAO = CreateRef<VAO>();
 
-        Ref<VBO> TempVBO = VBO::Create(&(TemShape->GetPointsData()->Points.front()), sizeof(glm::vec3) * TemShape->GetPointsData()->Points.size());
+        Ref<VBO> TempVBO = VBO::Create(&(TemShape->GetPointsData()->Points.front()), sizeof(GLfloat) * TemShape->GetPointsData()->Points.size());
 
-        BufferLayout TempLayout = 
+        BufferLayout TempLayout;
+        if(TemShape->GetType() == Shape::ShapeType::Triangle)
         {
-            {ShaderDataType::f_Vec3, "vPosition"},
-            {ShaderDataType::f_Vec3, "vColor"}
-        };
+            TempLayout = 
+            {
+                {ShaderDataType::f_Vec3, "vPosition"},
+                {ShaderDataType::f_Vec3, "vColor"}
+            };
+        }
+        else
+        {
+            TempLayout = 
+            {
+                {ShaderDataType::f_Vec3, "vPosition"},
+                {ShaderDataType::f_Vec3, "vColor"}
+            };   
+        }
         TempVBO->SetLayout(TempLayout);
         TempVAO->AddVBO(TempVBO);
 

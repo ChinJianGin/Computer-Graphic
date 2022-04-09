@@ -23,7 +23,7 @@ namespace CustomSpace
 
     struct PointsData
     {
-        std::vector<glm::vec3> Points;
+        std::vector<GLfloat> Points;
     };
 
     struct VertexData

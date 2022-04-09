@@ -12,11 +12,11 @@ namespace CustomSpace
         m_Type = Shape::ShapeType::Triangle;
         m_Transform = CreateRef<Transform>();
         m_VertexData = CreateRef<VertexData>();
-        std::vector<glm::vec3> Points =
+        std::vector<GLfloat> Points =
         {
-            glm::vec3(-.5f, -.5f * float(sqrt(3)) / 3, 0.f), glm::vec3(1.f, 0.f, 0.f),
-            glm::vec3( .5f, -.5f * float(sqrt(3)) / 3, 0.f), glm::vec3(.2f, .3f, .8f),
-            glm::vec3( 0.f,  .5f * float(sqrt(3)) * 2 / 3, 0.f), glm::vec3(.35f, .9f, .1f)
+            -.5f, -.5f * float(sqrt(3)) / 3, 0.f,      1.f, 0.f, 0.f,
+             .5f, -.5f * float(sqrt(3)) / 3, 0.f,      .2f, .3f, .8f,
+             0.f,  .5f * float(sqrt(3)) * 2 / 3, 0.f, .35f, .9f, .1f
         };
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());
