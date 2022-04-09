@@ -46,24 +46,14 @@ void ShootingGame::Run()
 /***
  * Draw
 ***/
+        CustomSpace::Renderer::BeginScene(*m_Camera);
         std::vector<glm::vec4> Color;
+        m_Triangle_2->GetColor(Color);
+        CustomSpace::Renderer::Submit(m_Triangle->GetVertexData()->m_Shader, m_Triangle);
+        CustomSpace::Renderer::Submit(m_Triangle_2->GetVertexData()->m_Shader, m_Triangle_2);
         m_Quad->GetColor(Color);
-        m_Triangle->GetVertexData()->m_Shader->Activate();
-        m_Triangle->GetVertexData()->m_VAO->Bind();
-        m_Triangle->GetVertexData()->m_Shader->SetMat4("uMV", m_Triangle->GetTransform()->m_ModelMatrix);
-        m_Triangle->GetVertexData()->m_Shader->SetMat4("uVP", m_Camera->GetVPMatrix());
-        glDrawElements(GL_TRIANGLES, m_Triangle->GetVertexData()->m_VAO->GetEBO()->GetCount() / sizeof(GLuint), GL_UNSIGNED_INT, 0);
-        m_Triangle_2->GetVertexData()->m_Shader->Activate();
-        m_Triangle_2->GetVertexData()->m_VAO->Bind();
-        m_Triangle_2->GetVertexData()->m_Shader->SetMat4("uMV", m_Triangle_2->GetTransform()->m_ModelMatrix);
-        m_Triangle_2->GetVertexData()->m_Shader->SetMat4("uVP", m_Camera->GetVPMatrix());
-        glDrawElements(GL_TRIANGLES, m_Triangle_2->GetVertexData()->m_VAO->GetEBO()->GetCount(), GL_UNSIGNED_INT, nullptr);
-        m_Quad->GetVertexData()->m_Shader->Activate();
-        m_Quad->GetVertexData()->m_VAO->Bind();
-        m_Quad->GetVertexData()->m_Shader->SetMat4("uMV", m_Quad->GetTransform()->m_ModelMatrix);
-        m_Quad->GetVertexData()->m_Shader->SetMat4("uVP", m_Camera->GetVPMatrix());
-        // m_Quad->GetVertexData()->m_Shader->SetFloat4("uColor", Color.front());
-        glDrawElements(GL_TRIANGLES, m_Quad->GetVertexData()->m_VAO->GetEBO()->GetCount() / sizeof(GLuint), GL_UNSIGNED_INT, nullptr);
+        CustomSpace::Renderer::Submit(m_Quad->GetVertexData()->m_Shader, m_Quad);
+        m_Quad->GetVertexData()->m_Shader->SetFloat4("uColor", Color[1]);
        ///----------------------------------------
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit(EXIT_SUCCESS);
 

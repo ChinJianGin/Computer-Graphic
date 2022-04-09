@@ -63,52 +63,28 @@ namespace CustomSpace
 
         Ref<VAO> TempVAO = CreateRef<VAO>();
 
-    CORE_WARN("Create vao");
         Ref<VBO> TempVBO = VBO::Create(&(TemShape->GetPointsData()->Points.front()), sizeof(glm::vec3) * TemShape->GetPointsData()->Points.size());
 
-    CORE_WARN("Create vbo");
-    if(TemShape->GetType() == Shape::ShapeType::Triangle)
-    {
         BufferLayout TempLayout = 
         {
             {ShaderDataType::f_Vec3, "vPosition"},
             {ShaderDataType::f_Vec3, "vColor"}
         };
         TempVBO->SetLayout(TempLayout);
-        CORE_WARN("Create Triangles");
-    }
-    else
-    {
-        CORE_INFO("Create Quad");
-        BufferLayout TempLayout =
-        {
-            {ShaderDataType::f_Vec3, "vPosition"},
-            {ShaderDataType::f_Vec3, "vColor"}
-        };
-        TempVBO->SetLayout(TempLayout);
-    }
-
-    CORE_WARN("Set layout");
         TempVAO->AddVBO(TempVBO);
-    CORE_WARN("Add vbo");
 
         std::vector<GLuint> Indices;
         this->CalculateIndices(TemShape->GetType(), Indices);
-    CORE_WARN("Create Indices");
 
        Ref<EBO> TempEBO =  EBO::Create(&(Indices.front()), sizeof(GLuint) * Indices.size());
        TempVAO->SetEBO(TempEBO);
 
 
        Ref<Shader> ShaderProgram = CreateRef<Shader>(Shader("../src/shader/2DGame.vert", "../src/shader/2DGame.frag"));
-    CORE_WARN("Create shader");
 
        TemShape->GetVertexData()->m_VAO = TempVAO;
-    CORE_WARN("Set VAO");
        TemShape->GetVertexData()->m_VBO = TempVBO;
-    CORE_WARN("Set VBO");
        TemShape->GetVertexData()->m_Shader = ShaderProgram;
-    CORE_WARN("Set Shader");
 
        return TemShape;
     }

@@ -28,12 +28,20 @@ namespace CustomSpace
 
     void Renderer::Submit(const Ref<Shader>& shader, const Ref<Shape>& shape)
     {
-        shader->Activate();
-        shader->SetMat4("uVP", m_SceneData->VPMatrix);
-        shader->SetMat4("uMV", shape->GetTransform()->m_ModelMatrix);
+        if(shader != shape->GetVertexData()->m_Shader)
+        {
+            shader->Activate();
+            shader->SetMat4("uVP", m_SceneData->VPMatrix);
+            shader->SetMat4("uMV", shape->GetTransform()->m_ModelMatrix);
+        }
+        else
+        {
+            shape->GetVertexData()->m_Shader->Activate();
+            shape->GetVertexData()->m_Shader->SetMat4("uVP", m_SceneData->VPMatrix);
+            shape->GetVertexData()->m_Shader->SetMat4("uMV",  shape->GetTransform()->m_ModelMatrix);
+        }
 
-        
-
-        
+        shape->GetVertexData()->m_VAO->Bind(); 
+        RenderCommand::RenderTarget(shape->GetVertexData()->m_VAO, shape->GetVertexData()->m_VAO->GetEBO()->GetCount());  
     }
 }

@@ -14,10 +14,10 @@ namespace CustomSpace
         m_VertexData = CreateRef<VertexData>();
         std::vector<glm::vec3> Points =
         {
-            glm::vec3(-.5f, -.5f, 0.f),glm::vec3( .8f, .2f, .1f),
-            glm::vec3(-.5f,  .5f, 0.f),glm::vec3( .1f, .2f, .6f),
-            glm::vec3( .5f, -.5f, 0.f),glm::vec3( .2f, .7f, .1f),
-            glm::vec3( .5f,  .5f, 0.f),glm::vec3( .3f, .25f, .6f)
+            glm::vec3(-.5f, -.5f, 0.f),glm::vec3( 1.f, 0.f, 0.f),
+            glm::vec3(-.5f,  .5f, 0.f),glm::vec3( .2f, .3f, .8f),
+            glm::vec3( .5f, -.5f, 0.f),glm::vec3( .8f, .8f, .2f),
+            glm::vec3( .5f,  .5f, 0.f),glm::vec3(.35f, .9f, .1f)
         };
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());
@@ -29,6 +29,7 @@ namespace CustomSpace
             glm::vec4( .8f, .8f, .2f, 1.f),
             glm::vec4(.35f, .9f, .1f, 1.f)
         };
+        SetColor(Colors);
         CORE_WARN("Create Quad");
     }
 
