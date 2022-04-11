@@ -66,12 +66,14 @@ namespace CustomSpace
         Ref<VBO> TempVBO = VBO::Create(&(TemShape->GetPointsData()->Points.front()), sizeof(GLfloat) * TemShape->GetPointsData()->Points.size());
 
         BufferLayout TempLayout;
+        Ref<Shader> ShaderProgram;
         if(TemShape->GetType() == Shape::ShapeType::Triangle)
         {
             TempLayout = 
             {
                 {ShaderDataType::f_Vec3, "vPosition"},
-                {ShaderDataType::f_Vec3, "vColor"}
+                {ShaderDataType::f_Vec3, "vColor"},
+                {ShaderDataType::f_Vec2, "vTexCoord"}
             };
         }
         else
@@ -79,7 +81,8 @@ namespace CustomSpace
             TempLayout = 
             {
                 {ShaderDataType::f_Vec3, "vPosition"},
-                {ShaderDataType::f_Vec3, "vColor"}
+                {ShaderDataType::f_Vec2,  "vTexCoord"}
+                // {ShaderDataType::f_Vec3, "vColor"}
             };   
         }
         TempVBO->SetLayout(TempLayout);
@@ -91,8 +94,10 @@ namespace CustomSpace
        Ref<EBO> TempEBO =  EBO::Create(&(Indices.front()), sizeof(GLuint) * Indices.size());
        TempVAO->SetEBO(TempEBO);
 
+if(TemShape->GetType() == Shape::ShapeType::Triangle) ShaderProgram = CreateRef<Shader>(Shader("../src/shader/2DGame.vert", "../src/shader/2DGame.frag"));
+else ShaderProgram = CreateRef<Shader>(Shader("../src/shader/2DGameTexture.vert", "../src/shader/2DGameTexture.frag"));
 
-       Ref<Shader> ShaderProgram = CreateRef<Shader>(Shader("../src/shader/2DGame.vert", "../src/shader/2DGame.frag"));
+
 
        TemShape->GetVertexData()->m_VAO = TempVAO;
        TemShape->GetVertexData()->m_VBO = TempVBO;

@@ -14,10 +14,10 @@ namespace CustomSpace
         m_VertexData = CreateRef<VertexData>();
         std::vector<GLfloat> Points =
         {
-            -.5f, -.5f, 0.f, 1.f, 0.f, 0.f,
-            -.5f,  .5f, 0.f, .2f, .3f, .8f,
-             .5f, -.5f, 0.f, .8f, .8f, .2f,
-             .5f,  .5f, 0.f,.35f, .9f, .1f
+            -.5f, -.5f, 0.f, 0.f, 0.f,
+            -.5f,  .5f, 0.f, 0.f, 1.f,
+             .5f, -.5f, 0.f, 1.f, 0.f,
+             .5f,  .5f, 0.f, 1.f, 1.f
         };
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());

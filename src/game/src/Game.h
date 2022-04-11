@@ -3,6 +3,8 @@
 #include"../../core/include/Core.h"
 #include"../../graphic/Renderer.h"
 #include"../../client/include/Creator.h"
+#include"../../graphic/Texture.h"
+
 class ShootingGame
 {
 public:
@@ -26,6 +28,8 @@ private:
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle_2;
     CustomSpace::Ref<CustomSpace::Shape> m_Quad;
+    CustomSpace::Ref<CustomSpace::Texture2D> m_Texture;
+    CustomSpace::Ref<CustomSpace::Texture2D> m_Texture2;
 
     CustomSpace::Ref<CustomSpace::ShapeFactory> m_Factory;
     glm::vec3 CameraPosition;
