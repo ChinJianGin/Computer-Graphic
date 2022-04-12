@@ -16,12 +16,14 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
 
     m_Camera->SetPosition(glm::vec3(0, 0, -1.f));
     m_Rotation = 0;
-    Transform = glm::vec3(0, 0, -1.f);
-    Transform2 = glm::vec3(.5f, .5f, 0.f);
+    m_Transform = glm::vec3(0, 0, -0.5f);
+    m_Transform2 = glm::vec3(.5f, .5f, -1.f);
 
     m_Factory = CreateRef<ShapeFactory>();
 
     m_Triangle = m_Factory->ShapeCreator<Triangle>();
+    OriginTrans = CreateRef<Transform>(*(m_Triangle->GetTransform()));
+    OriginTrans->m_Position = m_Transform;
     m_Triangle_2 = m_Factory->ShapeCreator<Triangle>();
     m_Quad = m_Factory->ShapeCreator<Quad>();
 
@@ -59,24 +61,24 @@ void ShootingGame::Run()
         m_Texture2->Bind();
         CustomSpace::Renderer::Submit(m_Quad->GetVertexData()->m_Shader, m_Quad);
         m_Quad->GetVertexData()->m_Shader->SetFloat4("uColor", Color[2]);
-        m_Quad->GetVertexData()->m_Shader->SetInt("Texture1", 0);
+        // m_Quad->GetVertexData()->m_Shader->SetInt("Texture1", 0);
         m_Quad->GetVertexData()->m_Shader->SetInt("Texture2", 1);
        ///----------------------------------------
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit(EXIT_SUCCESS);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_A))
-            Transform.x -= (float)m_MoveSpeed * m_Timer->GetTick();
+            m_Transform.x -= (float)m_MoveSpeed * m_Timer->GetTick();
         else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_D))
-            Transform.x += (float)m_MoveSpeed * m_Timer->GetTick();
+            m_Transform.x += (float)m_MoveSpeed * m_Timer->GetTick();
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
-            Transform.y += (float)m_MoveSpeed * m_Timer->GetTick();
+            m_Transform.y += (float)m_MoveSpeed * m_Timer->GetTick();
         else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_S))
-            Transform.y -= (float)m_MoveSpeed * m_Timer->GetTick();
+            m_Transform.y -= (float)m_MoveSpeed * m_Timer->GetTick();
 
-        m_Triangle->SetPosition(Transform);
-        m_Triangle_2->SetPosition(Transform2);
-        m_Quad->SetPosition(Transform2 + glm::vec3(-1, -1, 0));
+        m_Triangle->SetPosition(m_Transform);
+        m_Triangle_2->SetPosition(m_Transform2);
+        m_Quad->SetPosition(m_Transform2 + glm::vec3(-1, -1, 0));
         // m_Camera->SetPosition(CameraPosition);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_E))
@@ -85,7 +87,7 @@ void ShootingGame::Run()
             m_Rotation += (float)m_RotationSpeed * m_Timer->GetTick();
 
         //m_Camera->SetRotation(CameraRotation);
-        m_Triangle->SetRotation(m_Rotation, glm::vec3(1, 0, 1));
+        m_Triangle->SetRotation(m_Rotation, glm::vec3(0, 0, 1));
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_UP))
             m_Scale += (float)m_Timer->GetTick();
@@ -94,6 +96,15 @@ void ShootingGame::Run()
             m_Scale -= (float)m_Timer->GetTick();
             
         m_Triangle->SetScale(m_Scale);
+
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_R))
+        {
+            m_Transform = OriginTrans->m_Position;
+            m_Rotation = OriginTrans->m_Rotation;
+            m_Scale = OriginTrans->m_Scale;
+        }    
+            
+
         M_Window->Update();        
     }
 }

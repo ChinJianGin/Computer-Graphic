@@ -32,9 +32,11 @@ private:
     CustomSpace::Ref<CustomSpace::Texture2D> m_Texture2;
 
     CustomSpace::Ref<CustomSpace::ShapeFactory> m_Factory;
-    glm::vec3 CameraPosition;
-    glm::vec3 Transform;
-    glm::vec3 Transform2;
+    glm::vec3 m_CameraPosition;
+    glm::vec3 m_Transform;
+    glm::vec3 m_Transform2;
+
+    CustomSpace::Ref<CustomSpace::Transform> OriginTrans;
 
     float m_Rotation = 0.f;
     float m_RotationSpeed = 1.f;    

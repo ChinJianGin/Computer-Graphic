@@ -52,6 +52,7 @@ namespace CustomSpace
 
         M_Context = OpenGLContext::Create(M_Window);
         M_Context->Init();
+        glEnable(GL_DEPTH_TEST);
 
         glViewport(0, 0, M_Prop.Width, M_Prop.Width);
 

@@ -10,6 +10,7 @@ namespace CustomSpace
     void Triangle::Init()
     {   
         m_Type = Shape::ShapeType::Triangle;
+        m_Method = MatrixMethod::TRS;
         m_Transform = CreateRef<Transform>();
         m_VertexData = CreateRef<VertexData>();
         std::vector<GLfloat> Points =
@@ -40,7 +41,10 @@ namespace CustomSpace
     
     void Triangle::SetTransform(const Ref<Transform>& trans)
     {
-        m_Transform = trans;
+        m_Transform->m_Position = trans->m_Position;
+        m_Transform->m_Rotation = trans->m_Rotation;
+        m_Transform->m_Scale = trans->m_Scale;
+        m_Transform->m_Axis = trans->m_Axis;
         this->LocalUpdate();
     }
 
@@ -68,10 +72,34 @@ namespace CustomSpace
         this->LocalUpdate();
     }
 
+    void Triangle::ModelMatrixMethod(const MatrixMethod method)
+    {
+        m_Method = method;
+    }
+
     void Triangle::LocalUpdate()
     {
-        this->GetTransform()->m_ModelMatrix = glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)
-             * glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
-             * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
+        if(m_Method == MatrixMethod::TRS)
+        {
+            this->GetTransform()->m_ModelMatrix = glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)
+                * glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
+                * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
+        }
+        else
+        {
+            if(m_Method == MatrixMethod::RTS)
+            {
+                this->GetTransform()->m_ModelMatrix = glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
+                    * glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)                    
+                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
+            }
+            else
+            {
+                this->GetTransform()->m_ModelMatrix = glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
+                    * glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)                    
+                    * glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
+                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
+            }
+        }
     }
 }

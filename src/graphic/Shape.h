@@ -50,6 +50,12 @@ namespace CustomSpace
             virtual Ref<VertexData> GetVertexData() const = 0;   
             virtual void GetColor(std::vector<glm::vec4>& colors) = 0; 
 
+            enum class MatrixMethod
+            {
+                TRS = 0, RTS = 1, RTRS = 2
+            };
+            virtual void ModelMatrixMethod(const MatrixMethod method = MatrixMethod::TRS) = 0;
+
             enum class ShapeType
             {
                 None = 0, Point = 1, Line = 2, Sphere = 3, Triangle = 4, Quad = 5 
@@ -68,6 +74,7 @@ namespace CustomSpace
             std::vector<glm::vec4> m_Color;
 
             ShapeType m_Type;
+            MatrixMethod m_Method;
         private:
             virtual void LocalUpdate() = 0;
     };
