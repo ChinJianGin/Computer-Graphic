@@ -67,13 +67,13 @@ namespace CustomSpace
 
         BufferLayout TempLayout;
         Ref<Shader> ShaderProgram;
-        if(TemShape->GetType() == Shape::ShapeType::Triangle)
+        if(TemShape->GetType() == Shape::ShapeType::Quad)
         {
             TempLayout = 
             {
                 {ShaderDataType::f_Vec3, "vPosition"},
-                {ShaderDataType::f_Vec3, "vColor"},
-                {ShaderDataType::f_Vec2, "vTexCoord"}
+                {ShaderDataType::f_Vec2,  "vTexCoord"}
+                // {ShaderDataType::f_Vec3, "vColor"}
             };
         }
         else
@@ -81,9 +81,9 @@ namespace CustomSpace
             TempLayout = 
             {
                 {ShaderDataType::f_Vec3, "vPosition"},
-                {ShaderDataType::f_Vec2,  "vTexCoord"}
-                // {ShaderDataType::f_Vec3, "vColor"}
-            };   
+                {ShaderDataType::f_Vec3, "vColor"},
+                {ShaderDataType::f_Vec2, "vTexCoord"}
+            };
         }
         TempVBO->SetLayout(TempLayout);
         TempVAO->AddVBO(TempVBO);

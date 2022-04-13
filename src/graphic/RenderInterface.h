@@ -14,6 +14,7 @@ namespace CustomSpace
             virtual void Clear() = 0;
 
             virtual void DrawElement(const Ref<VAO>& vao, uint32_t count = 0) = 0;
+            virtual void DrawLine(const Ref<VAO>& vao, uint32_t count = 0) = 0;
 
             static Scope<RenderInterface> Create();
     };

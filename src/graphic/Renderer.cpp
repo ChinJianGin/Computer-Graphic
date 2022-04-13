@@ -42,6 +42,9 @@ namespace CustomSpace
         }
 
         shape->GetVertexData()->m_VAO->Bind(); 
+        if(shape->GetType() == CustomSpace::Shape::ShapeType::Line)
+        RenderCommand::RenderLine(shape->GetVertexData()->m_VAO, shape->GetVertexData()->m_VAO->GetEBO()->GetCount());
+        else
         RenderCommand::RenderTarget(shape->GetVertexData()->m_VAO, shape->GetVertexData()->m_VAO->GetEBO()->GetCount());  
     }
 }

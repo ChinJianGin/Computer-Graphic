@@ -30,4 +30,10 @@ namespace CustomSpace
         uint32_t IndexCount = (count ? count : vao->GetEBO()->GetCount()) / sizeof(GLuint);
         glDrawElements(GL_TRIANGLES, IndexCount, GL_UNSIGNED_INT, nullptr);
     }
+
+    void OpenGLRenderCommand::DrawLine(const Ref<VAO>& vao, uint32_t count)
+    {
+        uint32_t IndexCount = (count ? count : vao->GetEBO()->GetCount()) / sizeof(GLuint);
+        glDrawElements(GL_LINES, IndexCount, GL_UNSIGNED_INT, nullptr);
+    }
 }

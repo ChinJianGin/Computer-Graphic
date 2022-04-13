@@ -26,6 +26,7 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     OriginTrans->m_Position = m_Transform;
     m_Triangle_2 = m_Factory->ShapeCreator<Triangle>();
     m_Quad = m_Factory->ShapeCreator<Quad>();
+    m_Line = m_Factory->ShapeCreator<Line>();
 
     m_Texture = Texture2D::Create("../src/TextureSrc/container.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     m_Texture2 = Texture2D::Create("../src/TextureSrc/aperture.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -63,6 +64,8 @@ void ShootingGame::Run()
         m_Quad->GetVertexData()->m_Shader->SetFloat4("uColor", Color[2]);
         // m_Quad->GetVertexData()->m_Shader->SetInt("Texture1", 0);
         m_Quad->GetVertexData()->m_Shader->SetInt("Texture2", 1);
+        dynamic_cast<CustomSpace::Line*>(m_Line.get())->SetLineWidth(20.f);
+        CustomSpace::Renderer::Submit(m_Line->GetVertexData()->m_Shader, m_Line);
        ///----------------------------------------
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit(EXIT_SUCCESS);
 
@@ -96,6 +99,7 @@ void ShootingGame::Run()
             m_Scale -= (float)m_Timer->GetTick();
             
         m_Triangle->SetScale(m_Scale);
+        m_Line->SetScale(m_Scale);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_R))
         {

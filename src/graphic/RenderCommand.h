@@ -30,6 +30,11 @@ namespace CustomSpace
                 m_RenderInterface->DrawElement(vao, count);
             }
 
+            static void RenderLine(const Ref<VAO>& vao, uint32_t count = 0)
+            {
+                m_RenderInterface->DrawLine(vao, count);
+            }
+
         private:
             static Scope<RenderInterface> m_RenderInterface;
 

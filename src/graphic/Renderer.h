@@ -6,6 +6,7 @@
 #include "Shape.h"
 #include "Triangle.h"
 #include "Quad.h"
+#include "Line.h"
 
 namespace CustomSpace
 {

@@ -14,5 +14,6 @@ namespace CustomSpace
             virtual void Clear() override;
 
             virtual void DrawElement(const Ref<VAO>& vao, uint32_t count = 0) override;
+            virtual void DrawLine(const Ref<VAO>& vao, uint32_t count = 0) override;
     };
 }
