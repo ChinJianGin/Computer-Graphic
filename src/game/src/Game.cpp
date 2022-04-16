@@ -27,6 +27,7 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     m_Triangle_2 = m_Factory->ShapeCreator<Triangle>();
     m_Quad = m_Factory->ShapeCreator<Quad>();
     m_Line = m_Factory->ShapeCreator<Line>();
+    m_Circle = m_Factory->ShapeCreator<Circle>();
 
     m_Texture = Texture2D::Create("../src/TextureSrc/container.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     m_Texture2 = Texture2D::Create("../src/TextureSrc/aperture.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -62,10 +63,11 @@ void ShootingGame::Run()
         m_Texture2->Bind();
         CustomSpace::Renderer::Submit(m_Quad->GetVertexData()->m_Shader, m_Quad);
         m_Quad->GetVertexData()->m_Shader->SetFloat4("uColor", Color[2]);
-        // m_Quad->GetVertexData()->m_Shader->SetInt("Texture1", 0);
         m_Quad->GetVertexData()->m_Shader->SetInt("Texture2", 1);
         dynamic_cast<CustomSpace::Line*>(m_Line.get())->SetLineWidth(20.f);
         CustomSpace::Renderer::Submit(m_Line->GetVertexData()->m_Shader, m_Line);
+        CustomSpace::Renderer::Submit(m_Circle->GetVertexData()->m_Shader, m_Circle);
+        m_Circle->GetVertexData()->m_Shader->SetInt("Texture2", 1);
        ///----------------------------------------
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit(EXIT_SUCCESS);
 
@@ -82,6 +84,7 @@ void ShootingGame::Run()
         m_Triangle->SetPosition(m_Transform);
         m_Triangle_2->SetPosition(m_Transform2);
         m_Quad->SetPosition(m_Transform2 + glm::vec3(-1, -1, 0));
+        m_Circle->SetPosition(m_Transform2 - glm::vec3(-1, -1, 0));
         // m_Camera->SetPosition(CameraPosition);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_E))

@@ -33,8 +33,14 @@ namespace CustomSpace
             indices.push_back(0);
             indices.push_back(1);
             break;
-        case Shape::ShapeType::Sphere:
-
+        case Shape::ShapeType::Circle:
+            indices.resize(6);
+            indices.push_back(0);
+            indices.push_back(1);
+            indices.push_back(2);
+            indices.push_back(2);
+            indices.push_back(3);
+            indices.push_back(1);
             break;
         case Shape::ShapeType::Triangle:
             indices.resize(3);
@@ -91,13 +97,27 @@ namespace CustomSpace
         std::vector<GLuint> Indices;
         this->CalculateIndices(TemShape->GetType(), Indices);
 
-       Ref<EBO> TempEBO =  EBO::Create(&(Indices.front()), sizeof(GLuint) * Indices.size());
-       TempVAO->SetEBO(TempEBO);
+        Ref<EBO> TempEBO =  EBO::Create(&(Indices.front()), sizeof(GLuint) * Indices.size());
+        TempVAO->SetEBO(TempEBO);
 
-if(TemShape->GetType() == Shape::ShapeType::Triangle) ShaderProgram = CreateRef<Shader>(Shader("../src/shader/2DGame.vert", "../src/shader/2DGame.frag"));
-else ShaderProgram = CreateRef<Shader>(Shader("../src/shader/2DGameTexture.vert", "../src/shader/2DGameTexture.frag"));
-
-
+        if(TemShape->GetType() == Shape::ShapeType::Triangle) 
+        {
+            ShaderProgram = CreateRef<Shader>(Shader("../src/shader/2DGame.vert", "../src/shader/2DGame.frag"));
+            CORE_INFO("Triangle shader");
+        }
+        else
+        {
+            if(TemShape->GetType() == Shape::ShapeType::Circle)
+            {
+                ShaderProgram = CreateRef<Shader>(Shader("../src/shader/2DGameCircle.vert", "../src/shader/2DGameCircle.frag"));
+            CORE_INFO("Circle shader");
+            }
+            else
+            {
+                ShaderProgram = CreateRef<Shader>(Shader("../src/shader/2DGameTexture.vert", "../src/shader/2DGameTexture.frag"));
+            CORE_INFO("Else shader");
+            }
+        }
 
        TemShape->GetVertexData()->m_VAO = TempVAO;
        TemShape->GetVertexData()->m_VBO = TempVBO;
