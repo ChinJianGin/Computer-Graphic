@@ -27,9 +27,9 @@ private:
 
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle_2;
-    CustomSpace::Ref<CustomSpace::Shape> m_Quad, m_Line, m_Circle;
-    CustomSpace::Ref<CustomSpace::Texture2D> m_Texture;
-    CustomSpace::Ref<CustomSpace::Texture2D> m_Texture2;
+    // CustomSpace::Ref<CustomSpace::Shape> m_Quad, m_Line, m_Circle;
+    // CustomSpace::Ref<CustomSpace::Texture2D> m_Texture;
+    // CustomSpace::Ref<CustomSpace::Texture2D> m_Texture2;
 
     CustomSpace::Ref<CustomSpace::ShapeFactory> m_Factory;
     glm::vec3 m_CameraPosition;

@@ -23,6 +23,8 @@ namespace CustomSpace
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());
 
+        m_Bounding = CreateRef<BoundingObject>(m_Transform, m_PointsData);
+
         std::vector<glm::vec4> Colors =
         {
             glm::vec4( 1.f, 0.f, 0.f, 1.f),
@@ -46,12 +48,14 @@ namespace CustomSpace
         m_Transform->m_Rotation = trans->m_Rotation;
         m_Transform->m_Scale = trans->m_Scale;
         m_Transform->m_Axis = trans->m_Axis;
+        m_Bounding->ResizeBoundingVolume(m_Transform);
         this->LocalUpdate();
     }
 
     void Quad::SetPosition(const glm::vec3& pos)
     {
         m_Transform->m_Position = pos;
+        m_Bounding->ResizeBoundingVolume(m_Transform);
         this->LocalUpdate();
     }
 
@@ -70,6 +74,7 @@ namespace CustomSpace
     void Quad::SetScale(const float scale)
     {
         m_Transform->m_Scale = scale;
+        m_Bounding->ResizeBoundingVolume(m_Transform);
         this->LocalUpdate();
     }
 

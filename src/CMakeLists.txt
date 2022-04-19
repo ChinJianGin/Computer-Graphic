@@ -7,6 +7,7 @@ add_subdirectory(core)
 add_subdirectory(client)
 add_subdirectory(game)
 add_subdirectory(graphic)
+add_subdirectory(physics)
 
 
 project(Practice1)

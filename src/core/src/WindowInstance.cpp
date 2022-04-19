@@ -11,6 +11,9 @@ namespace CustomSpace
         WindowProps& window = *(WindowProps*)glfwGetWindowUserPointer(_Window);
         window.Width = NewWidth;
         window.Height = NewHeight;
+    }
+    static void FrameBufferResizeCallback(GLFWwindow* _Window, int NewWidth, int NewHeight)
+    {
         glViewport(0, 0, NewWidth, NewHeight);
     }
     WindowInstance::WindowInstance(const WindowProps& props)
@@ -71,6 +74,7 @@ namespace CustomSpace
             glfwSetCursorPosCallback(M_Window, Input::MousePosCallback);
             glfwSetMouseButtonCallback(M_Window, Input::MouseButtonCallback);
             glfwSetWindowSizeCallback(M_Window, ResizeCallback);
+            glfwSetFramebufferSizeCallback(M_Window, FrameBufferResizeCallback);
         }
     }
 

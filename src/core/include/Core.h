@@ -36,6 +36,30 @@
 
 namespace CustomSpace
 {
+    struct Transform
+    {
+        glm::mat4 m_ModelMatrix;
+        glm::vec3 m_Position;
+        glm::vec3 m_Axis;
+        float m_Rotation;
+        float m_Scale;
+
+        Transform(const glm::vec3& pos = glm::vec3(0), float rotation = 0, const glm::vec3& axis = glm::vec3(0, 0, 1), float scale = 1)
+        : m_Position(pos), m_Rotation(rotation), m_Axis(axis), m_Scale(scale)
+        {
+            m_ModelMatrix = glm::translate(glm::mat4(1.f), pos)
+             * glm::rotate(glm::mat4(1.f), m_Rotation, m_Axis)
+             * glm::scale(glm::mat4(1.f), glm::vec3(m_Scale));
+        }
+    };
+
+    struct PointsData
+    {
+        std::vector<GLfloat> Points;
+    };
+
+    
+
     template<typename T>
     using Scope = std::unique_ptr<T>;
     template<typename T, typename ... Args>

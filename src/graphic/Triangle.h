@@ -19,6 +19,7 @@ namespace CustomSpace
             virtual Ref<Transform> GetTransform() const override { return this->m_Transform; }
             virtual Ref<PointsData> GetPointsData() const override { return this->m_PointsData; }
             virtual Ref<VertexData> GetVertexData() const override { return this->m_VertexData; }
+            virtual Ref<BoundingObject> GetBounding() const override { return this->m_Bounding; }
             virtual void GetColor(std::vector<glm::vec4>& colors) override { colors.assign(m_Color.begin(), m_Color.end()); }
             Triangle();
             virtual ~Triangle() = default;

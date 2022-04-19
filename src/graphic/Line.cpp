@@ -16,11 +16,12 @@ namespace CustomSpace
         m_VertexData = CreateRef<VertexData>();
         std::vector<GLfloat> Points = 
         {
-            0.f,  .5f, 0.f, 1.f, 0.f, 0.f, 1.f, 1.f,
-            0.f, -.5f, 0.f, 0.f, 1.f, 0.f, 1.f, 0.f
+            .5f,  0.f, 0.f, 1.f, 0.f, 0.f, 1.f, 1.f,
+            -.5f, 0.f, 0.f, 0.f, 1.f, 0.f, 1.f, 0.f
         };
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());
+
 
         std::vector<glm::vec4> Colors = 
         {
