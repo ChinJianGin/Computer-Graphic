@@ -18,6 +18,6 @@ namespace CustomSpace
     class Texture2D : public Texture
     {
         public:
-            static Ref<Texture2D> Create(const char* path, GLenum texturetype, GLenum slot, GLenum format, GLenum pixeltype);
+            static Ref<Texture2D> Create(const char* path, GLenum texturetype, GLenum slot, GLenum pixeltype);
     };
 }

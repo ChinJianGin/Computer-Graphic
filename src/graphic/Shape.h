@@ -21,7 +21,7 @@ namespace CustomSpace
             virtual void SetPosition(const glm::vec3& pos) = 0;
             virtual void SetColor(const std::vector<glm::vec4> colors) = 0;
             virtual void SetRotation(const float rotation, const glm::vec3& axis = glm::vec3(0, 0, 1)) = 0;
-            virtual void SetScale(const float scale) = 0;
+            virtual void SetScale(const glm::vec3& scale) = 0;
 
             virtual Ref<Transform> GetTransform() const = 0;  
             virtual Ref<PointsData> GetPointsData() const = 0;

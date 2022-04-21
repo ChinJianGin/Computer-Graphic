@@ -10,17 +10,18 @@ namespace CustomSpace
     void BoundingObject::Init(const Ref<Transform>& trans, const Ref<PointsData>& points, bool isCircle)
     {
         m_Circle = CreateRef<BoundingCircle>();
+        float LocalScale = GetBiggerScale(trans->m_Scale);
         if(!isCircle)
         {
             m_Circle->m_Center = trans->m_Position;
-            float Radius = ((points->Points[0] * points->Points[0]) + (points->Points[1] * points->Points[1])) * (trans->m_Scale * trans->m_Scale);
+            float Radius = ((points->Points[0] * points->Points[0]) + (points->Points[1] * points->Points[1])) * (LocalScale * LocalScale);
             m_Circle->Radius_NS = Radius; 
             m_OriginRadius = Radius;
         }
         else
         {
             m_Circle->m_Center = trans->m_Position;
-            float Radius = (points->Points[0] * points->Points[0]) * (trans->m_Scale * trans->m_Scale);
+            float Radius = (points->Points[0] * points->Points[0]) * (LocalScale * LocalScale);
             m_Circle->Radius_NS = Radius;
             m_OriginRadius = Radius;
         }
@@ -29,7 +30,8 @@ namespace CustomSpace
     void BoundingObject::ResizeBoundingVolume(const Ref<Transform>& trans)
     {
         m_Circle->m_Center = trans->m_Position;
-        float TempRadius = m_OriginRadius * (trans->m_Scale * trans->m_Scale);
+        float LocalScale = GetBiggerScale(trans->m_Scale);
+        float TempRadius = m_OriginRadius * (LocalScale * LocalScale);
         m_Circle->Radius_NS = TempRadius;
         // CORE_TRACE("Position : (X:{0} , Y:{1}), Radius : {2}", m_Circle->m_Center.x, m_Circle->m_Center.y, m_Circle->Radius_NS);
     }
@@ -59,4 +61,9 @@ namespace CustomSpace
     {
         return m_Circle;
     }
+
+    const float BoundingObject::GetBiggerScale(const glm::vec3& scale) const
+    {
+        return scale.x >= scale.y ? scale.x : scale.y;
+    } 
 }

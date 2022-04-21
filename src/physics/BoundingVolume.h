@@ -29,6 +29,6 @@ namespace CustomSpace
             float m_OriginRadius = 0;
             bool b_NeedTest = false;
         protected:
-
+            const float GetBiggerScale(const glm::vec3& scale) const;
     };
 }

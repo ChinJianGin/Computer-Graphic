@@ -1,7 +1,7 @@
 #include"../core/include/Core.h"
 #include"../game/include/Game.h"
 
-#define WINDOW_WIDTH 720
+#define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 1280
 const char* WidnowTitle = "2D Shooting!";
 

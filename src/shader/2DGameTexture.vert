@@ -1,17 +1,18 @@
 #version 330 core
 
 layout (location = 0) in vec3 vPosition;
-layout (location = 1) in vec2 vTexCoord;
+layout (location = 1) in vec3 vColor;
+layout (location = 2) in vec2 vTexCoord;
 
 uniform mat4 uVP;
 uniform mat4 uMV;
-uniform vec4 uColor;
 
-out vec2  TexCoord;
-out vec4 ourColor;
-void main(){
-    TexCoord = vTexCoord;
-    ourColor = uColor;
-    gl_Position = uVP * uMV *vec4(vPosition, 1.0);
-    //gl_Position = vec4(vPosition, 1.0);
+out vec3 color;
+out vec2 texCoord;
+
+void main()
+{
+    gl_Position = uVP * uMV * vec4(vPosition, 1.0);
+    color = vColor;
+    texCoord = vTexCoord;
 }

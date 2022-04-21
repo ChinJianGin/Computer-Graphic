@@ -71,10 +71,9 @@ namespace CustomSpace
         this->LocalUpdate();
     }
 
-    void Circle::SetScale(const float scale)
+    void Circle::SetScale(const glm::vec3& scale)
     {
         m_Transform->m_Scale = scale;
-        m_Radius *= scale;
         m_Bounding->ResizeBoundingVolume(m_Transform);
         this->LocalUpdate();
     }
@@ -90,7 +89,7 @@ namespace CustomSpace
         {
             this->GetTransform()->m_ModelMatrix = glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)
                 * glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
-                * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
+                * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale.x, this->GetTransform()->m_Scale.y, this->GetTransform()->m_Scale.z));
         }
         else
         {
@@ -98,7 +97,7 @@ namespace CustomSpace
             {
                 this->GetTransform()->m_ModelMatrix = glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
                     * glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)                    
-                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
+                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale.x, this->GetTransform()->m_Scale.y, this->GetTransform()->m_Scale.z));
  
             }
             else
@@ -106,7 +105,7 @@ namespace CustomSpace
                 this->GetTransform()->m_ModelMatrix = glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
                     * glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)                    
                     * glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
-                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
+                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale.x, this->GetTransform()->m_Scale.y, this->GetTransform()->m_Scale.z));
             }
         }
     }

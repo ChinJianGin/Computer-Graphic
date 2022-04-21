@@ -63,7 +63,7 @@ namespace CustomSpace
         this->LocalUpdate();
     }
     
-    void Line::SetScale(const float scale)
+    void Line::SetScale(const glm::vec3& scale)
     {
         m_Transform->m_Scale = scale;
         this->LocalUpdate();

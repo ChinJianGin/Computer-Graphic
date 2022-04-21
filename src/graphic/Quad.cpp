@@ -15,10 +15,10 @@ namespace CustomSpace
         m_VertexData = CreateRef<VertexData>();
         std::vector<GLfloat> Points =
         {
-            -.5f, -.5f, 0.f, 0.f, 0.f,
-            -.5f,  .5f, 0.f, 0.f, 1.f,
-             .5f, -.5f, 0.f, 1.f, 0.f,
-             .5f,  .5f, 0.f, 1.f, 1.f
+            -.5f, -.5f, 0.f, .8f, .2f, .1f, 0.f, 0.f,
+            -.5f,  .5f, 0.f, .1f, .8f, .2f, 0.f, 1.f,
+             .5f, -.5f, 0.f, .2f, .1f, .8f, 1.f, 0.f,
+             .5f,  .5f, 0.f, .3f, .6f, .9f, 1.f, 1.f
         };
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());
@@ -71,7 +71,7 @@ namespace CustomSpace
         this->LocalUpdate();
     }
 
-    void Quad::SetScale(const float scale)
+    void Quad::SetScale(const glm::vec3& scale)
     {
         m_Transform->m_Scale = scale;
         m_Bounding->ResizeBoundingVolume(m_Transform);
@@ -89,7 +89,7 @@ namespace CustomSpace
         {
             this->GetTransform()->m_ModelMatrix = glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)
                 * glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
-                * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
+                * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale.x, this->GetTransform()->m_Scale.y, this->GetTransform()->m_Scale.z));
         }
         else
         {
@@ -97,7 +97,7 @@ namespace CustomSpace
             {
                 this->GetTransform()->m_ModelMatrix = glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
                     * glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)                    
-                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
+                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale.x, this->GetTransform()->m_Scale.y, this->GetTransform()->m_Scale.z));
  
             }
             else
@@ -105,7 +105,7 @@ namespace CustomSpace
                 this->GetTransform()->m_ModelMatrix = glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
                     * glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)                    
                     * glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
-                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
+                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale.x, this->GetTransform()->m_Scale.y, this->GetTransform()->m_Scale.z));
             }
         }
     }

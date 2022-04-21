@@ -14,9 +14,6 @@ public:
 
     void Close();
 private:
-    //CustomSpace::Ref<VAO> TriangleVAO;
-    //CustomSpace::Ref<Shader> TriangleShaderProgram;
-
     CustomSpace::Ref<CustomSpace::OrthoCamera> m_Camera;
 
     CustomSpace::Scope<CoreTimer> m_Timer;
@@ -27,9 +24,8 @@ private:
 
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle_2;
-    // CustomSpace::Ref<CustomSpace::Shape> m_Quad, m_Line, m_Circle;
-    // CustomSpace::Ref<CustomSpace::Texture2D> m_Texture;
-    // CustomSpace::Ref<CustomSpace::Texture2D> m_Texture2;
+    CustomSpace::Ref<CustomSpace::Shape> m_Background;
+    CustomSpace::Ref<CustomSpace::Texture2D> m_Texture;
 
     CustomSpace::Ref<CustomSpace::ShapeFactory> m_Factory;
     glm::vec3 m_CameraPosition;
@@ -41,5 +37,5 @@ private:
     float m_Rotation = 0.f;
     float m_RotationSpeed = 1.f;    
     float m_MoveSpeed = 1.f;
-    float m_Scale = 1;
+    glm::vec3 m_Scale = glm::vec3(1);
 };
