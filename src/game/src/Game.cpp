@@ -21,6 +21,10 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
 
     m_Factory = CreateRef<ShapeFactory>();
 
+    m_OriginTransform[0] = glm::vec3(0, -9.6, -1);
+    m_OriginTransform[1] = glm::vec3(0, 0, -1);
+    m_OriginTransform[2] = glm::vec3(0, 9.6, -1);
+
     m_Triangle = m_Factory->ShapeCreator<Triangle>();
     OriginTrans = CreateRef<Transform>(*(m_Triangle->GetTransform()));
     OriginTrans->m_Position = m_Transform;
@@ -30,11 +34,17 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     m_Triangle_2 = m_Factory->ShapeCreator<Triangle>();
     m_Triangle_2->SetPosition(m_Transform2);
     m_Triangle_2->GetBounding()->SetNeedTest(true);
-    m_Background = m_Factory->ShapeCreator<Quad>();
-    m_Background->SetPosition(glm::vec3(0, 0, -1.f));
-    m_Background->SetScale(glm::vec3(4.8, 9.6, 0));
-    m_Texture = Texture2D::Create("../src/TextureSrc/T_PurpleBackground.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
 
+    m_Background = m_Factory->ShapeCreator<Quad>();
+    m_Background->SetPosition(m_OriginTransform[1]);
+    m_Background->SetScale(glm::vec3(4.8, 9.6, 0));
+    m_Texture = Texture2D::Create("../src/TextureSrc/T_PurpleBackground_Version1_Layer1.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+
+    m_Background2 = m_Factory->ShapeCreator<Quad>();
+    m_Background2->SetPosition(m_OriginTransform[2]);
+    m_Background2->SetScale(glm::vec3(4.8, 9.6, 0));
+    m_Texture2 = Texture2D::Create("../src/TextureSrc/T_YellowBackground_Version1_Layer1.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+    
     CORE_WARN("Shooting game constructor done");
 }
 
@@ -53,6 +63,7 @@ void ShootingGame::Run()
 
         m_Timer->CalculateTimer();
 
+        m_FrameTime += m_Timer->GetFrameTime();
 /***
  * Draw
 ***/
@@ -63,7 +74,13 @@ void ShootingGame::Run()
         CustomSpace::Renderer::Submit(m_Triangle_2->GetVertexData()->m_Shader, m_Triangle_2);
         m_Texture->Bind();
         CustomSpace::Renderer::Submit(m_Background->GetVertexData()->m_Shader, m_Background);
-        // m_Background->GetVertexData()->m_Shader->SetInt("Texture1", 0);
+        m_Background->GetVertexData()->m_Shader->SetInt("tex0", 0);
+        m_Texture->UnBind();
+        m_Texture2->Bind();
+        CustomSpace::Renderer::Submit(m_Background2->GetVertexData()->m_Shader, m_Background2);
+        m_Background2->GetVertexData()->m_Shader->SetInt("tex0", 1);
+        m_Texture2->UnBind();
+        
        ///----------------------------------------
         if(m_Triangle->GetBounding()->Intersects(m_Triangle_2->GetBounding()))
         {
@@ -85,6 +102,28 @@ void ShootingGame::Run()
 
         m_Triangle->SetPosition(m_Transform);
         m_Triangle_2->SetPosition(m_Transform2);
+        
+        if(m_FrameTime >= m_Timer->GetDeltaTick())
+        {
+            float CurrentPos = m_Background->GetTransform()->m_Position.y;
+            CurrentPos -= (m_Timer->GetTick() * m_PerSecFrame);
+
+            if(CurrentPos <= -9.6)
+            {
+                CurrentPos = CurrentPos + 2 * 9.6;
+            }
+            m_Background->SetPosition(CurrentPos, 2);
+
+            CurrentPos = m_Background2->GetTransform()->m_Position.y;
+            CurrentPos -= m_Timer->GetTick() * m_PerSecFrame;
+
+            if(CurrentPos <= -9.6)
+            {
+                CurrentPos = CurrentPos + 2 * 9.6;
+            }
+            m_Background2->SetPosition(CurrentPos, 2);
+            m_FrameTime -= m_Timer->GetDeltaTick();
+        }
         // m_Camera->SetPosition(CameraPosition);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_E))

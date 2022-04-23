@@ -58,6 +58,26 @@ namespace CustomSpace
         this->LocalUpdate();
     }
 
+    void Triangle::SetPosition(const float pos, int axis)
+    {
+        switch(axis)
+        {
+            case 1:
+            m_Transform->m_Position.x = pos;
+            break;
+
+            case 2:
+            m_Transform->m_Position.y = pos;
+            break;
+
+            default:
+            break;
+        }
+
+        m_Bounding->ResizeBoundingVolume(m_Transform);
+        this->LocalUpdate();
+    }
+
     void Triangle::SetColor(const std::vector<glm::vec4> colors)
     {
         m_Color.assign(colors.begin(), colors.end());
