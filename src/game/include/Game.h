@@ -1,9 +1,6 @@
 #pragma once
 
-#include"../../core/include/Core.h"
-#include"../../graphic/Renderer.h"
-#include"../../client/include/Creator.h"
-#include"../../graphic/Texture.h"
+#include"./Scene.h"
 
 class ShootingGame
 {
@@ -24,17 +21,12 @@ private:
 
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
     CustomSpace::Ref<CustomSpace::Shape> m_Triangle_2;
-    CustomSpace::Ref<CustomSpace::Shape> m_Background, m_Background2;
-    CustomSpace::Ref<CustomSpace::Texture2D> m_Texture, m_Texture2;
-
+    CustomSpace::Ref<CustomSpace::Scene> m_Scene1;
+    
     CustomSpace::Ref<CustomSpace::ShapeFactory> m_Factory;
     glm::vec3 m_CameraPosition;
     glm::vec3 m_Transform;
     glm::vec3 m_Transform2;
-    glm::vec3 m_OriginTransform[3];
-    float m_RunTime =  0;
-    float m_FrameTime = 0;
-    float m_PerSecFrame = 9.6 / 20;
 
     CustomSpace::Ref<CustomSpace::Transform> OriginTrans;
 

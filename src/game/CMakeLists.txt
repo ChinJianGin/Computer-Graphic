@@ -4,4 +4,4 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 project(game)
 
-add_library(game ./src/Game.cpp)
+add_library(game ./src/Game.cpp ./src/Scene.cpp)
