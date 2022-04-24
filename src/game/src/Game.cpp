@@ -21,16 +21,6 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
 
     m_Factory = CreateRef<ShapeFactory>();
 
-    m_Triangle = m_Factory->ShapeCreator<Triangle>();
-    OriginTrans = CreateRef<Transform>(*(m_Triangle->GetTransform()));
-    OriginTrans->m_Position = m_Transform;
-    m_Triangle->SetPosition(m_Transform);
-    m_Triangle->GetBounding()->SetNeedTest(true);
-
-    m_Triangle_2 = m_Factory->ShapeCreator<Triangle>();
-    m_Triangle_2->SetPosition(m_Transform2);
-    m_Triangle_2->GetBounding()->SetNeedTest(true);
-
     m_Scene1 = CreateRef<Scene>();
         
     CORE_WARN("Shooting game constructor done");
@@ -55,17 +45,10 @@ void ShootingGame::Run()
  * Draw
 ***/
         CustomSpace::Renderer::BeginScene(*m_Camera);
-        CustomSpace::Renderer::Submit(m_Triangle->GetVertexData()->m_Shader, m_Triangle);
-        CustomSpace::Renderer::Submit(m_Triangle_2->GetVertexData()->m_Shader, m_Triangle_2);
         
         m_Scene1->Update(*m_Timer);
        ///----------------------------------------
-        if(m_Triangle->GetBounding()->Intersects(m_Triangle_2->GetBounding()))
-        {
-            CORE_INFO("Overlapping");
-            glm::vec4 WorldPosition = m_Triangle->GetTransform()->m_ModelMatrix * glm::vec4(m_Triangle->GetBounding()->GetBoundingVolume()->m_Center, 0.f, 1.f);
-            CORE_WARN("T1 : X : {0}, Y : {1}, R : {2}", WorldPosition.x, WorldPosition.y, m_Triangle->GetBounding()->GetBoundingVolume()->Radius_NS);
-        }
+
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit(EXIT_SUCCESS);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_A))
@@ -78,9 +61,6 @@ void ShootingGame::Run()
         else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_S))
             m_Transform.y -= (float)m_MoveSpeed * m_Timer->GetTick();
 
-        m_Triangle->SetPosition(m_Transform);
-        m_Triangle_2->SetPosition(m_Transform2);
-        
         // m_Camera->SetPosition(CameraPosition);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_E))
@@ -89,7 +69,6 @@ void ShootingGame::Run()
             m_Rotation += (float)m_RotationSpeed * m_Timer->GetTick();
 
         //m_Camera->SetRotation(CameraRotation);
-        m_Triangle->SetRotation(m_Rotation, glm::vec3(0, 0, 1));
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_UP))
             m_Scale += (float)m_Timer->GetTick();
@@ -97,7 +76,6 @@ void ShootingGame::Run()
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_DOWN))
             m_Scale -= (float)m_Timer->GetTick();
             
-        // m_Triangle->SetScale(m_Scale);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_R))
         {
@@ -105,7 +83,6 @@ void ShootingGame::Run()
             m_Rotation = OriginTrans->m_Rotation;
             // m_Scale = OriginTrans->m_Scale;
         }    
-            
 
         M_Window->Update();        
     }

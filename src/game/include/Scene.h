@@ -4,6 +4,7 @@
 #include "../../graphic/Renderer.h"
 #include"../../client/include/Creator.h"
 #include "../../graphic/Texture.h"
+#include "./Player.h"
 
 namespace CustomSpace
 {
@@ -16,13 +17,18 @@ namespace CustomSpace
             void Init();
             void Update(CoreTimer& time);
         private:
-            CustomSpace::Ref<CustomSpace::Shape> m_Background, m_Background2;
-            CustomSpace::Ref<CustomSpace::Texture2D> m_Texture, m_Texture2;
+            Ref<Shape> m_Background, m_Background2;
+            Ref<Texture2D> m_Texture, m_Texture2;
+            Ref<APlayer> m_Player;
 
-            CustomSpace::Ref<CustomSpace::ShapeFactory> m_Factory;
+            Ref<ShapeFactory> m_Factory;
 
             glm::vec3 m_OriginTransform[3];
             float m_FrameTime = 0, m_MoveSpeed = (9.6 / 20);
+
+
+            glm::vec3 m_Transform;
+            float m_PlayerSpeed = 1.f;
         protected:
 
     };

@@ -30,6 +30,12 @@ namespace CustomSpace
         m_Background2->SetScale(glm::vec3(4.8, 9.6, 0));
         m_Texture2 = Texture2D::Create("../src/TextureSrc/T_YellowBackground_Version1_Layer1.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
 
+        m_Player = CreateRef<APlayer>(m_Factory);
+        m_Transform = glm::vec3(0, -3.5, 0);
+        if(m_Player != nullptr)
+        {
+            m_Player->SetPosition(m_Transform);
+        }
     }
     void Scene::Update(CoreTimer& time)
     {
@@ -64,5 +70,18 @@ namespace CustomSpace
             m_Background2->SetPosition(CurrentPos, 2);
             m_FrameTime -= time.GetDeltaTick();
         }
+
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_A))
+            m_Transform.x -= (float)m_PlayerSpeed * time.GetTick();
+        else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_D))
+            m_Transform.x += (float)m_PlayerSpeed * time.GetTick();
+
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
+            m_Transform.y += (float)m_PlayerSpeed * time.GetTick();
+        else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_S))
+            m_Transform.y -= (float)m_PlayerSpeed * time.GetTick();
+
+        m_Player->SetPosition(m_Transform);
+        m_Player->Update(time);
     }
 }

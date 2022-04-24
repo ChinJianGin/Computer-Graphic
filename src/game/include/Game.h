@@ -10,6 +10,9 @@ public:
     void Run();
 
     void Close();
+
+    static ShootingGame& Get() { return *Instance; }
+    CustomSpace::Windows& GetWindow() { return *M_Window; }
 private:
     CustomSpace::Ref<CustomSpace::OrthoCamera> m_Camera;
 
@@ -19,8 +22,6 @@ private:
     CustomSpace::Scope<CustomSpace::Windows> M_Window;
     bool B_Running = true;
 
-    CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
-    CustomSpace::Ref<CustomSpace::Shape> m_Triangle_2;
     CustomSpace::Ref<CustomSpace::Scene> m_Scene1;
     
     CustomSpace::Ref<CustomSpace::ShapeFactory> m_Factory;
@@ -34,4 +35,5 @@ private:
     float m_RotationSpeed = 1.f;    
     float m_MoveSpeed = 1.f;
     glm::vec3 m_Scale = glm::vec3(1);
+    int Test = 0;
 };
