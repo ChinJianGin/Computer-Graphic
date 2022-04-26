@@ -1,5 +1,5 @@
 #include"../include/Input.h"
-
+#include"../include/KeyEvent.h"
 namespace CustomSpace
 {
     namespace Input
@@ -13,8 +13,30 @@ namespace CustomSpace
 
         void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
         {
+            WindowProps& data = *(WindowProps*)glfwGetWindowUserPointer(window);
             if(key >= 0 && key < GLFW_KEY_LAST)
             {
+                switch (action)
+                {
+                    case GLFW_PRESS:
+                    {
+                        KeyPressedEvent event(key, 0);
+                        data.EventCallback(event);
+                        break;
+                    }
+                    case GLFW_RELEASE:
+                    {
+                        KeyReleasedEEvent event(key);
+                        data.EventCallback(event);
+                        break;
+                    }
+                    case GLFW_REPEAT:
+                    {
+                        KeyPressedEvent event(key, 1);
+                        data.EventCallback(event);
+                        break;
+                    }
+                }
                 KeyPressedData[key] = (action == GLFW_PRESS) || (action == GLFW_REPEAT);
             }
         }

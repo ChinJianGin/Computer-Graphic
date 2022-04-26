@@ -1,9 +1,12 @@
 #pragma once
 
 #include "Core.h"
-
+#include"./RenderContext.h"
+#include"./OpenGLContext.h"
+#include"./Event.h"
 namespace CustomSpace
 {
+    using EventCallbackFn = std::function<void(Event&)>;
     struct WindowProps
     {
         const char* Title;
@@ -11,6 +14,7 @@ namespace CustomSpace
         uint32_t Height;
         bool FullScreenMode;
         bool VSync;
+        EventCallbackFn EventCallback;
 
         WindowProps(uint32_t width = 512, uint32_t height = 512, const char* title = "Game", bool ScreenMode = false, bool vsync  =  true):
         Width(width), Height(height), Title(title), FullScreenMode(ScreenMode), VSync(vsync)
@@ -42,6 +46,7 @@ namespace CustomSpace
             virtual uint32_t GetHeight() const = 0;
 
             virtual void SetupMainCallbacks() = 0;
+            virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
             virtual void SetVSync(bool enable) = 0;
             virtual bool IsVSync() const = 0;
 

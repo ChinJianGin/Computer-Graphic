@@ -22,12 +22,14 @@ namespace CustomSpace
         virtual Ref<Transform> GetTransform() const override { return this->m_Body->GetTransform(); }  
         virtual Ref<PointsData> GetPointsData() const override { return this->m_Body->GetPointsData(); }
         virtual Ref<VertexData> GetVertexData() const override { return this->m_Body->GetVertexData(); } 
-        virtual Ref<BoundingObject> GetBounding() const override { return this->m_Body->GetBounding(); }
+        virtual Ref<BoundingObject> GetBounding() const override { return this->m_BoundingVolume->GetBounding(); }
 
         virtual void ModelMatrixMethod(const Shape::MatrixMethod method = Shape::MatrixMethod::TRS) override;
 
         private:
-
+        Ref<Texture2D> m_PlayerTex;
+        Ref<Shape> m_Shield;
+        Ref<Shape> m_BoundingVolume;
         protected:
         virtual void AttackAction() override;
     };

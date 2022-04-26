@@ -15,6 +15,7 @@ namespace CustomSpace
             unsigned int GetHeight() const override { return M_Prop.Height; }
 
             void SetupMainCallbacks() override;
+            void SetEventCallback(const EventCallbackFn& callback) override { M_Prop.EventCallback = callback; }
             void SetVSync(bool  enable) override;
             bool IsVSync() const override;
 

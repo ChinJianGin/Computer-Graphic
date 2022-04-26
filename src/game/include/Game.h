@@ -1,6 +1,8 @@
 #pragma once
 
 #include"./Scene.h"
+#include"../../core/include/Event.h"
+#include"../../core/include/KeyEvent.h"
 
 class ShootingGame
 {
@@ -8,6 +10,9 @@ public:
     ShootingGame(int width = 512, int height = 512, const char* title = "", bool screenmode = false, bool vsync = false);
 
     void Run();
+
+    void OnEvent(CustomSpace::Event& e);
+    bool OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event);
 
     void Close();
 

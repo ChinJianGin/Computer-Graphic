@@ -17,7 +17,7 @@ namespace CustomSpace
             void Init();
             void Update(CoreTimer& time);
         private:
-            Ref<Shape> m_Background, m_Background2;
+            Ref<Shape> m_Background, m_Background2, m_CollisionTest;
             Ref<Texture2D> m_Texture, m_Texture2;
             Ref<APlayer> m_Player;
 

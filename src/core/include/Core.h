@@ -34,6 +34,10 @@
 #include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#define BIT(x) (1 << x)
+
+#define BIND_EVENT(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+
 namespace CustomSpace
 {
     struct Transform
@@ -85,7 +89,5 @@ namespace CustomSpace
 #include"./Input.h"
 #include"./Window.h"
 #include"./Timer.h"
-#include"./RenderContext.h"
-#include"./OpenGLContext.h"
 #include"../../shader/ShaderClass.h"
 #include"./OrthoCamera.h"

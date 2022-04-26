@@ -7,6 +7,7 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     using namespace CustomSpace;
     Instance = this;
     M_Window = Windows::CreateWindow(WindowProps(width, height, title, screen, vsync));
+    M_Window->SetEventCallback(BIND_EVENT(ShootingGame::OnEvent));
 
     Renderer::Init();
 
@@ -86,4 +87,21 @@ void ShootingGame::Run()
 
         M_Window->Update();        
     }
+}
+
+
+void ShootingGame::OnEvent(CustomSpace::Event& e)
+{
+    CustomSpace::EventDispatcher dispatcher(e);
+    dispatcher.Dispatch<CustomSpace::KeyPressedEvent>(BIND_EVENT(ShootingGame::OnKeyPressedEvent));
+}
+
+bool ShootingGame::OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event)
+{
+    if(event.GetKeyCode() == GLFW_KEY_1)
+    {
+        CORE_INFO("One event pressed");
+    }
+
+    return false;
 }
