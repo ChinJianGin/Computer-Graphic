@@ -35,7 +35,7 @@ namespace CustomSpace
         m_CollisionTest->GetBounding()->SetNeedTest(true);
 
         m_Player = CreateRef<APlayer>(m_Factory);
-        m_Transform = glm::vec3(0, -3.5, 0);
+        m_Transform = glm::vec3(0, -3.5, -.5);
         if(m_Player != nullptr)
         {
             m_Player->SetPosition(m_Transform);

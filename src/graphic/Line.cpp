@@ -130,5 +130,9 @@ namespace CustomSpace
                     * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
             }
         }
+        if(this->GetTransform()->IsAChild)
+        {
+            this->GetTransform()->m_ModelMatrix = this->GetTransform()->m_FatherTranslate * this->GetTransform()->m_ModelMatrix;
+        }
     }
 }

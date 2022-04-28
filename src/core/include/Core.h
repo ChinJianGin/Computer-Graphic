@@ -47,10 +47,12 @@ namespace CustomSpace
         glm::vec3 m_Axis;
         glm::vec3 m_Scale;
         float m_Rotation;
-        
 
-        Transform(const glm::vec3& pos = glm::vec3(0), float rotation = 0, const glm::vec3& axis = glm::vec3(0, 0, 1), glm::vec3 scale = glm::vec3(1, 1, 1))
-        : m_Position(pos), m_Rotation(rotation), m_Axis(axis), m_Scale(scale)
+        bool IsAChild;
+        glm::mat4 m_FatherTranslate;
+
+        Transform(const glm::vec3& pos = glm::vec3(0), float rotation = 0, const glm::vec3& axis = glm::vec3(0, 0, 1), glm::vec3 scale = glm::vec3(1, 1, 1), bool child = false)
+        : m_Position(pos), m_Rotation(rotation), m_Axis(axis), m_Scale(scale), IsAChild(child)
         {
             m_ModelMatrix = glm::translate(glm::mat4(1.f), pos)
              * glm::rotate(glm::mat4(1.f), m_Rotation, m_Axis)
@@ -86,6 +88,7 @@ namespace CustomSpace
 //#include"vector2.hpp"
 //#include"vector3.hpp"
 #include"./Log.h"
+#include"./LinkList.h"
 #include"./Input.h"
 #include"./Window.h"
 #include"./Timer.h"

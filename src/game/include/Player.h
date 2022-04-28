@@ -28,8 +28,12 @@ namespace CustomSpace
 
         private:
         Ref<Texture2D> m_PlayerTex;
-        Ref<Shape> m_Shield;
+        Ref<Shape> m_Shield, m_Satellite[2];
         Ref<Shape> m_BoundingVolume;
+
+        glm::vec3 m_PlayerOriginPosition;
+
+        float m_Orbit = 0;
         protected:
         virtual void AttackAction() override;
     };
