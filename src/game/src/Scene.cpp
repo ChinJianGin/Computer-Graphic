@@ -14,12 +14,20 @@ namespace CustomSpace
 
     void Scene::Init()
     {
+
         m_OriginTransform[0] = glm::vec3(0, -9.6, -1);
         m_OriginTransform[1] = glm::vec3(0, 0, -1);
         m_OriginTransform[2] = glm::vec3(0, 9.6, -1);
         m_Factory = CreateRef<ShapeFactory>();        
 
+        if(ProjectileSystem::GetProjectileSystem(m_Factory) == nullptr)
+        {
+            return;
+        }
 
+        CORE_INFO("Projectile num : {0}", ProjectileSystem::GetProjectileSystem(m_Factory)->GetProjectileList()->size());
+
+        
         m_Background = m_Factory->ShapeCreator<Quad>();
         m_Background->SetPosition(m_OriginTransform[1]);
         m_Background->SetScale(glm::vec3(4.8, 9.6, 0));
@@ -93,5 +101,11 @@ namespace CustomSpace
         {
             CORE_WARN("Collide : {0}", m_Player->GetBounding()->GetBoundingVolume()->Radius_NS);
         }
+        Projectile* get;
+        get = ProjectileSystem::GetProjectileSystem(m_Factory)->GetProjectileList()->front();
+
+        get->SetPosition(glm::vec3(-2, 3, 0));
+        Renderer::Submit(get->GetVertexData()->m_Shader, get->GetBody());
+
     }
 }

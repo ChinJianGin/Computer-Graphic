@@ -98,7 +98,7 @@ namespace CustomSpace
 
     void APlayer::ModelMatrixMethod(Shape::MatrixMethod method)
     {
-        this->ModelMatrixMethod(method);
+        this->m_Body->ModelMatrixMethod(method);
     }
 
     void APlayer::AttackAction()

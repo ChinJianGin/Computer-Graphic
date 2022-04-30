@@ -5,6 +5,7 @@
 #include"../../client/include/Creator.h"
 #include "../../graphic/Texture.h"
 #include "./Player.h"
+#include "./ProjectileSystem.h"
 
 namespace CustomSpace
 {

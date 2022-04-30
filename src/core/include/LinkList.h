@@ -19,7 +19,7 @@ namespace CustomSpace
 
         friend std::ostream &operator<<( std::ostream &out, const ListNode<T> &node)
         {
-            out << node.data;
+            out << typeid(node.data).name();
             return out;
         }
 
@@ -48,6 +48,8 @@ namespace CustomSpace
 
         int size();
 
+        T front();
+
         template<typename Q>
         friend std::ostream &operator<<(std::ostream &out, LinkList<T> &obj)
         {
@@ -74,7 +76,7 @@ namespace CustomSpace
         ListNode<T>* current = first;
         while(current != nullptr)
         {
-            std::cout << current->data << " ";
+            std::cout << typeid(current->data).name() << " ";
             current = current->next;
         }
         std::cout << "\n";
@@ -181,5 +183,17 @@ namespace CustomSpace
             temp = temp->next;
         }
         return NodeCounter;
+    }
+
+    template<typename T>
+    T LinkList<T>::front()
+    {
+        if(first == nullptr)
+        {
+            std::cout << "List is empty\n";
+            return nullptr;
+        }
+
+        return first->getData();
     }
 }
