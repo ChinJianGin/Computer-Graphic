@@ -14,7 +14,6 @@ namespace CustomSpace
 
     void Scene::Init()
     {
-
         m_OriginTransform[0] = glm::vec3(0, -9.6, -1);
         m_OriginTransform[1] = glm::vec3(0, 0, -1);
         m_OriginTransform[2] = glm::vec3(0, 9.6, -1);
@@ -26,7 +25,6 @@ namespace CustomSpace
         }
 
         CORE_INFO("Projectile num : {0}", ProjectileSystem::GetProjectileSystem(m_Factory)->GetProjectileList()->size());
-
         
         m_Background = m_Factory->ShapeCreator<Quad>();
         m_Background->SetPosition(m_OriginTransform[1]);
@@ -84,14 +82,14 @@ namespace CustomSpace
             m_FrameTime -= time.GetDeltaTick();
         }
 
-        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_A))
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_LEFT))
             m_Transform.x -= (float)m_PlayerSpeed * time.GetTick();
-        else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_D))
+        else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_RIGHT))
             m_Transform.x += (float)m_PlayerSpeed * time.GetTick();
 
-        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_UP))
             m_Transform.y += (float)m_PlayerSpeed * time.GetTick();
-        else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_S))
+        else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_DOWN))
             m_Transform.y -= (float)m_PlayerSpeed * time.GetTick();
 
         m_Player->SetPosition(m_Transform);
@@ -101,11 +99,18 @@ namespace CustomSpace
         {
             CORE_WARN("Collide : {0}", m_Player->GetBounding()->GetBoundingVolume()->Radius_NS);
         }
-        Projectile* get;
-        get = ProjectileSystem::GetProjectileSystem(m_Factory)->GetProjectileList()->front();
+    }
 
-        get->SetPosition(glm::vec3(-2, 3, 0));
-        Renderer::Submit(get->GetVertexData()->m_Shader, get->GetBody());
+    void Scene::OnEvent(Event& event)
+    {
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT(Scene::OnKeyPressedEvent));
 
+        m_Player->OnEvent(event);
+    }
+
+    bool Scene::OnKeyPressedEvent(KeyPressedEvent& event)
+    {
+        return false;
     }
 }

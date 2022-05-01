@@ -1,5 +1,5 @@
 #include"../include/Player.h"
-
+#include"../include/ProjectileSystem.h"
 
 namespace CustomSpace
 {
@@ -59,11 +59,55 @@ namespace CustomSpace
            Renderer::Submit(m_Satellite[i]->GetVertexData()->m_Shader, m_Satellite[i]); 
         }
 
-        if(Input::IsKeyDown(GLFW_KEY_SPACE))
+        if(Input::IsKeyDown(GLFW_KEY_Z))
         {
+            GAME_TRACE("Player Attack");
+            Projectile* get;
+            get = ProjectileSystem::GetProjectileSystem()->GetProjectileList()->front();
+            if(get != nullptr)
+            {
+                get->SetTeamID(Projectile::TeamID::Player);
+                ProjectileSystem::GetProjectileSystem()->GetProjectileList()->Pop_Front();
+                ProjectileSystem::GetProjectileSystem()->GetInUsedList()->Push_back(get);
+            }
+        }
+
+        if(ActiveShiled)
+        {
+            EffectTime += timer.GetTick();
+            if(EffectTime >= 3)
+            {
+                EffectTime = 0.f;
+                ActiveShiled = false;
+                ShiledCooldown = 5.f;
+                m_Shield->GetBounding()->SetNeedTest(false);
+                m_BoundingVolume = m_Body;
+            }
+        }
+
+        if(ShiledCooldown > 0)
+        {
+            ShiledCooldown -= timer.GetTick();
+        }
+    }
+
+    void APlayer::OnEvent(Event& event)
+    {
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT(OnKeyPressedEvent));
+    }
+
+    bool APlayer::OnKeyPressedEvent(KeyPressedEvent& event)
+    {
+        if(event.GetKeyCode() == GLFW_KEY_X && ShiledCooldown <= 0)
+        {
+            CORE_INFO("Shiled skill");
             m_Shield->GetBounding()->SetNeedTest(true);
             m_BoundingVolume = m_Shield;
-        }
+            ActiveShiled = true;
+        }    
+
+       return false;
     }
 
     void APlayer::SetTransform(const Ref<Transform>& trans)
@@ -103,6 +147,6 @@ namespace CustomSpace
 
     void APlayer::AttackAction()
     {
-
+        GAME_INFO("Player attack");
     }
 }

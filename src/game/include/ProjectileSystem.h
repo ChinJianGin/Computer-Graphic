@@ -13,6 +13,7 @@ namespace CustomSpace
         ProjectileSystem(const Ref<ShapeFactory>& factory);
         ~ProjectileSystem();
         static Scope<ProjectileSystem>& GetProjectileSystem(const Ref<ShapeFactory>& factory);
+        static Scope<ProjectileSystem>& GetProjectileSystem();
 
 
         Scope<LinkList<Projectile*>>& GetProjectileList();

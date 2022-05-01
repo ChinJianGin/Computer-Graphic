@@ -94,6 +94,8 @@ void ShootingGame::OnEvent(CustomSpace::Event& e)
 {
     CustomSpace::EventDispatcher dispatcher(e);
     dispatcher.Dispatch<CustomSpace::KeyPressedEvent>(BIND_EVENT(ShootingGame::OnKeyPressedEvent));
+
+    m_Scene1->OnEvent(e);
 }
 
 bool ShootingGame::OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event)

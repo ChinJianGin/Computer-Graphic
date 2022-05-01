@@ -6,6 +6,7 @@
 #include "../../graphic/Texture.h"
 #include "./Player.h"
 #include "./ProjectileSystem.h"
+#include "../../core/include/KeyEvent.h"
 
 namespace CustomSpace
 {
@@ -17,6 +18,10 @@ namespace CustomSpace
 
             void Init();
             void Update(CoreTimer& time);
+
+            bool OnKeyPressedEvent(KeyPressedEvent& event);
+            void OnEvent(Event& event);
+
         private:
             Ref<Shape> m_Background, m_Background2, m_CollisionTest;
             Ref<Texture2D> m_Texture, m_Texture2;

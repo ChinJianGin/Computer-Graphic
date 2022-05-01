@@ -19,7 +19,7 @@ namespace CustomSpace
 
         friend std::ostream &operator<<( std::ostream &out, const ListNode<T> &node)
         {
-            out << typeid(node.data).name();
+            out << typeid(node.data).name() << std::endl;
             return out;
         }
 
@@ -45,10 +45,23 @@ namespace CustomSpace
         void Delete(T x);
         void Clear();
         void Reverse();
+        void Pop_Front();
 
         int size();
 
         T front();
+
+        class Iterator;
+
+        Iterator begin()
+        {
+            return Iterator(first);
+        }
+
+        Iterator end()
+        {
+            return Iterator(nullptr);
+        }
 
         template<typename Q>
         friend std::ostream &operator<<(std::ostream &out, LinkList<T> &obj)
@@ -62,6 +75,49 @@ namespace CustomSpace
             std::cout << std::endl;
             return out;
         }
+
+        class Iterator
+        {
+            public:
+            Iterator() : current(first) {}
+
+            Iterator(ListNode<T>* node) : current(node) {}
+
+            T Get() { return current->getData(); }
+
+            Iterator& operator=(ListNode<T>* node)
+            {
+                this->current = node;
+                return *this;
+            }
+
+            Iterator& operator++()
+            {
+                if(current)
+                    current = current->next;
+                return *this;
+            }
+
+            Iterator operator++(int)
+            {
+                Iterator iterator = *this;
+                ++*this;
+                return iterator;
+            }
+
+            bool operator!=(const Iterator& iterator)
+            {
+                return current != iterator.current;
+            }
+
+            T operator*()
+            {
+                return current->getData();
+            }
+
+            private:
+            ListNode<T>* current;
+        };
     };
 
     template<typename T>
@@ -164,6 +220,20 @@ namespace CustomSpace
         }
         current->next = previous;
         first = current;
+    }
+
+    template<typename T>
+    void LinkList<T>::Pop_Front()
+    {
+        ListNode<T>* current = first;
+        if(current == nullptr)
+        {
+            std::cout << "The list is empty.\n";
+            return;
+        }
+        first = first->next;
+        delete current;
+        current = nullptr;
     }
 
     template<typename T>

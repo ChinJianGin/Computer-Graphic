@@ -13,6 +13,11 @@ namespace CustomSpace
         return m_ProjectileSystem;
     }
 
+    Scope<ProjectileSystem>& ProjectileSystem::GetProjectileSystem()
+    {
+        return m_ProjectileSystem;
+    }
+
     ProjectileSystem::ProjectileSystem(const Ref<ShapeFactory>& factory)
     {
         m_ProjectileList = CreateScope<LinkList<Projectile*>>();

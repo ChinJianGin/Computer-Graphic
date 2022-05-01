@@ -16,6 +16,7 @@ namespace CustomSpace
             return;
         }
 
+        m_Body->SetPosition(glm::vec3(0, 0, 0));
         m_TeamID = TeamID::Neutral;
     }
 

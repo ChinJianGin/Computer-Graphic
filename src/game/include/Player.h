@@ -1,5 +1,6 @@
 #pragma once
 #include"./Actor.h"
+#include"../../core/include/KeyEvent.h"
 
 namespace CustomSpace
 {
@@ -26,6 +27,14 @@ namespace CustomSpace
 
         virtual void ModelMatrixMethod(const Shape::MatrixMethod method = Shape::MatrixMethod::TRS) override;
 
+        virtual void AttackAction() override;
+
+        void OnEvent(Event& event);
+
+        bool OnKeyPressedEvent(KeyPressedEvent& event);
+
+        bool ActiveShiled = false;
+        float EffectTime = 0, ShiledCooldown = -1.f;
         private:
         Ref<Texture2D> m_PlayerTex;
         Ref<Shape> m_Shield, m_Satellite[2];
@@ -35,6 +44,5 @@ namespace CustomSpace
 
         float m_Orbit = 0;
         protected:
-        virtual void AttackAction() override;
     };
 }

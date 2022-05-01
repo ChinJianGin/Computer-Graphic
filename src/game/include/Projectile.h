@@ -39,8 +39,10 @@ namespace CustomSpace
         void Reset();
 
         Ref<Shape> GetBody() const { return this->m_Body; }
-        protected:
+
         virtual void AttackAction() override;
+
+        protected:
 
         TeamID m_TeamID;
     };

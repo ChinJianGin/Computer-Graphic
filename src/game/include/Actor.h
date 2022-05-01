@@ -29,12 +29,12 @@ namespace CustomSpace
 
 
 
+        virtual void AttackAction() = 0;
         private:
 
         protected:
 
         Ref<Shape> m_Body;    
-        virtual void AttackAction() = 0;
     
     };
 }
