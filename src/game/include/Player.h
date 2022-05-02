@@ -33,8 +33,6 @@ namespace CustomSpace
 
         bool OnKeyPressedEvent(KeyPressedEvent& event);
 
-        bool ActiveShiled = false;
-        float EffectTime = 0, ShiledCooldown = -1.f;
         private:
         Ref<Texture2D> m_PlayerTex;
         Ref<Shape> m_Shield, m_Satellite[2];
@@ -43,6 +41,9 @@ namespace CustomSpace
         glm::vec3 m_PlayerOriginPosition;
 
         float m_Orbit = 0;
+
+        bool ActiveShiled = false, AttackAgain = false;
+        float EffectTime = 0, ShiledCooldown = -1.f, SAT = 1.f;
         protected:
     };
 }

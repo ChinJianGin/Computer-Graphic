@@ -17,12 +17,23 @@ namespace CustomSpace
         }
 
         m_Body->SetPosition(glm::vec3(0, 0, 0));
+        m_Body->SetScale(glm::vec3(.25f, .25f, 1));
         m_TeamID = TeamID::Neutral;
     }
 
     void Projectile::Update(const CoreTimer& timer)
     {
+        if(m_TeamID == TeamID::Player)
+        {
+            glm::vec3 LocalPos = m_Body->GetTransform()->m_Position;
+            float Velocity = (float)5 * timer.GetTick();
+            m_Body->SetPosition(glm::vec3(LocalPos.x, LocalPos.y + Velocity, LocalPos.z));
+            Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
+        }
+        else
+        {
 
+        }
     }
 
     void Projectile::SetTransform(const Ref<Transform>& trans)

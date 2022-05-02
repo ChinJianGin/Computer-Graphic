@@ -59,16 +59,32 @@ namespace CustomSpace
            Renderer::Submit(m_Satellite[i]->GetVertexData()->m_Shader, m_Satellite[i]); 
         }
 
-        if(Input::IsKeyDown(GLFW_KEY_Z))
+        if(Input::IsKeyDown(GLFW_KEY_Z) && !AttackAgain)
         {
+            AttackAgain = true;
             GAME_TRACE("Player Attack");
             Projectile* get;
-            get = ProjectileSystem::GetProjectileSystem()->GetProjectileList()->front();
-            if(get != nullptr)
+            for(int i = 0; i < 3; i++)
             {
-                get->SetTeamID(Projectile::TeamID::Player);
-                ProjectileSystem::GetProjectileSystem()->GetProjectileList()->Pop_Front();
-                ProjectileSystem::GetProjectileSystem()->GetInUsedList()->Push_back(get);
+                get = ProjectileSystem::GetProjectileSystem()->GetProjectileList()->front();
+                if(get != nullptr)
+                {
+                    float _y = LocalPlayerPosition.y + (float)(i * (0.3));
+                    get->SetTeamID(Projectile::TeamID::Player);
+                    get->SetPosition(glm::vec3(LocalPlayerPosition.x, _y, LocalPlayerPosition.z));
+                    ProjectileSystem::GetProjectileSystem()->GetProjectileList()->Pop_Front();
+                    ProjectileSystem::GetProjectileSystem()->GetInUsedList()->Push_back(get);
+                }
+            }
+            CORE_TRACE("In used : {0}", ProjectileSystem::GetProjectileSystem()->GetInUsedList()->size());
+        }
+        else if(AttackAgain)
+        {
+            SAT -= timer.GetTick();
+            if(SAT <= 0)
+            {
+                AttackAgain = false;
+                SAT = 1.f;
             }
         }
 
@@ -85,7 +101,7 @@ namespace CustomSpace
             }
         }
 
-        if(ShiledCooldown > 0)
+        if(ShiledCooldown > 0 && !ActiveShiled)
         {
             ShiledCooldown -= timer.GetTick();
         }
@@ -99,7 +115,7 @@ namespace CustomSpace
 
     bool APlayer::OnKeyPressedEvent(KeyPressedEvent& event)
     {
-        if(event.GetKeyCode() == GLFW_KEY_X && ShiledCooldown <= 0)
+        if(event.GetKeyCode() == GLFW_KEY_X && ShiledCooldown <= 0 && !ActiveShiled)
         {
             CORE_INFO("Shiled skill");
             m_Shield->GetBounding()->SetNeedTest(true);

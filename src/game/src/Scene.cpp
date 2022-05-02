@@ -99,6 +99,21 @@ namespace CustomSpace
         {
             CORE_WARN("Collide : {0}", m_Player->GetBounding()->GetBoundingVolume()->Radius_NS);
         }
+
+        for(auto it = ProjectileSystem::GetProjectileSystem()->GetInUsedList()->begin(); it != ProjectileSystem::GetProjectileSystem()->GetInUsedList()->end(); ++it)
+        {
+            if(it != nullptr)
+            {
+                it.Get()->Update(time);
+                if(it.Get()->GetTransform()->m_Position.y > 5.f)
+                {
+                    it.Get()->SetTeamID(Projectile::TeamID::Neutral);
+                    ProjectileSystem::GetProjectileSystem()->GetInUsedList()->Delete(it.Get());
+                    ProjectileSystem::GetProjectileSystem()->GetProjectileList()->Push_back(it.Get());
+                    CORE_TRACE("List : {0}", ProjectileSystem::GetProjectileSystem()->GetProjectileList()->size());
+                }
+            }
+        }
     }
 
     void Scene::OnEvent(Event& event)
