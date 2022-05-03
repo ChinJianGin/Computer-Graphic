@@ -19,12 +19,13 @@ namespace CustomSpace
         m_OriginTransform[2] = glm::vec3(0, 9.6, -1);
         m_Factory = CreateRef<ShapeFactory>();        
 
-        if(ProjectileSystem::GetProjectileSystem(m_Factory) == nullptr)
+        Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem(m_Factory);
+        if(ProSystem == nullptr)
         {
             return;
         }
 
-        CORE_INFO("Projectile num : {0}", ProjectileSystem::GetProjectileSystem(m_Factory)->GetProjectileList()->size());
+        CORE_INFO("Projectile num : {0}", ProSystem->GetProjectileList()->size());
         
         m_Background = m_Factory->ShapeCreator<Quad>();
         m_Background->SetPosition(m_OriginTransform[1]);
@@ -45,12 +46,19 @@ namespace CustomSpace
         if(m_Player != nullptr)
         {
             m_Player->SetPosition(m_Transform);
-            m_Player->SetScale(glm::vec3(.55, .65, 0));
+            m_Player->SetScale(glm::vec3(.45, .55, 0));
+        }
+
+        m_Normal = CreateRef<NormalEnemy>(m_Factory);
+        if(m_Normal != nullptr)
+        {
+            m_Normal->SetPosition(glm::vec3(0.f, 3.f, -.4f));
         }
     }
     void Scene::Update(CoreTimer& time)
     {
         m_FrameTime += time.GetFrameTime();
+        m_RunTime += time.GetTick();
         m_Texture->Bind();
         CustomSpace::Renderer::Submit(m_Background->GetVertexData()->m_Shader, m_Background);
         m_Background->GetVertexData()->m_Shader->SetInt("tex0", 0);
@@ -94,23 +102,26 @@ namespace CustomSpace
 
         m_Player->SetPosition(m_Transform);
         m_Player->Update(time);
+        m_Normal->SetTarget(m_Player);
+        m_Normal->Update(time);
         Renderer::Submit(m_CollisionTest->GetVertexData()->m_Shader, m_CollisionTest);
         if(m_Player->GetBounding()->Intersects(m_CollisionTest->GetBounding()))
         {
             CORE_WARN("Collide : {0}", m_Player->GetBounding()->GetBoundingVolume()->Radius_NS);
         }
 
-        for(auto it = ProjectileSystem::GetProjectileSystem()->GetInUsedList()->begin(); it != ProjectileSystem::GetProjectileSystem()->GetInUsedList()->end(); ++it)
+        Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem();
+        for(auto it = ProSystem->GetInUsedList()->begin(); it != ProSystem->GetInUsedList()->end(); ++it)
         {
             if(it != nullptr)
             {
                 it.Get()->Update(time);
-                if(it.Get()->GetTransform()->m_Position.y > 5.f)
+                if(it.Get()->GetTransform()->m_Position.y > 5.f || it.Get()->GetTransform()->m_Position.y < -5.f)
                 {
                     it.Get()->SetTeamID(Projectile::TeamID::Neutral);
-                    ProjectileSystem::GetProjectileSystem()->GetInUsedList()->Delete(it.Get());
-                    ProjectileSystem::GetProjectileSystem()->GetProjectileList()->Push_back(it.Get());
-                    CORE_TRACE("List : {0}", ProjectileSystem::GetProjectileSystem()->GetProjectileList()->size());
+                    ProSystem->GetInUsedList()->Delete(it.Get());
+                    ProSystem->GetProjectileList()->Push_back(it.Get());
+                    CORE_TRACE("List : {0}", ProSystem->GetProjectileList()->size());
                 }
             }
         }

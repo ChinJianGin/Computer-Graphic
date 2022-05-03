@@ -12,7 +12,7 @@ namespace CustomSpace
     {
         m_Body = factory->ShapeCreator<Quad>();
         m_Shield = factory->ShapeCreator<Circle>();
-        m_Shield->SetScale(glm::vec3(1.25, 1.25, -.5));
+        m_Shield->SetScale(glm::vec3(1.15f, 1.15f, -.5));
         if(m_Body == nullptr)
         {
             CORE_ERROR("Player body not set.");
@@ -49,10 +49,10 @@ namespace CustomSpace
         // float _y = sinf(m_Orbit) * .5f;
 
         m_Satellite[0]->SetFatherModelMatrix(LocalPlayerPosition, true);
-        m_Satellite[0]->SetPosition(glm::vec3(.5, .5, -.4));
+        m_Satellite[0]->SetPosition(glm::vec3(.4, .4, -.4));
         m_Satellite[0]->SetRotation(m_Orbit);
         m_Satellite[1]->SetFatherModelMatrix(LocalPlayerPosition, true);
-        m_Satellite[1]->SetPosition(glm::vec3(-.5, -.5, -.4));
+        m_Satellite[1]->SetPosition(glm::vec3(-.4, -.4, -.4));
         m_Satellite[1]->SetRotation(m_Orbit);
         for(int i = 0; i < 2; i++)
         {

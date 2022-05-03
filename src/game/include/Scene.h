@@ -7,6 +7,7 @@
 #include "./Player.h"
 #include "./ProjectileSystem.h"
 #include "../../core/include/KeyEvent.h"
+#include "./NormalEnemy.h"
 
 namespace CustomSpace
 {
@@ -31,10 +32,13 @@ namespace CustomSpace
 
             glm::vec3 m_OriginTransform[3];
             float m_FrameTime = 0, m_MoveSpeed = (9.6 / 20);
+            float m_RunTime = 0;
 
 
             glm::vec3 m_Transform;
             float m_PlayerSpeed = 1.f;
+
+            Ref<Enemy> m_Normal;
         protected:
 
     };

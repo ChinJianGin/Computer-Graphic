@@ -32,7 +32,17 @@ namespace CustomSpace
         }
         else
         {
+            glm::vec3 LocalPos = m_Body->GetTransform()->m_Position;
+            if(m_Target != nullptr)
+            {
+                glm::vec3 TargetPos = m_Target->GetTransform()->m_Position;
+                m_Direction = glm::normalize(TargetPos - LocalPos);
+                m_Target = nullptr;
+            }
 
+            float Velocity = (float)6 * timer.GetTick();
+            m_Body->SetPosition(glm::vec3(LocalPos.x + (m_Direction.x * Velocity),LocalPos.y + (m_Direction.y * Velocity), LocalPos.z));
+            Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
         }
     }
 
@@ -79,5 +89,15 @@ namespace CustomSpace
     void Projectile::SetTeamID(const TeamID id)
     {
         m_TeamID = id;
+    }
+
+    void Projectile::SetOwner(const Ref<Actor> owner)
+    {
+        m_Owner = owner;
+    }
+
+    void Projectile::SetTarget(const Ref<Actor> target)
+    {
+        m_Target = target;
     }
 }
