@@ -8,6 +8,8 @@
 #include "./ProjectileSystem.h"
 #include "../../core/include/KeyEvent.h"
 #include "./NormalEnemy.h"
+#include "./EliteEnemy.h"
+#include "./BossEnemy.h"
 
 namespace CustomSpace
 {
@@ -36,9 +38,9 @@ namespace CustomSpace
 
 
             glm::vec3 m_Transform;
-            float m_PlayerSpeed = 1.f;
+            float m_PlayerSpeed = 1.5f;
 
-            Ref<Enemy> m_Normal;
+            Ref<Enemy> m_Normal, m_Elite, m_Boss;
         protected:
 
     };

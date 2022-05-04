@@ -54,6 +54,18 @@ namespace CustomSpace
         {
             m_Normal->SetPosition(glm::vec3(0.f, 3.f, -.4f));
         }
+
+        m_Elite = CreateRef<EliteEnemy>(m_Factory);
+        if(m_Elite != nullptr)
+        {
+            m_Elite->SetPosition(glm::vec3(-2, 3, -.4f));
+        }
+
+        m_Boss = CreateRef<BossEnemy>(m_Factory);
+        if(m_Boss != nullptr)
+        {
+            m_Boss->SetPosition(glm::vec3(-2, 2, -.4f));
+        }
     }
     void Scene::Update(CoreTimer& time)
     {
@@ -104,6 +116,8 @@ namespace CustomSpace
         m_Player->Update(time);
         m_Normal->SetTarget(m_Player);
         m_Normal->Update(time);
+        m_Elite->Update(time);
+        m_Boss->Update(time);
         Renderer::Submit(m_CollisionTest->GetVertexData()->m_Shader, m_CollisionTest);
         if(m_Player->GetBounding()->Intersects(m_CollisionTest->GetBounding()))
         {
