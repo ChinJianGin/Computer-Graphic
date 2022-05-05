@@ -20,29 +20,29 @@ namespace CustomSpace
 
     ProjectileSystem::ProjectileSystem(const Ref<ShapeFactory>& factory)
     {
-        m_ProjectileList = CreateScope<LinkList<Projectile*>>();
-        m_InUsedList = CreateScope<LinkList<Projectile*>>();
         m_Projectiles = new Projectile[PROJECTILE_NUM];
+        m_FreeList = CreateRef<SinglyLinkedList<Projectile*>>();
+        m_UsedList = CreateRef<SinglyLinkedList<Projectile*>>();
         for(int i = 0; i < PROJECTILE_NUM; i++)
         {
             m_Projectiles[i].Init(factory);
-            m_ProjectileList->Push_back(&m_Projectiles[i]);
+            m_FreeList->push_back(&m_Projectiles[i]);
         }
+        CORE_WARN("Free list : {0}", m_FreeList->size());
     }
 
     ProjectileSystem::~ProjectileSystem()
     {
-        m_ProjectileList->Clear();
         delete[] m_Projectiles;
     }
 
-    Scope<LinkList<Projectile*>>& ProjectileSystem::GetProjectileList()
+    Ref<SinglyLinkedList<Projectile*>> ProjectileSystem::GetFreeList()
     {
-        return m_ProjectileList;
+        return this->m_FreeList;
     }
 
-    Scope<LinkList<Projectile*>>& ProjectileSystem::GetInUsedList()
+    Ref<SinglyLinkedList<Projectile*>> ProjectileSystem::GetUsedList()
     {
-        return m_InUsedList;
+        return this->m_UsedList;
     }
 }

@@ -37,10 +37,11 @@ namespace CustomSpace
     {
     private:
         ListNode<T>* first;
+        ListNode<T>* last;
     public:
-        LinkList() : first(nullptr) {};
+        LinkList() : first(nullptr), last(nullptr) {};
         void PrintList();
-        void Push_Front(T x);
+        void Push_front(T x);
         void Push_back(T x);
         void Delete(T x);
         void Clear();
@@ -91,26 +92,29 @@ namespace CustomSpace
                 return *this;
             }
 
-            Iterator& operator++()
+            Iterator* operator++()
             {
                 if(current)
                     current = current->next;
-                return *this;
+                return this;
             }
 
             Iterator operator++(int)
             {
-                Iterator iterator = *this;
-                ++*this;
-                return iterator;
+                // Iterator iterator = *this;
+                // ++*this;
+                // return iterator;
+                ListNode<T>* previous = current;
+                current = current->next;
+                return Iterator(previous);
             }
 
-            bool operator!=(const Iterator& iterator)
+            bool operator!=(const Iterator& iterator) const
             {
                 return current != iterator.current;
             }
 
-            T operator*()
+            const T& operator*() const
             {
                 return current->getData();
             }
@@ -132,14 +136,14 @@ namespace CustomSpace
         ListNode<T>* current = first;
         while(current != nullptr)
         {
-            std::cout << typeid(current->data).name() << " ";
+            std::cout << typeid(current->data).name() << "\n";
             current = current->next;
         }
         std::cout << "\n";
     }
 
     template<typename T>
-    void LinkList<T>::Push_Front(T x)
+    void LinkList<T>::Push_front(T x)
     {
         ListNode<T>* newNode = new ListNode<T>(x);
         newNode->next = first;
@@ -153,6 +157,7 @@ namespace CustomSpace
         if(first == nullptr)
         {
             first = newNode;
+            last = newNode->next;
             return;
         }
         ListNode<T>* current = first;

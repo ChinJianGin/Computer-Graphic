@@ -27,7 +27,7 @@ namespace CustomSpace
 
         private:
             Ref<Shape> m_Background, m_Background2, m_CollisionTest;
-            Ref<Texture2D> m_Texture, m_Texture2;
+            Ref<Texture2D> m_Texture, m_Texture2, m_Projectile[2];
             Ref<APlayer> m_Player;
 
             Ref<ShapeFactory> m_Factory;

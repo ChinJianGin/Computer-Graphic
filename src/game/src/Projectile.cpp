@@ -4,7 +4,13 @@ namespace CustomSpace
 {
     Projectile::Projectile()
     {
-        
+       m_Owner = nullptr;
+       m_Target = nullptr; 
+    }
+
+    Projectile::~Projectile()
+    {
+
     }
 
     void Projectile::Init(const Ref<ShapeFactory>& factory)
@@ -27,8 +33,10 @@ namespace CustomSpace
         {
             glm::vec3 LocalPos = m_Body->GetTransform()->m_Position;
             float Velocity = (float)5 * timer.GetTick();
-            m_Body->SetPosition(glm::vec3(LocalPos.x, LocalPos.y + Velocity, LocalPos.z));
+            m_Body->SetPosition(glm::vec3(LocalPos.x, LocalPos.y + Velocity, -.3f));
+            m_Body->SetRotation(M_PI_4);
             Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
+            m_Body->GetVertexData()->m_Shader->SetInt("tex0", 20);
         }
         else
         {
@@ -41,8 +49,9 @@ namespace CustomSpace
             }
 
             float Velocity = (float)6 * timer.GetTick();
-            m_Body->SetPosition(glm::vec3(LocalPos.x + (m_Direction.x * Velocity),LocalPos.y + (m_Direction.y * Velocity), LocalPos.z));
+            m_Body->SetPosition(glm::vec3(LocalPos.x + (m_Direction.x * Velocity),LocalPos.y + (m_Direction.y * Velocity), -.3f));
             Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
+            m_Body->GetVertexData()->m_Shader->SetInt("tex0", 21);
         }
     }
 

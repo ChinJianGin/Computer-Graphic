@@ -36,14 +36,14 @@ namespace CustomSpace
         {
             Projectile* get;
             Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem();
-            get = ProSystem->GetProjectileList()->front();
+            get = ProSystem->GetFreeList()->front()->get();
             if(get != nullptr)
             {
                 get->SetTeamID(Projectile::TeamID::Enemy);
                 get->SetTarget(m_Target);
                 get->SetPosition(LocalPosition);
-                ProSystem->GetProjectileList()->Pop_Front();
-                ProSystem->GetInUsedList()->Push_back(get);
+                ProSystem->GetFreeList()->pop_front();
+                ProSystem->GetUsedList()->push_back(get);
             }
             GAME_INFO("Normal attack");
             m_Cal = m_SAT;

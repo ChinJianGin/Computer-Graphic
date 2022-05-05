@@ -25,7 +25,7 @@ namespace CustomSpace
             return;
         }
 
-        CORE_INFO("Projectile num : {0}", ProSystem->GetProjectileList()->size());
+        CORE_INFO("Projectile num : {0}", ProSystem->GetFreeList()->size());
         
         m_Background = m_Factory->ShapeCreator<Quad>();
         m_Background->SetPosition(m_OriginTransform[1]);
@@ -35,11 +35,14 @@ namespace CustomSpace
         m_Background2 = m_Factory->ShapeCreator<Quad>();
         m_Background2->SetPosition(m_OriginTransform[2]);
         m_Background2->SetScale(glm::vec3(4.8, 9.6, 0));
-        m_Texture2 = Texture2D::Create("../src/TextureSrc/T_YellowBackground_Version1_Layer1.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+        m_Texture2 = Texture2D::Create("../src/TextureSrc/T_PurpleBackground_Version4_Layer1.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
 
         m_CollisionTest = m_Factory->ShapeCreator<Quad>();
         m_CollisionTest->SetPosition(glm::vec3(2, 3, 0));
         m_CollisionTest->GetBounding()->SetNeedTest(true);
+
+        m_Projectile[0] = Texture2D::Create("../src/TextureSrc/PlayerProjectile.png", GL_TEXTURE_2D, GL_TEXTURE20, GL_UNSIGNED_BYTE);
+        m_Projectile[1] = Texture2D::Create("../src/TextureSrc/NormalProjectile.png", GL_TEXTURE_2D, GL_TEXTURE21, GL_UNSIGNED_BYTE);
 
         m_Player = CreateRef<APlayer>(m_Factory);
         m_Transform = glm::vec3(0, -3.5, -.5);
@@ -64,7 +67,7 @@ namespace CustomSpace
         m_Boss = CreateRef<BossEnemy>(m_Factory);
         if(m_Boss != nullptr)
         {
-            m_Boss->SetPosition(glm::vec3(-2, 2, -.4f));
+            m_Boss->SetPosition(glm::vec3(0, 2, -.4f));
         }
     }
     void Scene::Update(CoreTimer& time)
@@ -116,8 +119,8 @@ namespace CustomSpace
         m_Player->Update(time);
         m_Normal->SetTarget(m_Player);
         m_Normal->Update(time);
-        m_Elite->Update(time);
-        m_Boss->Update(time);
+        // m_Elite->Update(time);
+        // m_Boss->Update(time);
         Renderer::Submit(m_CollisionTest->GetVertexData()->m_Shader, m_CollisionTest);
         if(m_Player->GetBounding()->Intersects(m_CollisionTest->GetBounding()))
         {
@@ -125,17 +128,20 @@ namespace CustomSpace
         }
 
         Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem();
-        for(auto it = ProSystem->GetInUsedList()->begin(); it != ProSystem->GetInUsedList()->end(); ++it)
+        for(auto it = ProSystem->GetUsedList()->begin(); it != ProSystem->GetUsedList()->end(); ++it)
         {
             if(it != nullptr)
             {
-                it.Get()->Update(time);
-                if(it.Get()->GetTransform()->m_Position.y > 5.f || it.Get()->GetTransform()->m_Position.y < -5.f)
+                m_Projectile[0]->Bind();
+                m_Projectile[1]->Bind();
+                it.getdata()->Update(time);
+                m_Projectile[0]->UnBind();
+                m_Projectile[1]->UnBind();
+                if(it.getdata()->GetTransform()->m_Position.y > 5.f || it.getdata()->GetTransform()->m_Position.y < -5.f)
                 {
-                    it.Get()->SetTeamID(Projectile::TeamID::Neutral);
-                    ProSystem->GetInUsedList()->Delete(it.Get());
-                    ProSystem->GetProjectileList()->Push_back(it.Get());
-                    CORE_TRACE("List : {0}", ProSystem->GetProjectileList()->size());
+                    it.getdata()->SetTeamID(Projectile::TeamID::Neutral);
+                    ProSystem->GetUsedList()->erase(it.get_current_node());
+                    ProSystem->GetFreeList()->push_back(it.getdata());
                 }
             }
         }

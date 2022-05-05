@@ -34,7 +34,7 @@ namespace CustomSpace
         bool OnKeyPressedEvent(KeyPressedEvent& event);
 
         private:
-        Ref<Texture2D> m_PlayerTex;
+        Ref<Texture2D> m_PlayerTex, m_ShieldTex, m_SatelliteTex;
         Ref<Shape> m_Shield, m_Satellite[2];
         Ref<Shape> m_BoundingVolume;
 

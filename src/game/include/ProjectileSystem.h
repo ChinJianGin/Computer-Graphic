@@ -15,13 +15,12 @@ namespace CustomSpace
         static Scope<ProjectileSystem>& GetProjectileSystem(const Ref<ShapeFactory>& factory);
         static Scope<ProjectileSystem>& GetProjectileSystem();
 
-
-        Scope<LinkList<Projectile*>>& GetProjectileList();
-        Scope<LinkList<Projectile*>>& GetInUsedList();
+        Ref<SinglyLinkedList<Projectile*>> GetFreeList();
+        Ref<SinglyLinkedList<Projectile*>> GetUsedList();
         private:
         static Scope<ProjectileSystem> m_ProjectileSystem;
-        Scope<LinkList<Projectile*>> m_ProjectileList;
-        Scope<LinkList<Projectile*>> m_InUsedList;
+        Ref<SinglyLinkedList<Projectile*>> m_FreeList;
+        Ref<SinglyLinkedList<Projectile*>> m_UsedList;
 
         Projectile* m_Projectiles;
     };

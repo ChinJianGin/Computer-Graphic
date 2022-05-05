@@ -7,7 +7,7 @@ namespace CustomSpace
     {
         public:
         Projectile();
-        virtual ~Projectile() = default;
+        virtual ~Projectile();
 
         virtual void Init(const Ref<ShapeFactory>& fctory) override;
         virtual void Update(const CoreTimer& timer) override;
@@ -48,7 +48,7 @@ namespace CustomSpace
 
         TeamID m_TeamID;
 
-        Ref<Actor> m_Owner = nullptr, m_Target = nullptr;
+        Ref<Actor> m_Owner, m_Target;
 
         glm::vec3 m_Direction;
     };

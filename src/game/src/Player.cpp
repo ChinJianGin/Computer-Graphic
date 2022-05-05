@@ -29,6 +29,9 @@ namespace CustomSpace
             m_Satellite[i]->SetScale(glm::vec3(.25f, .25f, 0));
             CORE_WARN("Create satillite");
         }
+
+        m_ShieldTex = Texture2D::Create("../src/TextureSrc/Shield.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
+        m_SatelliteTex = Texture2D::Create("../src/TextureSrc/Satellite.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
     }
 
     void APlayer::Update(const CoreTimer& timer)
@@ -40,8 +43,11 @@ namespace CustomSpace
         m_Body->GetVertexData()->m_Shader->SetInt("tex0", 2);
         m_PlayerTex->UnBind();
 
+        m_ShieldTex->Bind();
         m_Shield->SetPosition(m_Body->GetTransform()->m_Position);
         Renderer::Submit(m_Shield->GetVertexData()->m_Shader, m_Shield);
+        m_Shield->GetVertexData()->m_Shader->SetInt("tex0", 2);
+        m_ShieldTex->UnBind();
 
         glm::vec3 LocalPlayerPosition = m_Body->GetTransform()->m_Position;
 
@@ -54,10 +60,13 @@ namespace CustomSpace
         m_Satellite[1]->SetFatherModelMatrix(LocalPlayerPosition, true);
         m_Satellite[1]->SetPosition(glm::vec3(-.4, -.4, -.4));
         m_Satellite[1]->SetRotation(m_Orbit);
+        m_SatelliteTex->Bind();
         for(int i = 0; i < 2; i++)
         {
            Renderer::Submit(m_Satellite[i]->GetVertexData()->m_Shader, m_Satellite[i]); 
+           m_Satellite[i]->GetVertexData()->m_Shader->SetInt("tex0", 2);
         }
+        m_SatelliteTex->UnBind();
 
         if(Input::IsKeyDown(GLFW_KEY_Z) && !AttackAgain)
         {
@@ -66,17 +75,17 @@ namespace CustomSpace
             Projectile* get;
             for(int i = 0; i < 3; i++)
             {
-                get = ProjectileSystem::GetProjectileSystem()->GetProjectileList()->front();
+                get = ProjectileSystem::GetProjectileSystem()->GetFreeList()->front()->get();
                 if(get != nullptr)
                 {
                     float _y = LocalPlayerPosition.y + (float)(i * (0.3));
                     get->SetTeamID(Projectile::TeamID::Player);
                     get->SetPosition(glm::vec3(LocalPlayerPosition.x, _y, LocalPlayerPosition.z));
-                    ProjectileSystem::GetProjectileSystem()->GetProjectileList()->Pop_Front();
-                    ProjectileSystem::GetProjectileSystem()->GetInUsedList()->Push_back(get);
+                    ProjectileSystem::GetProjectileSystem()->GetFreeList()->pop_front();
+                    ProjectileSystem::GetProjectileSystem()->GetUsedList()->push_front(get);
                 }
             }
-            CORE_TRACE("In used : {0}", ProjectileSystem::GetProjectileSystem()->GetInUsedList()->size());
+            CORE_TRACE("In used : {0}", ProjectileSystem::GetProjectileSystem()->GetUsedList()->size());
         }
         else if(AttackAgain)
         {

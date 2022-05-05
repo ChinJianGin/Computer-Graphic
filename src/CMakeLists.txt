@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.17)
 
+include_directories(~/.local/include)
+add_definitions(-DSPDLOG_FMT_EXTERNAL)
+
 add_subdirectory(main)
 add_subdirectory(shader)
 add_subdirectory(vertex)

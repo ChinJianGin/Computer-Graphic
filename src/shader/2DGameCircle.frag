@@ -18,7 +18,7 @@ void main()
 
     circleAlpha *= smoothstep(thickness + fade, thickness, distance);
 
-    FragColor = vec4(color, 1.0);
+    FragColor = texture(tex0, texCoord);
     FragColor.a *= circleAlpha;
 
 }

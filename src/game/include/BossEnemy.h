@@ -32,7 +32,8 @@ namespace CustomSpace
         virtual void SetType(const EnemyType type) override;
 
         private:
-        Ref<Texture2D> m_BossEnemyTex;
+        Ref<Texture2D> m_BossEnemyTex, m_BossGuardianTex;
 
+        Ref<Shape> m_Guardian[2];
     };
 }
