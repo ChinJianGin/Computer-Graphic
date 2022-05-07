@@ -30,11 +30,13 @@ namespace CustomSpace
 
 
         virtual void AttackAction() = 0;
+        virtual void SetEnableActor(bool enable) { b_Enable = enable; }
         private:
 
         protected:
 
         Ref<Shape> m_Body;    
+        bool b_Enable = false;
     
     };
 }

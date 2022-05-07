@@ -44,6 +44,8 @@ namespace CustomSpace
 
         bool ActiveShiled = false, AttackAgain = false;
         float EffectTime = 0, ShiledCooldown = -1.f, SAT = 1.f;
+
+        void ShieldRender();
         protected:
     };
 }

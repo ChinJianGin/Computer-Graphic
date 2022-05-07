@@ -24,10 +24,13 @@ namespace CustomSpace
 
     void EliteEnemy::Update(const CoreTimer& timer)
     {
-        m_EliteEnemyTex->Bind();
-        Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
-        m_Body->GetVertexData()->m_Shader->SetInt("tex0", 11);
-        m_EliteEnemyTex->UnBind();
+        if(b_Enable)
+        {
+            m_EliteEnemyTex->Bind();
+            Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
+            m_Body->GetVertexData()->m_Shader->SetInt("tex0", 11);
+            m_EliteEnemyTex->UnBind();
+        }
     }
 
     void EliteEnemy::SetTransform(const Ref<Transform>& trans)

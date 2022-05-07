@@ -14,9 +14,9 @@ namespace CustomSpace
 
     void Scene::Init()
     {
-        m_OriginTransform[0] = glm::vec3(0, -9.6, -1);
-        m_OriginTransform[1] = glm::vec3(0, 0, -1);
-        m_OriginTransform[2] = glm::vec3(0, 9.6, -1);
+        m_OriginTransform[0] = { glm::vec3(0, -9.6, -1) };
+        m_OriginTransform[1] = { glm::vec3(0,    0, -1) };
+        m_OriginTransform[2] = { glm::vec3(0,  9.6, -1) };
         m_Factory = CreateRef<ShapeFactory>();        
 
         Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem(m_Factory);
@@ -37,10 +37,6 @@ namespace CustomSpace
         m_Background2->SetScale(glm::vec3(4.8, 9.6, 0));
         m_Texture2 = Texture2D::Create("../src/TextureSrc/T_PurpleBackground_Version4_Layer1.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
 
-        m_CollisionTest = m_Factory->ShapeCreator<Quad>();
-        m_CollisionTest->SetPosition(glm::vec3(2, 3, 0));
-        m_CollisionTest->GetBounding()->SetNeedTest(true);
-
         m_Projectile[0] = Texture2D::Create("../src/TextureSrc/PlayerProjectile.png", GL_TEXTURE_2D, GL_TEXTURE20, GL_UNSIGNED_BYTE);
         m_Projectile[1] = Texture2D::Create("../src/TextureSrc/NormalProjectile.png", GL_TEXTURE_2D, GL_TEXTURE21, GL_UNSIGNED_BYTE);
 
@@ -58,6 +54,13 @@ namespace CustomSpace
             m_Normal->SetPosition(glm::vec3(0.f, 3.f, -.4f));
         }
 
+        m_UsedNormalEnemy = CreateScope<SinglyLinkedList<Ref<Enemy>>>();
+        for(int i = 0; i < NORMAL_NUM; i++)
+        {
+            m_Normals[i] = CreateRef<NormalEnemy>(m_Factory);
+            m_Normals[i]->SetPosition(glm::vec3(-2.f + (i * 0.25), 5.f, -.4f));
+        }
+
         m_Elite = CreateRef<EliteEnemy>(m_Factory);
         if(m_Elite != nullptr)
         {
@@ -72,6 +75,11 @@ namespace CustomSpace
     }
     void Scene::Update(CoreTimer& time)
     {
+        /**
+         * @brief Background
+         * 
+         */
+#pragma region BACKGROUND_CONTROL
         m_FrameTime += time.GetFrameTime();
         m_RunTime += time.GetTick();
         m_Texture->Bind();
@@ -104,7 +112,11 @@ namespace CustomSpace
             m_Background2->SetPosition(CurrentPos, 2);
             m_FrameTime -= time.GetDeltaTick();
         }
-
+#pragma endregion BACKGROUND_CONTROL
+        /**
+         * @brief Player section
+         * 
+         */
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_LEFT))
             m_Transform.x -= (float)m_PlayerSpeed * time.GetTick();
         else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_RIGHT))
@@ -117,14 +129,134 @@ namespace CustomSpace
 
         m_Player->SetPosition(m_Transform);
         m_Player->Update(time);
-        m_Normal->SetTarget(m_Player);
-        m_Normal->Update(time);
-        // m_Elite->Update(time);
-        // m_Boss->Update(time);
-        Renderer::Submit(m_CollisionTest->GetVertexData()->m_Shader, m_CollisionTest);
-        if(m_Player->GetBounding()->Intersects(m_CollisionTest->GetBounding()))
+       
+        /**
+        * @brief TimeLine 
+        * 
+        */
+        if(m_RunTime <= 30) // Phase 1
         {
-            CORE_WARN("Collide : {0}", m_Player->GetBounding()->GetBoundingVolume()->Radius_NS);
+#pragma region OPENING
+            m_PhaseTime += time.GetTick();
+            uint8_t n = 0;
+            glm::vec3 NormalPosition = glm::vec3(0);
+            float _x = 0.f;
+            float _y = 0.f;
+            float _z = m_Normals[0]->GetTransform()->m_Position.z;
+            if(m_RunTime <= 2) // Normal enemies in
+            {
+                for(int i = 0; i < 5; i++)
+                {
+                    n = i * 4;
+                    NormalPosition = m_Normals[n]->GetTransform()->m_Position;
+                    _y = NormalPosition.y;
+                    _x = NormalPosition.x;
+                    if(i % 2 == 1)
+                    {
+                        if(_y > .75f)
+                        {
+                            _y -= (float)(.0015f * (sinf(m_RunTime) + 1.f));
+                        }
+                        else
+                        {
+                            _y = .75f;
+                        }
+                    }
+                    else
+                    {
+                        if(_y > 2.25f)
+                        {
+                            _y -= (float)(.001f * (sinf(m_RunTime) + 1.f));
+                        }
+                        else
+                        {
+                            _y = 2.25f;
+                        }
+                    }
+                    m_Normals[n]->SetEnableActor(true);
+                    m_Normals[n]->SetPosition(glm::vec3(_x, _y, _z));
+                    m_Normals[n]->SetTarget(m_Player);
+                    m_Normals[n]->Update(time);
+                    if(m_UsedNormalEnemy->size() < 5)
+                        m_UsedNormalEnemy->push_back(m_Normals[n]);
+                }
+            }
+            else if(m_UsedNormalEnemy->size() > 0)
+            {
+                if(m_RunTime <= 25) // Normal enemies stay
+                {
+                    if(!m_PhaseActive[0])
+                    {
+                        m_PhaseTime = m_PhaseTime - m_RunTime;
+                        m_PhaseActive[0] = true;
+                    }
+                    uint8_t i = 0;
+                    if(m_OriginPosition[0] == glm::vec3(0))
+                    {
+                        for(auto it = m_UsedNormalEnemy->begin(); it != m_UsedNormalEnemy->end(); ++it)
+                        {
+                            m_OriginPosition[i] = it.getdata()->GetTransform()->m_Position;
+                            i++;
+                        }
+                        uint8_t i = 0;
+                    }
+                    for(auto it = m_UsedNormalEnemy->begin(); it != m_UsedNormalEnemy->end(); ++it)
+                    {
+                        _x = m_OriginPosition[i].x;
+                        _y = m_OriginPosition[i].y;
+                        float sin_x = sinf(m_PhaseTime);
+                        if(i % 2 == 1)
+                        {
+                            _x += (float)(.6f * sin_x);
+                        }
+                        else
+                        {
+                            _x -= (float)(.25f * sin_x);
+                        }
+                        it.getdata()->SetTarget(m_Player);
+                        it.getdata()->SetPosition(glm::vec3(_x, _y, _z));
+                        it.getdata()->Update(time);
+                        i++;
+                    }
+                }
+                else // Normal enemies out
+                {
+                    if(m_UsedNormalEnemy->size() > 0)
+                    {
+                        for(auto it = m_UsedNormalEnemy->begin(); it != m_UsedNormalEnemy->end(); ++it)
+                        {
+                            _x = it.getdata()->GetTransform()->m_Position.x;
+                            _y = it.getdata()->GetTransform()->m_Position.y;
+                            _y += 1 * time.GetTick();
+                            it.getdata()->SetPosition(glm::vec3(_x, _y, _z));
+                            it.getdata()->Update(time);
+                                if(_y >= 4.8f)
+                                {
+                                    it.getdata()->SetEnableActor(false);
+                                    m_UsedNormalEnemy->erase(it.get_current_node());
+                                } 
+                        }
+                    } 
+                }
+            }
+#pragma endregion OPENING
+            else  // random spawn normal enemy
+            {
+
+            }
+        }
+        else if(m_RunTime <= 70) // Phase 2
+        {
+            GAME_INFO("Phase two");
+            m_Normal->SetEnableActor(false);
+            m_Elite->SetEnableActor(true);
+            m_Elite->Update(time);
+        }
+        else // Boss Phase
+        {
+            GAME_INFO("Boss fight.");
+            m_Boss->SetEnableActor(true);
+            m_Boss->Update(time);
         }
 
         Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem();

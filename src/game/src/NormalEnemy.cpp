@@ -25,28 +25,31 @@ namespace CustomSpace
 
     void NormalEnemy::Update(const CoreTimer& timer)
     {
-        m_NormalEnemyTex->Bind();
-        Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
-        m_Body->GetVertexData()->m_Shader->SetInt("tex0", 10);
-        m_NormalEnemyTex->UnBind();
-
-        glm::vec3 LocalPosition = m_Body->GetTransform()->m_Position;
-        m_Cal -= timer.GetTick();
-        if(m_Cal <= 0)
+        if(b_Enable)
         {
-            Projectile* get;
-            Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem();
-            get = ProSystem->GetFreeList()->front()->get();
-            if(get != nullptr)
+            m_NormalEnemyTex->Bind();
+            Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
+            m_Body->GetVertexData()->m_Shader->SetInt("tex0", 10);
+            m_NormalEnemyTex->UnBind();
+
+            glm::vec3 LocalPosition = m_Body->GetTransform()->m_Position;
+            m_Cal -= timer.GetTick();
+            if(m_Cal <= 0)
             {
-                get->SetTeamID(Projectile::TeamID::Enemy);
-                get->SetTarget(m_Target);
-                get->SetPosition(LocalPosition);
-                ProSystem->GetFreeList()->pop_front();
-                ProSystem->GetUsedList()->push_back(get);
+                Projectile* get;
+                Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem();
+                get = ProSystem->GetFreeList()->front()->get();
+                if(get != nullptr)
+                {
+                    get->SetTeamID(Projectile::TeamID::Enemy);
+                    get->SetTarget(m_Target);
+                    get->SetPosition(LocalPosition);
+                    ProSystem->GetFreeList()->pop_front();
+                    ProSystem->GetUsedList()->push_back(get);
+                }
+                GAME_INFO("Normal attack");
+                m_Cal = m_SAT;
             }
-            GAME_INFO("Normal attack");
-            m_Cal = m_SAT;
         }
     }
 

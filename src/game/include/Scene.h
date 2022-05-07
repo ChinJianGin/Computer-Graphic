@@ -11,6 +11,9 @@
 #include "./EliteEnemy.h"
 #include "./BossEnemy.h"
 
+
+constexpr uint8_t NORMAL_NUM = 20;
+
 namespace CustomSpace
 {
     class Scene
@@ -26,7 +29,7 @@ namespace CustomSpace
             void OnEvent(Event& event);
 
         private:
-            Ref<Shape> m_Background, m_Background2, m_CollisionTest;
+            Ref<Shape> m_Background, m_Background2;
             Ref<Texture2D> m_Texture, m_Texture2, m_Projectile[2];
             Ref<APlayer> m_Player;
 
@@ -35,12 +38,20 @@ namespace CustomSpace
             glm::vec3 m_OriginTransform[3];
             float m_FrameTime = 0, m_MoveSpeed = (9.6 / 20);
             float m_RunTime = 0;
+            float m_PhaseTime = 0;
 
 
             glm::vec3 m_Transform;
             float m_PlayerSpeed = 1.5f;
 
             Ref<Enemy> m_Normal, m_Elite, m_Boss;
+            Ref<Enemy> m_Normals[NORMAL_NUM];
+
+            Scope<SinglyLinkedList<Ref<Enemy>>> m_UsedNormalEnemy;
+
+            glm::vec3 m_OriginPosition[5] = {glm::vec3(0)};
+
+            bool m_PhaseActive[3] = { false };
         protected:
 
     };

@@ -43,31 +43,10 @@ namespace CustomSpace
         m_Body->GetVertexData()->m_Shader->SetInt("tex0", 2);
         m_PlayerTex->UnBind();
 
-        m_ShieldTex->Bind();
-        m_Shield->SetPosition(m_Body->GetTransform()->m_Position);
-        Renderer::Submit(m_Shield->GetVertexData()->m_Shader, m_Shield);
-        m_Shield->GetVertexData()->m_Shader->SetInt("tex0", 2);
-        m_ShieldTex->UnBind();
-
+        
         glm::vec3 LocalPlayerPosition = m_Body->GetTransform()->m_Position;
 
-        // float _x = cosf(m_Orbit) * .5f;
-        // float _y = sinf(m_Orbit) * .5f;
-
-        m_Satellite[0]->SetFatherModelMatrix(LocalPlayerPosition, true);
-        m_Satellite[0]->SetPosition(glm::vec3(.4, .4, -.4));
-        m_Satellite[0]->SetRotation(m_Orbit);
-        m_Satellite[1]->SetFatherModelMatrix(LocalPlayerPosition, true);
-        m_Satellite[1]->SetPosition(glm::vec3(-.4, -.4, -.4));
-        m_Satellite[1]->SetRotation(m_Orbit);
-        m_SatelliteTex->Bind();
-        for(int i = 0; i < 2; i++)
-        {
-           Renderer::Submit(m_Satellite[i]->GetVertexData()->m_Shader, m_Satellite[i]); 
-           m_Satellite[i]->GetVertexData()->m_Shader->SetInt("tex0", 2);
-        }
-        m_SatelliteTex->UnBind();
-
+        
         if(Input::IsKeyDown(GLFW_KEY_Z) && !AttackAgain)
         {
             AttackAgain = true;
@@ -100,6 +79,7 @@ namespace CustomSpace
         if(ActiveShiled)
         {
             EffectTime += timer.GetTick();
+            this->ShieldRender();
             if(EffectTime >= 3)
             {
                 EffectTime = 0.f;
@@ -173,5 +153,31 @@ namespace CustomSpace
     void APlayer::AttackAction()
     {
         GAME_INFO("Player attack");
+    }
+
+    void APlayer::ShieldRender()
+    {
+        glm::vec3 LocalPosition = this->m_Body->GetTransform()->m_Position;
+
+        m_ShieldTex->Bind();
+        m_Shield->SetPosition(LocalPosition);
+        Renderer::Submit(m_Shield->GetVertexData()->m_Shader, m_Shield);
+        m_Shield->GetVertexData()->m_Shader->SetInt("tex0", 2);
+        m_ShieldTex->UnBind();
+
+        m_Satellite[0]->SetFatherModelMatrix(LocalPosition, true);
+        m_Satellite[0]->SetPosition(glm::vec3(.4, .4, -.4));
+        m_Satellite[0]->SetRotation(m_Orbit);
+        m_Satellite[1]->SetFatherModelMatrix(LocalPosition, true);
+        m_Satellite[1]->SetPosition(glm::vec3(-.4, -.4, -.4));
+        m_Satellite[1]->SetRotation(m_Orbit);
+        m_SatelliteTex->Bind();
+        for(int i = 0; i < 2; i++)
+        {
+           Renderer::Submit(m_Satellite[i]->GetVertexData()->m_Shader, m_Satellite[i]); 
+           m_Satellite[i]->GetVertexData()->m_Shader->SetInt("tex0", 2);
+        }
+        m_SatelliteTex->UnBind();
+
     }
 }
