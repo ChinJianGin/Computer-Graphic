@@ -42,12 +42,12 @@ namespace CustomSpace
                 if(get != nullptr)
                 {
                     get->SetTeamID(Projectile::TeamID::Enemy);
+                    get->SetPath(Projectile::Path::ToTarget);
                     get->SetTarget(m_Target);
                     get->SetPosition(LocalPosition);
                     ProSystem->GetFreeList()->pop_front();
                     ProSystem->GetUsedList()->push_back(get);
                 }
-                GAME_INFO("Normal attack");
                 m_Cal = m_SAT;
             }
         }
@@ -96,5 +96,21 @@ namespace CustomSpace
     void NormalEnemy::SetType(EnemyType type)
     {
         m_Type = type;
+    }
+    
+    void NormalEnemy::Behavior(const CoreTimer& timer)
+    {
+        m_Runtim += timer.GetTick();
+        float _x = m_OriginPosition.x;
+        float _y = m_OriginPosition.y - (float)(r_y * sinf(m_Runtim));
+        float _z = m_OriginPosition.z;
+        m_Body->SetPosition(glm::vec3(_x, _y, _z));
+    }
+
+    void NormalEnemy::SetOriginPosition(const glm::vec3& origin)
+    {
+        m_OriginPosition = origin;
+        r_y = (float)((rand() / (RAND_MAX + 1.f)) * 3.5f) + 3.f;
+
     }
 }

@@ -31,6 +31,8 @@ namespace CustomSpace
 
         virtual void SetType(const EnemyType type) override;
 
+        virtual void Behavior(const CoreTimer& timer) override;
+        virtual void SetOriginPosition(const glm::vec3& origin) override;
         private:
         Ref<Texture2D> m_BossEnemyTex, m_BossGuardianTex;
 

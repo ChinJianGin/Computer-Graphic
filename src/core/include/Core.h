@@ -23,6 +23,8 @@
 #include<stdio.h>
 #include<string>
 #include<memory>
+#include<cstdlib>
+#include<ctime>
 
 
 // GLM

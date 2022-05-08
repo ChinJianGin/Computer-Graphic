@@ -14,6 +14,8 @@ namespace CustomSpace
         } ;
 
         virtual void SetType(const EnemyType type) = 0;
+        virtual void Behavior(const CoreTimer& timer) = 0;
+        virtual void SetOriginPosition(const glm::vec3& origin) = 0;
         virtual EnemyType GetType() const { return m_Type; }
 
         virtual void SetTarget(const Ref<Actor> target) { m_Target = target;}

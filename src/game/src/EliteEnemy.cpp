@@ -20,6 +20,7 @@ namespace CustomSpace
         m_Type = EnemyType::Elite;
 
         m_EliteEnemyTex = Texture2D::Create("../src/TextureSrc/EliteEnemyShip.png", GL_TEXTURE_2D, GL_TEXTURE11, GL_UNSIGNED_BYTE);
+        m_CAL = m_SAT;
     }
 
     void EliteEnemy::Update(const CoreTimer& timer)
@@ -30,6 +31,29 @@ namespace CustomSpace
             Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
             m_Body->GetVertexData()->m_Shader->SetInt("tex0", 11);
             m_EliteEnemyTex->UnBind();
+
+            glm::vec3 LocalPosition = m_Body->GetTransform()->m_Position;
+            m_CAL -= timer.GetTick();
+            if(m_CAL <= 0)
+            {
+                Projectile* get;
+                Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem();
+                for(int i = 0; i < 3; i++)
+                {
+                    get = ProSystem->GetFreeList()->front()->get();
+                    float r_x = (float)(rand() / (RAND_MAX + 1.f)) * 2.f - 1.f;
+                    if(get != nullptr)
+                    {
+                        get->SetTeamID(Projectile::TeamID::Enemy);
+                        get->SetPath(Projectile::Path::ShotGun);
+                        get->SetRandDirection(glm::vec3(r_x, 0, -.3f));
+                        get->SetPosition(LocalPosition);
+                        ProSystem->GetFreeList()->pop_front();
+                        ProSystem->GetUsedList()->push_back(get);
+                    }
+                }
+                m_CAL = m_SAT;
+            } 
         }
     }
 
@@ -76,5 +100,19 @@ namespace CustomSpace
     void EliteEnemy::SetType(EnemyType type)
     {
         m_Type = type;
+    }
+
+    void EliteEnemy::Behavior(const CoreTimer& timer)
+    {
+       if(m_OriginPosition == glm::vec3(0)) m_OriginPosition =  m_Body->GetTransform()->m_Position;
+       float _x = m_OriginPosition.x + (float)(cosf(m_RunTime));
+       float _y = m_OriginPosition.y + (float)(sinf(m_RunTime));
+       m_Body->SetPosition(glm::vec3(_x, _y, m_OriginPosition.z));
+       m_RunTime += timer.GetTick(); 
+    }
+
+    void EliteEnemy::SetOriginPosition(const glm::vec3& origin)
+    {
+
     }
 }

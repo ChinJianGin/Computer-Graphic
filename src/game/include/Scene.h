@@ -13,6 +13,7 @@
 
 
 constexpr uint8_t NORMAL_NUM = 20;
+constexpr uint8_t ELITE_NUM = 3;
 
 namespace CustomSpace
 {
@@ -39,19 +40,21 @@ namespace CustomSpace
             float m_FrameTime = 0, m_MoveSpeed = (9.6 / 20);
             float m_RunTime = 0;
             float m_PhaseTime = 0;
-
+            float m_NormalSpawnTime = 3.f;
 
             glm::vec3 m_Transform;
             float m_PlayerSpeed = 1.5f;
 
-            Ref<Enemy> m_Normal, m_Elite, m_Boss;
+            Ref<Enemy> m_Elite[ELITE_NUM], m_Boss;
             Ref<Enemy> m_Normals[NORMAL_NUM];
 
-            Scope<SinglyLinkedList<Ref<Enemy>>> m_UsedNormalEnemy;
+            Scope<SinglyLinkedList<Ref<Enemy>>> m_UsedNormalEnemy, m_FreeNormalEnemy, m_RandSpawnEnemy;
 
-            glm::vec3 m_OriginPosition[5] = {glm::vec3(0)};
+            glm::vec3 m_NormalOriginPosition[NORMAL_NUM] = { glm::vec3(0) };
+            glm::vec3 m_EliteOriginPosition[ELITE_NUM] = { glm::vec3(0) };
 
             bool m_PhaseActive[3] = { false };
+            uint8_t m_EliteCount = ELITE_NUM;
         protected:
 
     };

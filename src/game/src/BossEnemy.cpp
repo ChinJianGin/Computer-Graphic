@@ -97,4 +97,14 @@ namespace CustomSpace
     {
         m_Type = type;
     }
+
+    void BossEnemy::Behavior(const CoreTimer& timer)
+    {
+
+    }
+
+    void BossEnemy::SetOriginPosition(const glm::vec3& origin)
+    {
+
+    }
 }

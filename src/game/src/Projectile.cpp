@@ -25,34 +25,45 @@ namespace CustomSpace
         m_Body->SetPosition(glm::vec3(0, 0, 0));
         m_Body->SetScale(glm::vec3(.25f, .25f, 1));
         m_TeamID = TeamID::Neutral;
+        m_Path = Path::None;
     }
 
     void Projectile::Update(const CoreTimer& timer)
     {
-        if(m_TeamID == TeamID::Player)
+        if(m_Path == Path::None)
         {
-            glm::vec3 LocalPos = m_Body->GetTransform()->m_Position;
+            return;
+        }
+        
+        glm::vec3 LocalPos = m_Body->GetTransform()->m_Position;
+        if(m_Path == Path::Straight)
+        {
             float Velocity = (float)5 * timer.GetTick();
             m_Body->SetPosition(glm::vec3(LocalPos.x, LocalPos.y + Velocity, -.3f));
             m_Body->SetRotation(M_PI_4);
-            Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
-            m_Body->GetVertexData()->m_Shader->SetInt("tex0", 20);
         }
-        else
+        else if(m_Path == Path::ToTarget)
         {
-            glm::vec3 LocalPos = m_Body->GetTransform()->m_Position;
             if(m_Target != nullptr)
             {
                 glm::vec3 TargetPos = m_Target->GetTransform()->m_Position;
                 m_Direction = glm::normalize(TargetPos - LocalPos);
                 m_Target = nullptr;
             }
-
-            float Velocity = (float)6 * timer.GetTick();
-            m_Body->SetPosition(glm::vec3(LocalPos.x + (m_Direction.x * Velocity),LocalPos.y + (m_Direction.y * Velocity), -.3f));
-            Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
-            m_Body->GetVertexData()->m_Shader->SetInt("tex0", 21);
+                float Velocity = (float)6 * timer.GetTick();
+                m_Body->SetPosition(glm::vec3(LocalPos.x + (m_Direction.x * Velocity),LocalPos.y + (m_Direction.y * Velocity), -.3f));
         }
+        else if(m_Path == Path::ShotGun)
+        {
+            float Velocity = (float) 6 * timer.GetTick();
+            m_Body->SetPosition(glm::vec3(LocalPos.x + (m_Direction.x * Velocity), LocalPos.y - Velocity, -.3f));
+        }
+        
+        Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
+        if(m_TeamID == TeamID::Player)
+            m_Body->GetVertexData()->m_Shader->SetInt("tex0", 20);
+        else
+            m_Body->GetVertexData()->m_Shader->SetInt("tex0", 21);
     }
 
     void Projectile::SetTransform(const Ref<Transform>& trans)
@@ -100,6 +111,11 @@ namespace CustomSpace
         m_TeamID = id;
     }
 
+    void Projectile::SetPath(const Path path)
+    {
+        m_Path = path;
+    }
+
     void Projectile::SetOwner(const Ref<Actor> owner)
     {
         m_Owner = owner;
@@ -108,5 +124,10 @@ namespace CustomSpace
     void Projectile::SetTarget(const Ref<Actor> target)
     {
         m_Target = target;
+    }
+
+    void Projectile::SetRandDirection(const glm::vec3& dir)
+    {
+        m_Direction = dir;
     }
 }

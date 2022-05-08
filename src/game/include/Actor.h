@@ -31,6 +31,8 @@ namespace CustomSpace
 
         virtual void AttackAction() = 0;
         virtual void SetEnableActor(bool enable) { b_Enable = enable; }
+
+        virtual Ref<Shape> GetBody() const { return m_Body; }
         private:
 
         protected:

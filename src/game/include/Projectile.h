@@ -34,6 +34,13 @@ namespace CustomSpace
         void SetTeamID(const TeamID id);
         TeamID GetID() const { return m_TeamID; }
 
+        enum class Path : uint8_t
+        {
+            None = 0, Straight = 1, ToTarget = 2, ShotGun = 3
+        };
+
+        void SetPath(const Path path);
+
         void Active();
 
         void Reset();
@@ -44,9 +51,14 @@ namespace CustomSpace
 
         virtual void SetOwner(const Ref<Actor> owner); 
         virtual void SetTarget(const Ref<Actor> target);
+
+        void SetRandDirection(const glm::vec3& dir);
+
         protected:
 
         TeamID m_TeamID;
+
+        Path m_Path;
 
         Ref<Actor> m_Owner, m_Target;
 

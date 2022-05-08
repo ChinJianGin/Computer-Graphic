@@ -30,9 +30,15 @@ namespace CustomSpace
 
         virtual void SetType(const EnemyType type) override;
 
+        virtual void Behavior(const CoreTimer& timer) override;
+        virtual void SetOriginPosition(const glm::vec3& origin) override;
         private:
         Ref<Texture2D> m_NormalEnemyTex;
 
+        glm::vec3 m_OriginPosition = glm::vec3(0);
+
         float m_SAT = 3.f, m_Cal =  0;
+        float m_Runtim = 0;
+        float r_y = 0;
     };
 }

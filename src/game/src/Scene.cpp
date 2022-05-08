@@ -48,23 +48,20 @@ namespace CustomSpace
             m_Player->SetScale(glm::vec3(.45, .55, 0));
         }
 
-        m_Normal = CreateRef<NormalEnemy>(m_Factory);
-        if(m_Normal != nullptr)
-        {
-            m_Normal->SetPosition(glm::vec3(0.f, 3.f, -.4f));
-        }
-
         m_UsedNormalEnemy = CreateScope<SinglyLinkedList<Ref<Enemy>>>();
+        m_FreeNormalEnemy = CreateScope<SinglyLinkedList<Ref<Enemy>>>();
+        m_RandSpawnEnemy = CreateScope<SinglyLinkedList<Ref<Enemy>>>();
         for(int i = 0; i < NORMAL_NUM; i++)
         {
             m_Normals[i] = CreateRef<NormalEnemy>(m_Factory);
-            m_Normals[i]->SetPosition(glm::vec3(-2.f + (i * 0.25), 5.f, -.4f));
+            m_FreeNormalEnemy->push_back(m_Normals[i]);
         }
 
-        m_Elite = CreateRef<EliteEnemy>(m_Factory);
-        if(m_Elite != nullptr)
+        for(int i = 0; i < ELITE_NUM; i++)
         {
-            m_Elite->SetPosition(glm::vec3(-2, 3, -.4f));
+            m_Elite[i] = CreateRef<EliteEnemy>(m_Factory);
+            m_Elite[i]->SetPosition(glm::vec3((i - 1) * 1.2f, 5.f, -.4f));
+            m_EliteOriginPosition[i] = m_Elite[i]->GetTransform()->m_Position;
         }
 
         m_Boss = CreateRef<BossEnemy>(m_Factory);
@@ -134,123 +131,268 @@ namespace CustomSpace
         * @brief TimeLine 
         * 
         */
-        if(m_RunTime <= 30) // Phase 1
+//         if(m_RunTime <= 30) // Phase 1
+//         {
+// #pragma region OPENING
+//             m_PhaseTime += time.GetTick();
+//             uint8_t n = 0;
+//             glm::vec3 NormalPosition = glm::vec3(0);
+//             float _x = 0.f;
+//             float _y = 0.f;
+//             float _z = m_Normals[0]->GetTransform()->m_Position.z;
+//             Ref<Enemy> get;
+//             if(m_RunTime <= M_PI_2) // Normal enemies in
+//             {
+//                 if(!m_PhaseActive[0])
+//                 {
+//                     for(int i = 0; i < 5; i++)
+//                     {
+//                         n = i * 4;
+//                         get = m_FreeNormalEnemy->front()->get();
+//                         get->SetPosition(glm::vec3(-2.f + (n * 0.25f), 5.f, -.4f));
+//                         m_NormalOriginPosition[i] = get->GetTransform()->m_Position;
+
+//                         if(m_UsedNormalEnemy->size() < 5)
+//                         {
+//                             m_FreeNormalEnemy->pop_front();
+//                             m_UsedNormalEnemy->push_back(get);
+//                         }
+//                     }
+//                     m_PhaseTime = 0;
+//                     m_PhaseActive[0] = true;
+//                 }
+//                 else
+//                 {
+//                     uint8_t LocalCount = 0;
+//                     for(auto it = m_UsedNormalEnemy->begin(); it != m_UsedNormalEnemy->end(); ++it)
+//                     {
+//                         _y = m_NormalOriginPosition[LocalCount].y;
+//                         _x = m_NormalOriginPosition[LocalCount].x;
+//                         if(LocalCount % 2 == 1)
+//                         {
+//                             if(sinf(m_PhaseTime) <= 1)  //_y > .75f
+//                             {
+//                                 _y -= (float)(4.2f * sinf(m_PhaseTime));
+//                             }
+//                             else
+//                             {
+//                                 _y = .75f;
+//                             }
+//                         }
+//                         else
+//                         {
+//                             if(sinf(m_PhaseTime) <= 1) //_y > 2.25f
+//                             {
+//                                 _y -= (float)(2.2f * sinf(m_PhaseTime));
+//                             }
+//                             else
+//                             {
+//                                 _y = 2.25f;
+//                             }
+//                         }
+//                         it.getdata()->SetEnableActor(true);
+//                         it.getdata()->SetPosition(glm::vec3(_x, _y, _z));
+//                         it.getdata()->SetTarget(m_Player);
+//                         it.getdata()->Update(time);
+//                         LocalCount++;
+//                     }
+//                 }
+//             }
+//             else if(m_UsedNormalEnemy->size() > 0)
+//             {
+//                 if(m_RunTime <= 25) // Normal enemies stay
+//                 {
+//                     uint8_t i = 0;
+//                     if(!m_PhaseActive[1])
+//                     {
+//                         m_PhaseTime = 0;
+//                         for(auto it = m_UsedNormalEnemy->begin(); it != m_UsedNormalEnemy->end(); ++it)
+//                         {
+//                             m_NormalOriginPosition[i] = it.getdata()->GetTransform()->m_Position;
+//                             i++;
+//                         }
+//                         uint8_t i = 0;
+//                         m_PhaseActive[1] = true;
+//                     }
+
+//                     for(auto it = m_UsedNormalEnemy->begin(); it != m_UsedNormalEnemy->end(); ++it)
+//                     {
+//                         _x = m_NormalOriginPosition[i].x;
+//                         _y = m_NormalOriginPosition[i].y;
+//                         float sin_x = sinf(m_PhaseTime);
+//                         if(i % 2 == 1)
+//                         {
+//                             _x += (float)(.6f * sin_x);
+//                         }
+//                         else
+//                         {
+//                             _x -= (float)(.25f * sin_x);
+//                         }
+//                         it.getdata()->SetTarget(m_Player);
+//                         it.getdata()->SetPosition(glm::vec3(_x, _y, _z));
+//                         it.getdata()->Update(time);
+//                         i++;
+//                     }
+//                 }
+//                 else // Normal enemies out
+//                 {
+//                     if(m_UsedNormalEnemy->size() > 0)
+//                     {
+//                         for(auto it = m_UsedNormalEnemy->begin(); it != m_UsedNormalEnemy->end(); ++it)
+//                         {
+//                             _x = it.getdata()->GetTransform()->m_Position.x;
+//                             _y = it.getdata()->GetTransform()->m_Position.y;
+//                             _y += 1 * time.GetTick();
+//                             it.getdata()->SetPosition(glm::vec3(_x, _y, _z));
+//                             it.getdata()->Update(time);
+//                             if(_y >= 4.8f)
+//                             {
+//                                 it.getdata()->SetEnableActor(false);
+//                                 m_FreeNormalEnemy->push_front(it.getdata());
+//                                 m_UsedNormalEnemy->erase(it.get_current_node());
+//                             } 
+//                         }
+//                     } 
+//                 }
+//             }
+// #pragma endregion OPENING
+//             else  // random spawn normal enemy
+//             {
+//                 m_NormalSpawnTime -= time.GetTick();
+//                 if(m_NormalSpawnTime <= 0)
+//                 {
+//                     get = m_FreeNormalEnemy->front()->get();
+//                     float r_x = (float) ((rand() / (RAND_MAX + 1.f)) * 4.8f) - 2.6f;
+//                     glm::vec3 _Origin = glm::vec3(r_x, 5.f, -.4f);
+//                     get->SetPosition(_Origin);
+//                     get->SetOriginPosition(_Origin);
+//                     get->SetEnableActor(true);
+//                     m_FreeNormalEnemy->pop_front();
+//                     m_RandSpawnEnemy->push_back(get);
+//                     m_NormalSpawnTime = 3.f;
+//                 }
+//                 for(auto it = m_RandSpawnEnemy->begin(); it != m_RandSpawnEnemy->end(); ++it)
+//                 {
+//                     it.getdata()->SetTarget(m_Player);
+//                     it.getdata()->Update(time);
+//                     it.getdata()->Behavior(time);
+//                     if(it.getdata()->GetTransform()->m_Position.y >= 5.1f)
+//                     {
+//                         it.getdata()->SetEnableActor(false);
+//                         m_FreeNormalEnemy->push_back(it.getdata());
+//                         m_RandSpawnEnemy->erase(it.get_current_node());
+//                     }
+//                 }
+//             }
+//         }
+//         else if(m_RunTime <= 70) // Phase 2
+        if(m_RunTime <= 40.f)
         {
-#pragma region OPENING
             m_PhaseTime += time.GetTick();
-            uint8_t n = 0;
-            glm::vec3 NormalPosition = glm::vec3(0);
-            float _x = 0.f;
-            float _y = 0.f;
-            float _z = m_Normals[0]->GetTransform()->m_Position.z;
-            if(m_RunTime <= 2) // Normal enemies in
+            float _x = 0;
+            float _y = 0;
+            float _z = m_EliteOriginPosition[0].z;
+            if(!m_PhaseActive[2])
             {
-                for(int i = 0; i < 5; i++)
+                GAME_INFO("Phase two");
+                m_PhaseActive[2] = true;
+                m_PhaseTime = 0;
+            }
+            if(m_RunTime <= M_PI_2)
+            {
+                for(int i = 0; i < ELITE_NUM; i++)
                 {
-                    n = i * 4;
-                    NormalPosition = m_Normals[n]->GetTransform()->m_Position;
-                    _y = NormalPosition.y;
-                    _x = NormalPosition.x;
+                    _x = m_EliteOriginPosition[i].x;
+                    _y = m_EliteOriginPosition[i].y;
+                    float pre_y = m_Elite[i]->GetTransform()->m_Position.y;
                     if(i % 2 == 1)
                     {
-                        if(_y > .75f)
+                        _y -= (float)(2.5f * sinf(m_PhaseTime));
+                        if(_y > pre_y)
                         {
-                            _y -= (float)(.0015f * (sinf(m_RunTime) + 1.f));
-                        }
-                        else
-                        {
-                            _y = .75f;
+                            _y = pre_y;
                         }
                     }
                     else
                     {
-                        if(_y > 2.25f)
+                        _y -= (float)(4.5f * sinf(m_PhaseTime));
+                        if(_y > pre_y)
                         {
-                            _y -= (float)(.001f * (sinf(m_RunTime) + 1.f));
-                        }
-                        else
-                        {
-                            _y = 2.25f;
+                            _y = pre_y;
                         }
                     }
-                    m_Normals[n]->SetEnableActor(true);
-                    m_Normals[n]->SetPosition(glm::vec3(_x, _y, _z));
-                    m_Normals[n]->SetTarget(m_Player);
-                    m_Normals[n]->Update(time);
-                    if(m_UsedNormalEnemy->size() < 5)
-                        m_UsedNormalEnemy->push_back(m_Normals[n]);
+                    m_Elite[i]->SetEnableActor(true);
+                    m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
+                    m_Elite[i]->Update(time);
                 }
             }
-            else if(m_UsedNormalEnemy->size() > 0)
+            else
             {
-                if(m_RunTime <= 25) // Normal enemies stay
+                if(m_RunTime <= 35)
                 {
                     if(!m_PhaseActive[0])
                     {
-                        m_PhaseTime = m_PhaseTime - m_RunTime;
+                        for(int i = 0; i < ELITE_NUM; i++)
+                        {
+                            m_EliteOriginPosition[i] = m_Elite[i]->GetTransform()->m_Position;
+                        }
                         m_PhaseActive[0] = true;
+                        m_PhaseTime = 0;
+                        CORE_TRACE("One time");
                     }
-                    uint8_t i = 0;
-                    if(m_OriginPosition[0] == glm::vec3(0))
+                    else
                     {
-                        for(auto it = m_UsedNormalEnemy->begin(); it != m_UsedNormalEnemy->end(); ++it)
+                        if(m_EliteCount > 0)
                         {
-                            m_OriginPosition[i] = it.getdata()->GetTransform()->m_Position;
-                            i++;
-                        }
-                        uint8_t i = 0;
-                    }
-                    for(auto it = m_UsedNormalEnemy->begin(); it != m_UsedNormalEnemy->end(); ++it)
-                    {
-                        _x = m_OriginPosition[i].x;
-                        _y = m_OriginPosition[i].y;
-                        float sin_x = sinf(m_PhaseTime);
-                        if(i % 2 == 1)
-                        {
-                            _x += (float)(.6f * sin_x);
-                        }
-                        else
-                        {
-                            _x -= (float)(.25f * sin_x);
-                        }
-                        it.getdata()->SetTarget(m_Player);
-                        it.getdata()->SetPosition(glm::vec3(_x, _y, _z));
-                        it.getdata()->Update(time);
-                        i++;
-                    }
-                }
-                else // Normal enemies out
-                {
-                    if(m_UsedNormalEnemy->size() > 0)
-                    {
-                        for(auto it = m_UsedNormalEnemy->begin(); it != m_UsedNormalEnemy->end(); ++it)
-                        {
-                            _x = it.getdata()->GetTransform()->m_Position.x;
-                            _y = it.getdata()->GetTransform()->m_Position.y;
-                            _y += 1 * time.GetTick();
-                            it.getdata()->SetPosition(glm::vec3(_x, _y, _z));
-                            it.getdata()->Update(time);
-                                if(_y >= 4.8f)
+                            for(int i = 0; i < ELITE_NUM; i++)
+                            {
+                                if(i % 2 == 1)
                                 {
-                                    it.getdata()->SetEnableActor(false);
-                                    m_UsedNormalEnemy->erase(it.get_current_node());
-                                } 
+                                    _x = m_EliteOriginPosition[i].x + (float)(sinf(1.5f * m_PhaseTime)) * 1.5f;
+                                    _y = m_EliteOriginPosition[i].y - (float)(cosf(1.5f * m_PhaseTime) * sinf(1.5f * m_PhaseTime) * 1.25f);
+                                    m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
+                                }
+                                else
+                                {
+                                    float _sin = sinf(m_PhaseTime);
+                                    float _cos = cosf(m_PhaseTime);
+                                    if(i == 0)
+                                    {
+                                        _x = m_EliteOriginPosition[i].x - _sin;
+                                        _y = m_EliteOriginPosition[i].y + _sin * _cos;
+                                    }
+                                    else
+                                    {
+                                        _x = m_EliteOriginPosition[i].x + _sin;
+                                        _y = m_EliteOriginPosition[i].y + _sin * _cos;
+                                    }
+                                    m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
+                                }
+                                m_Elite[i]->Update(time);
+                            }
                         }
-                    } 
+                    }
+                }
+                else
+                {
+                    if(m_EliteCount > 0)
+                    {
+                        for(int i = 0; i < ELITE_NUM; i++)
+                        {
+                            _x = m_Elite[i]->GetTransform()->m_Position.x;
+                            _y = m_Elite[i]->GetTransform()->m_Position.y;
+                            _y += time.GetTick();
+                            m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
+                            m_Elite[i]->Update(time);
+
+                            if(_y >= 4.8)
+                            {
+                                m_Elite[i]->SetEnableActor(false);
+                            }
+                        }
+                    }
                 }
             }
-#pragma endregion OPENING
-            else  // random spawn normal enemy
-            {
-
-            }
-        }
-        else if(m_RunTime <= 70) // Phase 2
-        {
-            GAME_INFO("Phase two");
-            m_Normal->SetEnableActor(false);
-            m_Elite->SetEnableActor(true);
-            m_Elite->Update(time);
         }
         else // Boss Phase
         {

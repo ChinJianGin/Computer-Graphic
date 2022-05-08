@@ -9,6 +9,8 @@ int main()
 {
     CustomSpace::Log::Init();
 
+    srand(time(NULL));
+
     CORE_WARN("Initialized tag!");
     auto Game = new ShootingGame(WINDOW_WIDTH, WINDOW_HEIGHT, WidnowTitle, false, VSYNC);
 

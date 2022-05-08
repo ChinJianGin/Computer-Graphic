@@ -59,6 +59,7 @@ namespace CustomSpace
                 {
                     float _y = LocalPlayerPosition.y + (float)(i * (0.3));
                     get->SetTeamID(Projectile::TeamID::Player);
+                    get->SetPath(Projectile::Path::Straight);
                     get->SetPosition(glm::vec3(LocalPlayerPosition.x, _y, LocalPlayerPosition.z));
                     ProjectileSystem::GetProjectileSystem()->GetFreeList()->pop_front();
                     ProjectileSystem::GetProjectileSystem()->GetUsedList()->push_front(get);
