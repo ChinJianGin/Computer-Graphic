@@ -67,7 +67,10 @@ namespace CustomSpace
         m_Boss = CreateRef<BossEnemy>(m_Factory);
         if(m_Boss != nullptr)
         {
-            m_Boss->SetPosition(glm::vec3(0, 2, -.4f));
+            m_Boss->SetPosition(glm::vec3(0, -8.f, -.2f));
+            m_Boss->SetScale(glm::vec3(8.f, 8.f, 1.f));
+            m_Boss->SetRotation(M_PI);
+            m_BossOriginPosition = m_Boss->GetTransform()->m_Position;
         }
     }
     void Scene::Update(CoreTimer& time)
@@ -286,117 +289,161 @@ namespace CustomSpace
 //             }
 //         }
 //         else if(m_RunTime <= 70) // Phase 2
-        if(m_RunTime <= 40.f)
+        // if(m_RunTime <= 40.f)
+        // {
+        //     m_PhaseTime += time.GetTick();
+        //     float _x = 0;
+        //     float _y = 0;
+        //     float _z = m_EliteOriginPosition[0].z;
+        //     if(!m_PhaseActive[2])
+        //     {
+        //         GAME_INFO("Phase two");
+        //         m_PhaseActive[2] = true;
+        //         m_PhaseTime = 0;
+        //     }
+        //     if(m_RunTime <= M_PI_2)
+        //     {
+        //         for(int i = 0; i < ELITE_NUM; i++)
+        //         {
+        //             _x = m_EliteOriginPosition[i].x;
+        //             _y = m_EliteOriginPosition[i].y;
+        //             float pre_y = m_Elite[i]->GetTransform()->m_Position.y;
+        //             if(i % 2 == 1)
+        //             {
+        //                 _y -= (float)(2.5f * sinf(m_PhaseTime));
+        //                 if(_y > pre_y)
+        //                 {
+        //                     _y = pre_y;
+        //                 }
+        //             }
+        //             else
+        //             {
+        //                 _y -= (float)(4.5f * sinf(m_PhaseTime));
+        //                 if(_y > pre_y)
+        //                 {
+        //                     _y = pre_y;
+        //                 }
+        //             }
+        //             m_Elite[i]->SetEnableActor(true);
+        //             m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
+        //             m_Elite[i]->Update(time);
+        //         }
+        //     }
+        //     else
+        //     {
+        //         if(m_RunTime <= 35)
+        //         {
+        //             if(!m_PhaseActive[0])
+        //             {
+        //                 for(int i = 0; i < ELITE_NUM; i++)
+        //                 {
+        //                     m_EliteOriginPosition[i] = m_Elite[i]->GetTransform()->m_Position;
+        //                 }
+        //                 m_PhaseActive[0] = true;
+        //                 m_PhaseTime = 0;
+        //                 CORE_TRACE("One time");
+        //             }
+        //             else
+        //             {
+        //                 if(m_EliteCount > 0)
+        //                 {
+        //                     for(int i = 0; i < ELITE_NUM; i++)
+        //                     {
+        //                         if(i % 2 == 1)
+        //                         {
+        //                             _x = m_EliteOriginPosition[i].x + (float)(sinf(1.5f * m_PhaseTime)) * 1.5f;
+        //                             _y = m_EliteOriginPosition[i].y - (float)(cosf(1.5f * m_PhaseTime) * sinf(1.5f * m_PhaseTime) * 1.25f);
+        //                             m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
+        //                         }
+        //                         else
+        //                         {
+        //                             float _sin = sinf(m_PhaseTime);
+        //                             float _cos = cosf(m_PhaseTime);
+        //                             if(i == 0)
+        //                             {
+        //                                 _x = m_EliteOriginPosition[i].x - _sin;
+        //                                 _y = m_EliteOriginPosition[i].y + _sin * _cos;
+        //                             }
+        //                             else
+        //                             {
+        //                                 _x = m_EliteOriginPosition[i].x + _sin;
+        //                                 _y = m_EliteOriginPosition[i].y + _sin * _cos;
+        //                             }
+        //                             m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
+        //                         }
+        //                         m_Elite[i]->Update(time);
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         else
+        //         {
+        //             if(m_EliteCount > 0)
+        //             {
+        //                 for(int i = 0; i < ELITE_NUM; i++)
+        //                 {
+        //                     _x = m_Elite[i]->GetTransform()->m_Position.x;
+        //                     _y = m_Elite[i]->GetTransform()->m_Position.y;
+        //                     _y += time.GetTick();
+        //                     m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
+        //                     m_Elite[i]->Update(time);
+
+        //                     if(_y >= 4.8)
+        //                     {
+        //                         m_Elite[i]->SetEnableActor(false);
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        // else // Boss Phase
+        if(m_RunTime > 0)
         {
             m_PhaseTime += time.GetTick();
             float _x = 0;
             float _y = 0;
-            float _z = m_EliteOriginPosition[0].z;
-            if(!m_PhaseActive[2])
+            float _z = m_Boss->GetTransform()->m_Position.z;
+            if(m_RunTime < 13.5)
             {
-                GAME_INFO("Phase two");
-                m_PhaseActive[2] = true;
-                m_PhaseTime = 0;
-            }
-            if(m_RunTime <= M_PI_2)
-            {
-                for(int i = 0; i < ELITE_NUM; i++)
+                if(!m_PhaseActive[0])
                 {
-                    _x = m_EliteOriginPosition[i].x;
-                    _y = m_EliteOriginPosition[i].y;
-                    float pre_y = m_Elite[i]->GetTransform()->m_Position.y;
-                    if(i % 2 == 1)
+            GAME_INFO("Boss fight.");
+                    _x = m_BossOriginPosition.x;
+                    _y += m_Boss->GetTransform()->m_Position.y + time.GetTick() * 1.5f;
+                    m_Boss->SetPosition(glm::vec3(_x, _y, _z));
+                    if(_y >= 9)
                     {
-                        _y -= (float)(2.5f * sinf(m_PhaseTime));
-                        if(_y > pre_y)
-                        {
-                            _y = pre_y;
-                        }
-                    }
-                    else
-                    {
-                        _y -= (float)(4.5f * sinf(m_PhaseTime));
-                        if(_y > pre_y)
-                        {
-                            _y = pre_y;
-                        }
-                    }
-                    m_Elite[i]->SetEnableActor(true);
-                    m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
-                    m_Elite[i]->Update(time);
-                }
-            }
-            else
-            {
-                if(m_RunTime <= 35)
-                {
-                    if(!m_PhaseActive[0])
-                    {
-                        for(int i = 0; i < ELITE_NUM; i++)
-                        {
-                            m_EliteOriginPosition[i] = m_Elite[i]->GetTransform()->m_Position;
-                        }
                         m_PhaseActive[0] = true;
-                        m_PhaseTime = 0;
-                        CORE_TRACE("One time");
-                    }
-                    else
-                    {
-                        if(m_EliteCount > 0)
-                        {
-                            for(int i = 0; i < ELITE_NUM; i++)
-                            {
-                                if(i % 2 == 1)
-                                {
-                                    _x = m_EliteOriginPosition[i].x + (float)(sinf(1.5f * m_PhaseTime)) * 1.5f;
-                                    _y = m_EliteOriginPosition[i].y - (float)(cosf(1.5f * m_PhaseTime) * sinf(1.5f * m_PhaseTime) * 1.25f);
-                                    m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
-                                }
-                                else
-                                {
-                                    float _sin = sinf(m_PhaseTime);
-                                    float _cos = cosf(m_PhaseTime);
-                                    if(i == 0)
-                                    {
-                                        _x = m_EliteOriginPosition[i].x - _sin;
-                                        _y = m_EliteOriginPosition[i].y + _sin * _cos;
-                                    }
-                                    else
-                                    {
-                                        _x = m_EliteOriginPosition[i].x + _sin;
-                                        _y = m_EliteOriginPosition[i].y + _sin * _cos;
-                                    }
-                                    m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
-                                }
-                                m_Elite[i]->Update(time);
-                            }
-                        }
                     }
                 }
                 else
                 {
-                    if(m_EliteCount > 0)
+                    GAME_INFO("BOSS In");
+                    if(!m_PhaseActive[1])
                     {
-                        for(int i = 0; i < ELITE_NUM; i++)
-                        {
-                            _x = m_Elite[i]->GetTransform()->m_Position.x;
-                            _y = m_Elite[i]->GetTransform()->m_Position.y;
-                            _y += time.GetTick();
-                            m_Elite[i]->SetPosition(glm::vec3(_x, _y, _z));
-                            m_Elite[i]->Update(time);
-
-                            if(_y >= 4.8)
-                            {
-                                m_Elite[i]->SetEnableActor(false);
-                            }
-                        }
+                        m_Boss->SetScale(glm::vec3(1.f, 1.f, 1));
+                        m_Boss->SetRotation(0);
+                        m_Boss->SetPosition(glm::vec3(0.f, 5.f, -.4f));
+                        m_PhaseTime = 0;
+                        m_BossOriginPosition = m_Boss->GetTransform()->m_Position;
+                        m_PhaseActive[1] = true;
                     }
+                    float pre_y = m_Boss->GetTransform()->m_Position.y;
+                    _x = m_BossOriginPosition.x;
+                    _y = m_BossOriginPosition.y - (float)(sinf(m_PhaseTime) * 2.5f);
+                    if(_y > pre_y)
+                    {
+                        _y = pre_y;
+                    }
+                    m_Boss->SetPosition(glm::vec3(_x, _y, m_BossOriginPosition.z));
                 }
             }
-        }
-        else // Boss Phase
-        {
-            GAME_INFO("Boss fight.");
+            else
+            {
+                this->m_Boss->Behavior(time);
+            }
+            m_Boss->SetTarget(m_Player);
             m_Boss->SetEnableActor(true);
             m_Boss->Update(time);
         }

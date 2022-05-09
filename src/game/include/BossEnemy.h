@@ -37,5 +37,14 @@ namespace CustomSpace
         Ref<Texture2D> m_BossEnemyTex, m_BossGuardianTex;
 
         Ref<Shape> m_Guardian[2];
+
+        glm::vec3 m_OriginPosition = glm::vec3(0);
+
+        void SecondState();
+        bool b_Second = false;
+        bool b_DoOnce = false;
+        bool b_CanAttack = false;
+        uint8_t AttackType = 0;
+        float m_RunTime = 0, m_SAT = 3, m_CAL = 0, m_TypeOneCal = 0, m_TypeOneSAT = .5f, m_InerCAL = 0;
     };
 }

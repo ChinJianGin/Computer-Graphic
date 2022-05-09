@@ -52,6 +52,7 @@ namespace CustomSpace
 
             glm::vec3 m_NormalOriginPosition[NORMAL_NUM] = { glm::vec3(0) };
             glm::vec3 m_EliteOriginPosition[ELITE_NUM] = { glm::vec3(0) };
+            glm::vec3 m_BossOriginPosition = glm::vec3(0);
 
             bool m_PhaseActive[3] = { false };
             uint8_t m_EliteCount = ELITE_NUM;
