@@ -21,6 +21,7 @@ namespace CustomSpace
 
         m_EliteEnemyTex = Texture2D::Create("../src/TextureSrc/EliteEnemyShip.png", GL_TEXTURE_2D, GL_TEXTURE11, GL_UNSIGNED_BYTE);
         m_CAL = m_SAT;
+        m_HP = 30;
     }
 
     void EliteEnemy::Update(const CoreTimer& timer)
@@ -112,6 +113,16 @@ namespace CustomSpace
     }
 
     void EliteEnemy::SetOriginPosition(const glm::vec3& origin)
+    {
+
+    }
+
+    void EliteEnemy::Dead()
+    {
+
+    }
+
+    void EliteEnemy::TakeDamage()
     {
 
     }

@@ -33,8 +33,11 @@ namespace CustomSpace
 
         virtual void Behavior(const CoreTimer& timer) override;
         virtual void SetOriginPosition(const glm::vec3& origin) override;
+
+        virtual void Dead() override;
+        virtual void TakeDamage() override;
         private:
-        Ref<Texture2D> m_BossEnemyTex, m_BossGuardianTex;
+        Ref<Texture2D> m_BossEnemyTex, m_BossGuardianTex, m_BossGaurdianTex180;
 
         Ref<Shape> m_Guardian[2];
 
@@ -43,8 +46,10 @@ namespace CustomSpace
         void SecondState();
         bool b_Second = false;
         bool b_DoOnce = false;
-        bool b_CanAttack = false;
         uint8_t AttackType = 0;
+        uint8_t GaurdNum = 0;
         float m_RunTime = 0, m_SAT = 3, m_CAL = 0, m_TypeOneCal = 0, m_TypeOneSAT = .5f, m_InerCAL = 0;
+        float m_GaurdSAT = 4.f, m_GaurdCAL = 0, m_GaurdPAT = .3f, m_GaurdIner = 0, m_GaurdPATC = 0;
+        float m_SeconRunTime = 0;
     };
 }

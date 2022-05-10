@@ -58,6 +58,32 @@ namespace CustomSpace
             float Velocity = (float) 6 * timer.GetTick();
             m_Body->SetPosition(glm::vec3(LocalPos.x + (m_Direction.x * Velocity), LocalPos.y - Velocity, -.3f));
         }
+        else if(m_Path == Path::EStraight)
+        {
+            float Velocity = (float)5 * timer.GetTick();
+            if(LocalPos.x > 0)
+            {
+                if(LocalPos.y > 0)
+                {
+                    m_Body->SetPosition(glm::vec3(LocalPos.x + Velocity, LocalPos.y + Velocity, -.3f));
+                }
+                else
+                {
+                    m_Body->SetPosition(glm::vec3(LocalPos.x + Velocity, LocalPos.y - Velocity, -.3f));
+                }
+            }
+            else
+            {
+                if(LocalPos.y > 0)
+                {
+                    m_Body->SetPosition(glm::vec3(LocalPos.x - Velocity, LocalPos.y + Velocity, -.3f));
+                }
+                else
+                {
+                    m_Body->SetPosition(glm::vec3(LocalPos.x - Velocity, LocalPos.y - Velocity, -.3f));
+                }
+            }
+        }
         
         Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
         if(m_TeamID == TeamID::Player)

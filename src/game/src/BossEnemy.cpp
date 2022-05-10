@@ -22,12 +22,17 @@ namespace CustomSpace
         {
             m_Guardian[i] = factory->ShapeCreator<Quad>();
             m_Guardian[i]->SetScale(glm::vec3(.35f, .35f, 1));
+            m_Guardian[i]->ModelMatrixMethod(Shape::MatrixMethod::RTS);
         }
 
         m_BossEnemyTex = Texture2D::Create("../src/TextureSrc/BossEnemyShip.png", GL_TEXTURE_2D, GL_TEXTURE10, GL_UNSIGNED_BYTE);
         m_BossGuardianTex = Texture2D::Create("../src/TextureSrc/BossGuardianShip.png", GL_TEXTURE_2D, GL_TEXTURE11, GL_UNSIGNED_BYTE);
+        m_BossGaurdianTex180 = Texture2D::Create("../src/TextureSrc/BossGuardianShip_180.png", GL_TEXTURE_2D, GL_TEXTURE29, GL_UNSIGNED_BYTE);
         m_CAL = m_SAT;
         m_TypeOneCal = m_TypeOneSAT;
+        m_GaurdCAL = m_GaurdSAT;
+        m_GaurdPATC = m_GaurdPAT;
+        m_HP = 80;
     }
 
     void BossEnemy::Update(const CoreTimer& timer)
@@ -40,6 +45,19 @@ namespace CustomSpace
             m_BossEnemyTex->UnBind();
 
             glm::vec3 LocalPosition = m_Body->GetTransform()->m_Position;
+
+            if(this->m_HP < 40 && !b_Second)
+            {
+                b_Second = true;
+            }
+
+            if(!b_Second)
+            {
+
+            }
+            else
+            {
+            }
 
             if(b_CanAttack)
             {
@@ -101,6 +119,44 @@ namespace CustomSpace
                         AttackType = 0;
                     }
                 }
+
+                if(b_Second)
+                {
+                    if(m_GaurdCAL > 0)
+                    {
+                        m_GaurdIner = 0;
+                        m_GaurdCAL -= timer.GetTick();
+                    }
+                    else
+                    {
+                        Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem();
+                        Projectile* get;
+
+                        m_GaurdPATC -= timer.GetTick();
+                        m_GaurdIner += timer.GetTick();
+                        m_SeconRunTime += timer.GetTick();
+                        if(m_GaurdPATC <= 0)
+                        {
+                            get = ProSystem->GetFreeList()->front()->get();
+                            if(get != nullptr)
+                            {
+                                get->SetTeamID(Projectile::TeamID::Enemy);
+                                get->SetPath(Projectile::Path::EStraight);
+                                get->GetBody()->SetFatherModelMatrix(LocalPosition, true);
+                                get->SetPosition(glm::vec3(cosf(m_SeconRunTime) * 1.02f, sinf(m_SeconRunTime) * 1.02f, 0));
+                                ProSystem->GetFreeList()->pop_front();
+                                ProSystem->GetUsedList()->push_back(get);
+                            }
+                            m_GaurdPATC = m_GaurdPAT;
+                        }
+
+                        if(m_GaurdIner >= 6)
+                        {
+                            m_GaurdCAL = m_GaurdSAT;
+                            m_GaurdPATC = m_GaurdPAT;
+                        }
+                    }
+                }
             }
         }
     }
@@ -152,21 +208,35 @@ namespace CustomSpace
 
     void BossEnemy::Behavior(const CoreTimer& timer)
     {
-        if(!b_DoOnce)
+        if(!b_Second)
         {
-            m_OriginPosition = m_Body->GetTransform()->m_Position;
-            b_CanAttack = true;
-            b_DoOnce = true;
+            if(!b_DoOnce)
+            {
+                m_OriginPosition = m_Body->GetTransform()->m_Position;
+                b_CanAttack = true;
+                b_DoOnce = true;
+            }
+            float _x = m_OriginPosition.x;
+            float _y = m_OriginPosition.y;
+            float _z = m_OriginPosition.z;
+            float _sin = sinf(m_RunTime);
+            float _cos = cosf(m_RunTime);
+            _x += _sin * 1.8f;
+            _y += _sin * _cos;
+            m_Body->SetPosition(glm::vec3(_x, _y, _z));
+            m_RunTime += timer.GetTick();
         }
-        float _x = m_OriginPosition.x;
-        float _y = m_OriginPosition.y;
-        float _z = m_OriginPosition.z;
-        float _sin = sinf(m_RunTime);
-        float _cos = cosf(m_RunTime);
-        _x += _sin * 1.8f;
-        _y += _sin * _cos;
-        m_Body->SetPosition(glm::vec3(_x, _y, _z));
-        m_RunTime += timer.GetTick();
+        else
+        {
+            if(b_DoOnce)
+            {
+                m_RunTime = 0;
+                b_CanAttack = true;
+                b_DoOnce = false;
+            }
+            this->SecondState();
+            m_RunTime += timer.GetTick();
+        }
     }
 
     void BossEnemy::SetOriginPosition(const glm::vec3& origin)
@@ -180,16 +250,33 @@ namespace CustomSpace
         float _x = 1.f * m_Body->GetTransform()->m_Scale.x;
         float _y = 1.f * m_Body->GetTransform()->m_Scale.y;
         m_Guardian[0]->SetFatherModelMatrix(LocalBossPosition, true);
-        m_Guardian[0]->SetPosition(glm::vec3(_x, -_y, -.4f));
+        m_Guardian[0]->SetRotation(m_RunTime);
+        m_Guardian[0]->SetPosition(glm::vec3( 0.f, -_y, -.4f));
         m_Guardian[1]->SetFatherModelMatrix(LocalBossPosition, true);
-        m_Guardian[1]->SetPosition(glm::vec3(-_x, -_y, -.4f));
+        m_Guardian[1]->SetRotation(m_RunTime);
+        m_Guardian[1]->SetPosition(glm::vec3( 0.f, _y, -.4f));
 
         m_BossGuardianTex->Bind();
+        m_BossGaurdianTex180->Bind();
         for(int i = 0; i < 2; i++)
         {
             Renderer::Submit(m_Guardian[i]->GetVertexData()->m_Shader, m_Guardian[i]);
+            if(i == 0)
             m_Guardian[i]->GetVertexData()->m_Shader->SetInt("tex0", 11);
+            else
+            m_Guardian[i]->GetVertexData()->m_Shader->SetInt("tex0", 29);
         }
         m_BossGuardianTex->UnBind();
+        m_BossGaurdianTex180->UnBind();
+    }
+
+    void BossEnemy::Dead()
+    {
+
+    }
+
+    void BossEnemy::TakeDamage()
+    {
+        m_HP--;
     }
 }

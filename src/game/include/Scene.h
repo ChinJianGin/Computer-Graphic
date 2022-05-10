@@ -31,8 +31,9 @@ namespace CustomSpace
 
         private:
             Ref<Shape> m_Background, m_Background2;
-            Ref<Texture2D> m_Texture, m_Texture2, m_Projectile[2];
+            Ref<Texture2D> m_Texture, m_Texture2, m_Projectile[2], m_AddSpeedTex;
             Ref<APlayer> m_Player;
+            Ref<Shape> AddSpeed;
 
             Ref<ShapeFactory> m_Factory;
 
@@ -53,9 +54,15 @@ namespace CustomSpace
             glm::vec3 m_NormalOriginPosition[NORMAL_NUM] = { glm::vec3(0) };
             glm::vec3 m_EliteOriginPosition[ELITE_NUM] = { glm::vec3(0) };
             glm::vec3 m_BossOriginPosition = glm::vec3(0);
+            glm::vec3 m_BossSecondStateCal = glm::vec3(0);
 
             bool m_PhaseActive[3] = { false };
             uint8_t m_EliteCount = ELITE_NUM;
+
+            bool b_BossSecondState = false;
+            bool b_GameOver = false;
+            bool b_AddSpeed = false;
+            float CoolDown = 5.f, SpeedCal = 0;
         protected:
 
     };

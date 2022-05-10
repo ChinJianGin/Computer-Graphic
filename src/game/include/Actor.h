@@ -33,12 +33,18 @@ namespace CustomSpace
         virtual void SetEnableActor(bool enable) { b_Enable = enable; }
 
         virtual Ref<Shape> GetBody() const { return m_Body; }
+
+        virtual void CanAttack(bool can = false) { b_CanAttack = can; }
+        virtual void Dead() {}
+        virtual void TakeDamage() {}
+        virtual int GetHP() const { return m_HP; }
         private:
 
         protected:
 
         Ref<Shape> m_Body;    
-        bool b_Enable = false;
+        bool b_Enable = false, b_CanAttack = false;
+        int m_HP = 0;
     
     };
 }

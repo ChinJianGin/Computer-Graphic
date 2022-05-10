@@ -36,7 +36,7 @@ namespace CustomSpace
 
         enum class Path : uint8_t
         {
-            None = 0, Straight = 1, ToTarget = 2, ShotGun = 3
+            None = 0, Straight = 1, ToTarget = 2, ShotGun = 3, EStraight = 4
         };
 
         void SetPath(const Path path);

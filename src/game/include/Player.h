@@ -33,10 +33,15 @@ namespace CustomSpace
 
         bool OnKeyPressedEvent(KeyPressedEvent& event);
 
+        virtual void Dead() override;
+        virtual void TakeDamage() override;
+
+        void SetTarget(const Ref<Actor> target) { m_Target = target; }
         private:
-        Ref<Texture2D> m_PlayerTex, m_ShieldTex, m_SatelliteTex;
+        Ref<Texture2D> m_PlayerTex, m_ShieldTex, m_SatelliteTex, m_HitTex;
         Ref<Shape> m_Shield, m_Satellite[2];
         Ref<Shape> m_BoundingVolume;
+        Ref<Shape> m_Hit;
 
         glm::vec3 m_PlayerOriginPosition;
 
@@ -46,6 +51,19 @@ namespace CustomSpace
         float EffectTime = 0, ShiledCooldown = -1.f, SAT = 1.f;
 
         void ShieldRender();
+
+        bool damage = false;
+        float damagetime = 0;
+
+        bool b_LaunchRocket = false;
+        float RocketSAT = 0.005f, RocketCAL = 0;
+
+        bool b_LowHP = false;
+        bool b_Launch = false;
+
+        int RocketCount = 0;
         protected:
+
+        Ref<Actor> m_Target = nullptr;
     };
 }

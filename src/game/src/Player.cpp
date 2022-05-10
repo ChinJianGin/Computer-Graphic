@@ -29,9 +29,13 @@ namespace CustomSpace
             m_Satellite[i]->SetScale(glm::vec3(.25f, .25f, 0));
             CORE_WARN("Create satillite");
         }
+        m_Hit = factory->ShapeCreator<Quad>();
 
         m_ShieldTex = Texture2D::Create("../src/TextureSrc/Shield.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
         m_SatelliteTex = Texture2D::Create("../src/TextureSrc/Satellite.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
+        m_HitTex = Texture2D::Create("../src/TextureSrc/Hit.png", GL_TEXTURE_2D, GL_TEXTURE3, GL_UNSIGNED_BYTE);
+        m_HP = 30;
+        RocketCAL = RocketSAT;
     }
 
     void APlayer::Update(const CoreTimer& timer)
@@ -41,12 +45,27 @@ namespace CustomSpace
         m_PlayerTex->Bind();
         Renderer::Submit(m_Body->GetVertexData()->m_Shader, m_Body);
         m_Body->GetVertexData()->m_Shader->SetInt("tex0", 2);
+        if(b_LowHP)
+        m_Body->GetVertexData()->m_Shader->SetFloat("U_a", 0.5);
         m_PlayerTex->UnBind();
 
-        
         glm::vec3 LocalPlayerPosition = m_Body->GetTransform()->m_Position;
 
-        
+        if(damage)
+        {
+            damagetime += timer.GetTick();
+            m_HitTex->Bind();
+            m_Hit->SetPosition(glm::vec3(LocalPlayerPosition.x, LocalPlayerPosition.y, -.4f));
+            Renderer::Submit(m_Hit->GetVertexData()->m_Shader, m_Hit);
+            m_Hit->GetVertexData()->m_Shader->SetInt("tex0", 3);
+            m_HitTex->UnBind();
+            if(damagetime >= timer.GetDeltaTick())
+            {
+                damage = false;
+                damagetime = 0;
+            }
+        }
+
         if(Input::IsKeyDown(GLFW_KEY_Z) && !AttackAgain)
         {
             AttackAgain = true;
@@ -95,6 +114,49 @@ namespace CustomSpace
         {
             ShiledCooldown -= timer.GetTick();
         }
+
+        if(b_LaunchRocket)
+        {
+            RocketCAL -= timer.GetTick();
+            if(b_Launch)
+            {
+                Scope<ProjectileSystem>& ProSystem = ProjectileSystem::GetProjectileSystem();
+                Projectile* get;
+                get = ProSystem->GetFreeList()->front()->get();
+                if(get != nullptr)
+                {
+                    float _y = LocalPlayerPosition.y + (float)(2 * (0.3));
+                    get->SetTeamID(Projectile::TeamID::Player);
+                    get->SetPath(Projectile::Path::ToTarget);
+                    get->SetTarget(m_Target);
+                    get->SetPosition(glm::vec3(LocalPlayerPosition.x, _y, LocalPlayerPosition.z));
+                    ProSystem->GetFreeList()->pop_front();
+                    ProSystem->GetUsedList()->push_back(get);
+                    RocketCount++;
+                }
+            }
+
+            if(RocketCount == 2)
+            {
+                b_Launch = false;
+                RocketCount = 0;
+            }
+
+            if(RocketCAL <= 0)
+            {
+                b_LaunchRocket = false;
+                RocketCAL = RocketSAT;
+            }
+        }
+
+        if(m_HP < 15)
+        {
+            b_LowHP = true;
+        }
+        else
+        {
+            b_LowHP = false;
+        }
     }
 
     void APlayer::OnEvent(Event& event)
@@ -112,6 +174,12 @@ namespace CustomSpace
             m_BoundingVolume = m_Shield;
             ActiveShiled = true;
         }    
+
+        if(event.GetKeyCode() == GLFW_KEY_C && !b_LaunchRocket)
+        {
+            b_LaunchRocket = true;
+            b_Launch = true;
+        }
 
        return false;
     }
@@ -180,5 +248,19 @@ namespace CustomSpace
         }
         m_SatelliteTex->UnBind();
 
+    }
+
+    void APlayer::Dead()
+    {
+
+    }
+
+    void APlayer::TakeDamage()
+    {
+        if(!ActiveShiled)
+        {
+            m_HP--;
+            damage = true;
+        }
     }
 }

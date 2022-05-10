@@ -3,7 +3,7 @@
 #include"../../core/include/Core.h"
 #include"./Projectile.h"
 
-constexpr int PROJECTILE_NUM = 150;
+constexpr int PROJECTILE_NUM = 300;
 
 namespace CustomSpace
 {

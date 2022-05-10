@@ -21,6 +21,7 @@ namespace CustomSpace
 
         m_NormalEnemyTex = Texture2D::Create("../src/TextureSrc/NormalEnemyShip.png", GL_TEXTURE_2D, GL_TEXTURE10, GL_UNSIGNED_BYTE);
         m_Cal = m_SAT;
+        m_HP = 1;
     }
 
     void NormalEnemy::Update(const CoreTimer& timer)
@@ -112,5 +113,15 @@ namespace CustomSpace
         m_OriginPosition = origin;
         r_y = (float)((rand() / (RAND_MAX + 1.f)) * 3.5f) + 3.f;
 
+    }
+
+    void NormalEnemy::Dead()
+    {
+
+    }
+
+    void NormalEnemy::TakeDamage()
+    {
+        this->m_HP--;
     }
 }

@@ -32,6 +32,9 @@ namespace CustomSpace
 
         virtual void Behavior(const CoreTimer& timer) override;
         virtual void SetOriginPosition(const glm::vec3& origin) override;
+        
+        virtual void Dead() override;
+        virtual void TakeDamage() override;
         private:
         Ref<Texture2D> m_EliteEnemyTex;
         float m_SAT = 3.5f, m_CAL = 0;
