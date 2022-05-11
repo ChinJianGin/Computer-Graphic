@@ -1,8 +1,8 @@
-#include"../include/Game.h"
+#include "../include/Game.h"
 
-ShootingGame* ShootingGame::Instance = nullptr;
+ShootingGame *ShootingGame::Instance = nullptr;
 
-ShootingGame::ShootingGame(int width, int height, const char* title, bool screen, bool vsync)
+ShootingGame::ShootingGame(int width, int height, const char *title, bool screen, bool vsync)
 {
     using namespace CustomSpace;
     Instance = this;
@@ -23,74 +23,73 @@ ShootingGame::ShootingGame(int width, int height, const char* title, bool screen
     m_Factory = CreateRef<ShapeFactory>();
 
     m_Scene1 = CreateRef<Scene>();
-        
+
     CORE_WARN("Shooting game constructor done");
 }
 
 void ShootingGame::Close()
 {
-    B_Running =  false;
+    B_Running = false;
 }
 
 void ShootingGame::Run()
 {
-    while(B_Running)
+    while (B_Running)
     {
-        B_Running = !glfwWindowShouldClose((GLFWwindow*)M_Window->GetWindow());
+        B_Running = !glfwWindowShouldClose((GLFWwindow *)M_Window->GetWindow());
         CustomSpace::RenderCommand::SetClearColor(glm::vec4(0.f, 1.f, .7f, 1.f));
-        CustomSpace::RenderCommand::Clear();        
+        CustomSpace::RenderCommand::Clear();
 
         m_Timer->CalculateTimer();
 
-/***
- * Draw
-***/
+        /***
+         * Draw
+         ***/
         CustomSpace::Renderer::BeginScene(*m_Camera);
-        
+
         m_Scene1->Update(*m_Timer);
-       ///----------------------------------------
+        ///----------------------------------------
 
-        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE)) exit(EXIT_SUCCESS);
+        if (CustomSpace::Input::IsKeyDown(GLFW_KEY_ESCAPE))
+            exit(EXIT_SUCCESS);
 
-        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_A))
+        if (CustomSpace::Input::IsKeyDown(GLFW_KEY_A))
             m_Transform.x -= (float)m_MoveSpeed * m_Timer->GetTick();
-        else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_D))
+        else if (CustomSpace::Input::IsKeyDown(GLFW_KEY_D))
             m_Transform.x += (float)m_MoveSpeed * m_Timer->GetTick();
 
-        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
+        if (CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
             m_Transform.y += (float)m_MoveSpeed * m_Timer->GetTick();
-        else if(CustomSpace::Input::IsKeyDown(GLFW_KEY_S))
+        else if (CustomSpace::Input::IsKeyDown(GLFW_KEY_S))
             m_Transform.y -= (float)m_MoveSpeed * m_Timer->GetTick();
 
         // m_Camera->SetPosition(CameraPosition);
 
-        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_E))
+        if (CustomSpace::Input::IsKeyDown(GLFW_KEY_E))
             m_Rotation -= (float)m_RotationSpeed * m_Timer->GetTick();
-        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_Q))
+        if (CustomSpace::Input::IsKeyDown(GLFW_KEY_Q))
             m_Rotation += (float)m_RotationSpeed * m_Timer->GetTick();
 
-        //m_Camera->SetRotation(CameraRotation);
+        // m_Camera->SetRotation(CameraRotation);
 
-        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_UP))
+        if (CustomSpace::Input::IsKeyDown(GLFW_KEY_UP))
             m_Scale += (float)m_Timer->GetTick();
 
-        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_DOWN))
+        if (CustomSpace::Input::IsKeyDown(GLFW_KEY_DOWN))
             m_Scale -= (float)m_Timer->GetTick();
-            
 
-        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_R))
+        if (CustomSpace::Input::IsKeyDown(GLFW_KEY_R))
         {
             m_Transform = OriginTrans->m_Position;
             m_Rotation = OriginTrans->m_Rotation;
             // m_Scale = OriginTrans->m_Scale;
-        }    
+        }
 
-        M_Window->Update();        
+        M_Window->Update();
     }
 }
 
-
-void ShootingGame::OnEvent(CustomSpace::Event& e)
+void ShootingGame::OnEvent(CustomSpace::Event &e)
 {
     CustomSpace::EventDispatcher dispatcher(e);
     dispatcher.Dispatch<CustomSpace::KeyPressedEvent>(BIND_EVENT(ShootingGame::OnKeyPressedEvent));
@@ -98,9 +97,9 @@ void ShootingGame::OnEvent(CustomSpace::Event& e)
     m_Scene1->OnEvent(e);
 }
 
-bool ShootingGame::OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event)
+bool ShootingGame::OnKeyPressedEvent(CustomSpace::KeyPressedEvent &event)
 {
-    if(event.GetKeyCode() == GLFW_KEY_1)
+    if (event.GetKeyCode() == GLFW_KEY_1)
     {
         CORE_INFO("One event pressed");
     }
