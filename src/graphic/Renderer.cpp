@@ -32,13 +32,13 @@ namespace CustomSpace
         {
             shader->Activate();
             shader->SetMat4("uVP", m_SceneData->VPMatrix);
-            shader->SetMat4("uMV", shape->GetTransform()->m_ModelMatrix);
+            shader->SetMat4("uMV", shape->GetTransform()->GetModelMatrix());
         }
         else
         {
             shape->GetVertexData()->m_Shader->Activate();
             shape->GetVertexData()->m_Shader->SetMat4("uVP", m_SceneData->VPMatrix);
-            shape->GetVertexData()->m_Shader->SetMat4("uMV",  shape->GetTransform()->m_ModelMatrix);
+            shape->GetVertexData()->m_Shader->SetMat4("uMV",  shape->GetTransform()->GetModelMatrix());
         }
 
         shape->GetVertexData()->m_VAO->Bind(); 

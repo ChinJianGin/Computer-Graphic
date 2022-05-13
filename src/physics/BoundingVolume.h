@@ -1,6 +1,7 @@
 #pragma once
 
 #include"../core/include/Core.h"
+#include"./Transform.h"
 namespace CustomSpace
 {
     class BoundingObject

@@ -30,11 +30,14 @@
 // GLM
 #define GLM_EXT_INCLUDED
 #define GLM_ENABLE_EXPERIMENTAL
+#define GLM_GTX_quaternion
 #include <glm/gtx/hash.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #define BIT(x) (1 << x)
 
@@ -42,26 +45,6 @@
 
 namespace CustomSpace
 {
-    struct Transform
-    {
-        glm::mat4 m_ModelMatrix;
-        glm::vec3 m_Position;
-        glm::vec3 m_Axis;
-        glm::vec3 m_Scale;
-        float m_Rotation;
-
-        bool IsAChild;
-        glm::mat4 m_FatherTranslate;
-
-        Transform(const glm::vec3& pos = glm::vec3(0), float rotation = 0, const glm::vec3& axis = glm::vec3(0, 0, 1), glm::vec3 scale = glm::vec3(1, 1, 1), bool child = false)
-        : m_Position(pos), m_Rotation(rotation), m_Axis(axis), m_Scale(scale), IsAChild(child)
-        {
-            m_ModelMatrix = glm::translate(glm::mat4(1.f), pos)
-             * glm::rotate(glm::mat4(1.f), m_Rotation, m_Axis)
-             * glm::scale(glm::mat4(1.f), glm::vec3(m_Scale.x, m_Scale.y, m_Scale.z));
-        }
-    };
-
     struct PointsData
     {
         std::vector<GLfloat> Points;
@@ -87,10 +70,7 @@ namespace CustomSpace
 }
 
 // Custom
-//#include"vector2.hpp"
-//#include"vector3.hpp"
 #include"./Log.h"
-// #include"./LinkList.h"
 #include"./LinkedList.h"
 #include"./Input.h"
 #include"./Window.h"

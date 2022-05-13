@@ -11,7 +11,6 @@ namespace CustomSpace
     void Line::Init()
     {
         m_Type = Shape::ShapeType::Line;
-        m_Method = MatrixMethod::TRS;
         m_Transform = CreateRef<Transform>();
         m_VertexData = CreateRef<VertexData>();
         std::vector<GLfloat> Points = 
@@ -33,42 +32,16 @@ namespace CustomSpace
     void Line::SetPoints(const Ref<PointsData>& data)
     {
         m_PointsData = data;
-        this->LocalUpdate();
     }
 
-    void Line::SetTransform(const Ref<Transform>& trans)
+    void Line::SetModelMatrix(const glm::mat4& model)
     {
-        m_Transform->m_Position = trans->m_Position;
-        m_Transform->m_Rotation = trans->m_Rotation;
-        m_Transform->m_Scale = trans->m_Scale;
-        m_Transform->m_Axis = trans->m_Axis;
-        this->LocalUpdate();
+        m_Transform->SetModelMatrix(model);
     }
-    
+
     void Line::SetPosition(const glm::vec3& pos)
     {
-        m_Transform->m_Position = pos;
-        this->LocalUpdate();
-    }
-
-    void Line::SetPosition(const float pos, int axis)
-    {
-        switch(axis)
-        {
-            case 1:
-            m_Transform->m_Position.x = pos;
-            break;
-
-            case 2:
-            m_Transform->m_Position.y = pos;
-            break;
-
-            default:
-            break;
-        }
-
-        m_Bounding->ResizeBoundingVolume(m_Transform);
-        this->LocalUpdate();
+        m_Transform->SetPosition(pos);
     }
 
     void Line::SetColor(const std::vector<glm::vec4> colors)
@@ -78,15 +51,12 @@ namespace CustomSpace
 
     void Line::SetRotation(const float rotation, const glm::vec3& axis)
     {
-        m_Transform->m_Rotation = rotation;
-        m_Transform->m_Axis = axis;
-        this->LocalUpdate();
+        m_Transform->SetRotation(rotation, axis);
     }
     
     void Line::SetScale(const glm::vec3& scale)
     {
-        m_Transform->m_Scale = scale;
-        this->LocalUpdate();
+        m_Transform->SetScaleValue(scale);
     }
 
     GLfloat Line::GetLineWidth() const
@@ -98,41 +68,5 @@ namespace CustomSpace
     {
        m_LineWidth = width;
        glLineWidth(m_LineWidth); 
-    }
-
-    void Line::ModelMatrixMethod(const MatrixMethod method)
-    {
-        m_Method = method;
-    }
-
-    void Line::LocalUpdate()
-    {
-        if(m_Method == MatrixMethod::TRS)
-        {
-            this->GetTransform()->m_ModelMatrix = glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)
-                * glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
-                * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
-
-        }
-        else
-        {
-            if(m_Method == MatrixMethod::RTS)
-            {
-                this->GetTransform()->m_ModelMatrix = glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
-                    * glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)                    
-                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
-            }
-            else
-            {
-                this->GetTransform()->m_ModelMatrix = glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
-                    * glm::translate(glm::mat4(1.f), this->GetTransform()->m_Position)                    
-                    * glm::rotate(glm::mat4(1.f), this->GetTransform()->m_Rotation, this->GetTransform()->m_Axis)
-                    * glm::scale(glm::mat4(1.f), glm::vec3(this->GetTransform()->m_Scale));
-            }
-        }
-        if(this->GetTransform()->IsAChild)
-        {
-            this->GetTransform()->m_ModelMatrix = this->GetTransform()->m_FatherTranslate * this->GetTransform()->m_ModelMatrix;
-        }
     }
 }

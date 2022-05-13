@@ -7,9 +7,12 @@ namespace CustomSpace
     {
         public:
             OrthoCamera(float left, float right, float bottom, float top, float near = -1.f, float far = 1.f);
+            ~OrthoCamera() = default;
 
             void SetPosition(const glm::vec3& position) { m_Position = position; LocalUpdate(); }
             void SetRotation(float rotation) { m_Rotation = rotation; LocalUpdate(); }
+
+            void SetProjection(float left, float right, float bottom, float top, float near, float far);
 
             const glm::vec3& GetPosition() const { return m_Position; }
             float GetRotation() const { return m_Rotation; }
