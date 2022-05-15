@@ -10,6 +10,8 @@ namespace CustomSpace
         Ref<VAO> m_VAO;
         Ref<VBO> m_VBO;
         Ref<Shader> m_Shader;
+
+        std::vector<GLuint> indices;
     };
     class Shape
     {

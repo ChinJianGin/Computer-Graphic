@@ -4,4 +4,4 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 project(physics)
 
-add_library(physics BoundingVolume.cpp)
+add_library(physics BoundingVolume.cpp Transform.cpp)

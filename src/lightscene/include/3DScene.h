@@ -2,8 +2,11 @@
 
 #include"../../core/include/Core.h"
 #include"../../graphic/Renderer.h"
+#include"../../graphic/Texture.h"
+#include"../../client/include/Creator.h"
 #include"../../core/include/Event.h"
 #include"../../core/include/KeyEvent.h"
+#include"../../core/include/WindowEvent.h"
 
 class LightTestRoom
 {
@@ -15,6 +18,7 @@ class LightTestRoom
 
         void OnEvent(CustomSpace::Event& e);
         bool OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event);
+        bool OnWindowResizeEvent(CustomSpace::WindowResizeEvent& event);
 
         void Close();
 
@@ -23,7 +27,14 @@ class LightTestRoom
         CustomSpace::Windows& GetWindow() { return *m_Window; }
 
     private:
-        CustomSpace::Ref<CustomSpace::OrthoCamera> m_Camera;
+        CustomSpace::Ref<CustomSpace::OrthoCamera> m_OrthoCamera;
+        CustomSpace::Ref<CustomSpace::PerspectiveCamera> m_PersCamera;
+
+        CustomSpace::Scope<CustomSpace::ShapeFactory> m_Factory;
+        CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
+        CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
+
+        CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex;
 
         CustomSpace::Scope<CoreTimer> m_Timer;
 
@@ -31,4 +42,6 @@ class LightTestRoom
         CustomSpace::Scope<CustomSpace::Windows> m_Window;
 
         bool b_Running = true;
+
+        glm::vec3 m_CamPosition;
 };

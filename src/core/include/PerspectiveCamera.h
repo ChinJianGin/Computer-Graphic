@@ -1,3 +1,4 @@
+#pragma once
 #include"Core.h"
 
 namespace CustomSpace
@@ -16,6 +17,9 @@ namespace CustomSpace
             const glm::mat4& GetProjectionMatrix() const { return this->m_ProjectionMatrix; }
             const glm::mat4& GetViewMatrix() const { return this->m_View; }
             const glm::mat4& GetVPMatrix() const { return this->m_VP; }
+            const glm::vec3& GetPosition() const { return this->m_Position; }
+            const glm::vec3& GetLookAt() const { return this->m_LookAt; }
+            const glm::vec3& GetUp() const { return this->m_UpVector; }
         private:
 
             glm::mat4 m_ProjectionMatrix;

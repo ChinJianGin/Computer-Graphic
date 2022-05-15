@@ -3,10 +3,10 @@
 namespace CustomSpace
 {
     Transform::Transform(
-        const glm::vec3 &pos = glm::vec3(0),
-        const glm::vec3 &axis = glm::vec3(0, 0, 1),
-        const glm::vec3 &scale = glm::vec3(1, 1, 1),
-        float radian = 0) : m_Position(pos), m_Axis(axis), m_ScaleValue(scale), m_Radian(radian)
+        const glm::vec3 &pos,
+        const glm::vec3 &axis,
+        const glm::vec3 &scale,
+        float radian) : m_Position(pos), m_Axis(axis), m_ScaleValue(scale), m_Radian(radian)
     {
         m_Translate = glm::translate(glm::mat4(1), m_Position);
         m_Rotate = glm::rotate(glm::mat4(1), m_Radian, m_Axis);
@@ -76,7 +76,8 @@ namespace CustomSpace
 
     const glm::vec3& Transform::GetWorldPosition() const
     {
-        return glm::vec3(m_ModelMatrix * glm::vec4(m_Position, 1));
+        m_WorldPosition = glm::vec3(m_ModelMatrix * glm::vec4(m_Position, 1));
+        return m_WorldPosition;
     }
 
     const glm::quat& Transform::GetQuaternion() const

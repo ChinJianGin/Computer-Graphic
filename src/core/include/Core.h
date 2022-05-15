@@ -77,3 +77,4 @@ namespace CustomSpace
 #include"./Timer.h"
 #include"../../shader/ShaderClass.h"
 #include"./OrthoCamera.h"
+#include"./PerspectiveCamera.h"

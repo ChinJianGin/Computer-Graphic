@@ -1,4 +1,5 @@
 #include"../include/WindowInstance.h"
+#include"../include/WindowEvent.h"
 
 namespace CustomSpace
 {
@@ -11,6 +12,9 @@ namespace CustomSpace
         WindowProps& window = *(WindowProps*)glfwGetWindowUserPointer(_Window);
         window.Width = NewWidth;
         window.Height = NewHeight;
+
+        WindowResizeEvent event(NewWidth, NewHeight);
+        window.EventCallback(event);
     }
     static void FrameBufferResizeCallback(GLFWwindow* _Window, int NewWidth, int NewHeight)
     {
@@ -57,7 +61,9 @@ namespace CustomSpace
         M_Context->Init();
         glEnable(GL_DEPTH_TEST);
 
-        glViewport(0, 0, M_Prop.Width, M_Prop.Width);
+        int screenWidth, screenHeight;
+        glfwGetFramebufferSize(M_Window, &screenWidth, &screenHeight);
+        glViewport(0, 0, screenWidth, screenHeight);
 
         glfwSetWindowUserPointer(M_Window, &M_Prop);
 

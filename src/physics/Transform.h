@@ -38,6 +38,7 @@ namespace CustomSpace
         glm::mat4 m_Scale;
 
         glm::vec3 m_Position;
+        mutable glm::vec3 m_WorldPosition;
         glm::vec3 m_Axis;
         glm::vec3 m_ScaleValue;
         glm::vec3 m_Skew;

@@ -7,6 +7,7 @@ namespace CustomSpace
     enum class EventType
     {
         None = 0,
+        WindowResize,
         KeyPressed, KeyReleased,
         MouseButtonPressed, MouseButtonReleased
     };
@@ -17,7 +18,8 @@ namespace CustomSpace
         EventCategoryInput = BIT(0),
         EventCategoryKeyboard = BIT(1),
         EventCategoryMouse = BIT(2),
-        EventCategoryMouseButton = BIT(3)
+        EventCategoryMouseButton = BIT(3),
+        EventCategoryWindow = BIT(4)
     };
 
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; } \

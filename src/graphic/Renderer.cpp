@@ -21,6 +21,11 @@ namespace CustomSpace
         m_SceneData->VPMatrix = camera.GetVPMatrix();
     }
 
+    void Renderer::BeginScene(PerspectiveCamera& camera)
+    {
+        m_SceneData->VPMatrix = camera.GetVPMatrix();
+    }
+
     void Renderer::EndScene()
     {
 

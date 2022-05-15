@@ -94,10 +94,10 @@ namespace CustomSpace
         TempVBO->SetLayout(TempLayout);
         TempVAO->AddVBO(TempVBO);
 
-        std::vector<GLuint> Indices;
-        this->CalculateIndices(TemShape->GetType(), Indices);
+        // std::vector<GLuint> Indices;
+        // this->CalculateIndices(TemShape->GetType(), Indices);
 
-        Ref<EBO> TempEBO =  EBO::Create(&(Indices.front()), sizeof(GLuint) * Indices.size());
+        Ref<EBO> TempEBO =  EBO::Create(&(TemShape->GetVertexData()->indices.front()), sizeof(GLuint) * (TemShape->GetVertexData()->indices.size()));
         TempVAO->SetEBO(TempEBO);
 
         if(TemShape->GetType() == Shape::ShapeType::Triangle) 

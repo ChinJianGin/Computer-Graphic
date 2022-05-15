@@ -17,6 +17,6 @@ int main()
     GAME_WARN("Start Running");
     LightScene->Run();
 
-    glfwTerminate();
+    // glfwTerminate();
     return 0;
 }

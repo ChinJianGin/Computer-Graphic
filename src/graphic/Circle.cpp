@@ -22,6 +22,14 @@ namespace CustomSpace
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());
 
+        GLuint indices[] = 
+        {
+            0, 1, 2,
+            2, 3, 1
+        };
+
+        m_VertexData->indices.assign(indices, indices + 6);
+
         m_Bounding = CreateRef<BoundingObject>(m_Transform, m_PointsData, true);
 
         std::vector<glm::vec4> Colors =
