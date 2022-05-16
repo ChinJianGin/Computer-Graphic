@@ -9,7 +9,7 @@ namespace CustomSpace
         None = 0,
         WindowResize,
         KeyPressed, KeyReleased,
-        MouseButtonPressed, MouseButtonReleased
+        MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
     };
 
     enum EventCategory

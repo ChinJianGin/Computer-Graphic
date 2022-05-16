@@ -1,5 +1,6 @@
 #include"../include/Input.h"
 #include"../include/KeyEvent.h"
+#include"../include/MouseEvent.h"
 namespace CustomSpace
 {
     namespace Input
@@ -43,6 +44,9 @@ namespace CustomSpace
 
         void MousePosCallback(GLFWwindow* window, double x_pos, double y_pos)
         {
+            WindowProps& data = *(WindowProps*)glfwGetWindowUserPointer(window);
+            MouseMovedEvent event((float)x_pos, (float)y_pos);
+            data.EventCallback(event);
             MouseX = (float)x_pos;
             MouseY = (float)y_pos;
         }
@@ -51,12 +55,32 @@ namespace CustomSpace
         {
             if(button >= 0 && button < GLFW_MOUSE_BUTTON_LAST)
             {
-                MouseButtonPressedData[button] = action = GLFW_PRESS;
+                WindowProps& data = *(WindowProps*)glfwGetWindowUserPointer(window);
+                switch (action)
+                {
+                    case GLFW_PRESS:
+                    {
+                        MouseButtonPressedData[button] = action;
+                        MouseButtonPressedEvent event(button);
+                        data.EventCallback(event);       
+                        break;
+                    }
+                    case GLFW_RELEASE:
+                    {
+                        MouseButtonPressedData[button] = action;
+                        MouseButtonReleasedEvent event(button);
+                        data.EventCallback(event);
+                        break;
+                    }
+                }
             }
         }
 
         void MouseScrollCallback(GLFWwindow* window, double x_offset, double y_offset)
         {
+            WindowProps& data = *(WindowProps*)glfwGetWindowUserPointer(window);
+            MouseScrollEvent event((float)x_offset, (float)y_offset);
+            data.EventCallback(event);
             MouseScrollX = (float)x_offset;
             MouseScrollY = (float)y_offset;
         }

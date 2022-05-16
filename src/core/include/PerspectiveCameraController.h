@@ -2,6 +2,7 @@
 #include"./Core.h"
 #include"./PerspectiveCamera.h"
 #include"./Event.h"
+#include"./MouseEvent.h"
 
 namespace CustomSpace
 {
@@ -17,6 +18,10 @@ namespace CustomSpace
 
         void OnResize(int width, int height);
 
+        bool OnMouseInput(MouseButtonPressedEvent& event);
+        bool OnMouseMoved(MouseMovedEvent& event);
+        bool OnMouseScrolled(MouseScrollEvent& event);
+
         PerspectiveCamera& GetCamera() { return *this->m_Camera; }
         const PerspectiveCamera& GetCamera() const { return *this->m_Camera; }
         private:
@@ -31,6 +36,7 @@ namespace CustomSpace
 
         void LocalUpdate();
 
-        bool b_First = false;
+        bool b_Reset = false, b_ZoomUpdate = false, b_LookAtUpdate = false;
+
     };
 }

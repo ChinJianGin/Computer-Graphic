@@ -107,10 +107,8 @@ void LightTestRoom::Run()
         {
             m_CamPosition += -m_PersCamera->GetUp() * glm::vec3(m_Timer->GetTick());
         }
-        m_PersController->Update(*m_Timer);
 
         m_PersCamera->SetPosition(m_CamPosition);
-        // CORE_TRACE("Triangl position : X = {0} , Y = {1}", m_Triangle->GetTransform()->GetLocalPosition().x, m_Triangle->GetTransform()->GetLocalPosition().y);
 
         m_Window->Update();
     }
@@ -121,6 +119,8 @@ void LightTestRoom::OnEvent(CustomSpace::Event& e)
     CustomSpace::EventDispatcher dispatcher(e);
     dispatcher.Dispatch<CustomSpace::KeyPressedEvent>(BIND_EVENT(LightTestRoom::OnKeyPressedEvent));
     dispatcher.Dispatch<CustomSpace::WindowResizeEvent>(BIND_EVENT(LightTestRoom::OnWindowResizeEvent));
+
+    m_PersController->OnEvent(e);
 }
 
 bool LightTestRoom::OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event)
