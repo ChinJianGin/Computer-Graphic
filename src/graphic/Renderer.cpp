@@ -1,5 +1,4 @@
 #include"Renderer.h"
-#include"Render2D.h"
 
 namespace CustomSpace
 {
@@ -18,7 +17,7 @@ namespace CustomSpace
 
     void Renderer::BeginScene(OrthoCamera& camera)
     {
-        m_SceneData->VPMatrix = camera.GetVPMatrix();
+        Render2D::BeginScene(camera);
     }
 
     void Renderer::BeginScene(PerspectiveCamera& camera)

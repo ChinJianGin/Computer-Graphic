@@ -4,6 +4,7 @@
 #include "../shader/ShaderClass.h"
 #include"RenderCommand.h"
 #include "./OpenGLRenderCommand.h"
+#include"Render2D.h"
 #include "Shape.h"
 #include "Triangle.h"
 #include "Quad.h"

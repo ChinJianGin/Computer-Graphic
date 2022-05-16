@@ -15,7 +15,7 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     m_Factory = CreateScope<ShapeFactory>();
 
     m_Triangle = m_Factory->ShapeCreator<Triangle>();
-    m_Triangle->SetPosition(glm::vec3(-.5f, -.5f, -1.f));
+    m_Triangle->SetPosition(glm::vec3(-.5f, -.5f, 0.f));
     glm::mat4 _MM = m_Triangle->GetTransform()->GetTranslate() * m_Triangle->GetTransform()->GetRotate() * m_Triangle->GetTransform()->GetScale();
     m_Triangle->SetModelMatrix(_MM);
 
@@ -31,11 +31,16 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_OrthoCamera->SetPosition(glm::vec3(0, 0, -1.f));
 
-    m_PersCamera = CreateRef<PerspectiveCamera>(60.f, ((float)width / (float) height), 1.f, 1000.f);
+    // m_PersCamera = CreateRef<PerspectiveCamera>(60.f, ((float)width / (float) height), 1.f, 1000.f);
 
-    m_PersCamera->SetPosition(glm::vec3(0, 0, 0));
+    // m_PersCamera->SetPosition(glm::vec3(0, 0, 0));
 
-    m_CamPosition = m_PersCamera->GetPosition();
+    // m_CamPosition = m_PersCamera->GetPosition();
+    glm::vec3 CIP = glm::vec3(0);
+
+    m_PersController = CreateRef<PerspectiveCameraController>(width, height, 60.f, 1.f, 1000.f, CIP);
+
+    m_CamPosition = m_PersController->GetCamera().GetPosition();
 }
 
 LightTestRoom::~LightTestRoom()
@@ -65,16 +70,18 @@ void LightTestRoom::Run()
         m_Timer->CalculateTimer();
 
         // CustomSpace::Renderer::BeginScene(*m_OrthoCamera);
-        CustomSpace::Renderer::BeginScene(*m_PersCamera);
-
-        glm::mat4 _MM = m_Triangle->GetTransform()->GetTranslate() * m_Triangle->GetTransform()->GetRotate() * m_Triangle->GetTransform()->GetScale();
-        m_Triangle->SetModelMatrix(_MM);
-        CustomSpace::Renderer::Submit(m_Triangle->GetVertexData()->m_Shader, m_Triangle);
+        CustomSpace::PerspectiveCamera* m_PersCamera = &m_PersController->GetCamera();
+        CustomSpace::Renderer::BeginScene(m_PersController->GetCamera());
+        CustomSpace::Renderer::BeginScene(*m_OrthoCamera);
 
         m_StoneTex->Bind();
         CustomSpace::Renderer::Submit(m_Pyramid->GetVertexData()->m_Shader, m_Pyramid);
         m_Pyramid->GetVertexData()->m_Shader->SetInt("tex0", 0);
         m_StoneTex->UnBind();
+
+        // glm::mat4 _MM = m_Triangle->GetTransform()->GetTranslate() * m_Triangle->GetTransform()->GetRotate() * m_Triangle->GetTransform()->GetScale();
+        // m_Triangle->SetModelMatrix(_MM);
+        CustomSpace::Render2D::RenderTarget(m_Triangle->GetVertexData()->m_Shader, m_Triangle);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
         {
@@ -92,6 +99,15 @@ void LightTestRoom::Run()
         {
             m_CamPosition += glm::normalize(glm::cross(m_PersCamera->GetLookAt(), m_PersCamera->GetUp())) * glm::vec3(m_Timer->GetTick());
         }
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_SPACE))
+        {
+            m_CamPosition += m_PersCamera->GetUp() * glm::vec3(m_Timer->GetTick());
+        }
+        if(CustomSpace::Input::IsKeyDown(GLFW_KEY_LEFT_CONTROL))
+        {
+            m_CamPosition += -m_PersCamera->GetUp() * glm::vec3(m_Timer->GetTick());
+        }
+        m_PersController->Update(*m_Timer);
 
         m_PersCamera->SetPosition(m_CamPosition);
         // CORE_TRACE("Triangl position : X = {0} , Y = {1}", m_Triangle->GetTransform()->GetLocalPosition().x, m_Triangle->GetTransform()->GetLocalPosition().y);

@@ -7,6 +7,7 @@
 #include"../../core/include/Event.h"
 #include"../../core/include/KeyEvent.h"
 #include"../../core/include/WindowEvent.h"
+#include"../../core/include/PerspectiveCameraController.h"
 
 class LightTestRoom
 {
@@ -28,7 +29,7 @@ class LightTestRoom
 
     private:
         CustomSpace::Ref<CustomSpace::OrthoCamera> m_OrthoCamera;
-        CustomSpace::Ref<CustomSpace::PerspectiveCamera> m_PersCamera;
+        CustomSpace::Ref<CustomSpace::PerspectiveCameraController> m_PersController;
 
         CustomSpace::Scope<CustomSpace::ShapeFactory> m_Factory;
         CustomSpace::Ref<CustomSpace::Shape> m_Triangle;

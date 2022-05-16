@@ -17,5 +17,15 @@ namespace CustomSpace
             static void EndScene();
 
             static void RenderTarget(const Ref<Shape>& shape);
+            static void RenderTarget(const Ref<Shader>& shader, const Ref<Shape>& shape);
+
+        private:
+            struct TwoDSceneData
+            {
+                Ref<Shader> m_Shader;
+                glm::mat4 VPMatrix;
+            };
+
+            static Scope<TwoDSceneData> m_2DSceneData;
     };
 }
