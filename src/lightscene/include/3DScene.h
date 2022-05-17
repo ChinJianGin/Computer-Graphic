@@ -8,6 +8,7 @@
 #include"../../core/include/KeyEvent.h"
 #include"../../core/include/WindowEvent.h"
 #include"../../core/include/PerspectiveCameraController.h"
+#include"../../graphic/ModelLoad/Model.h"
 
 class LightTestRoom
 {
@@ -45,4 +46,9 @@ class LightTestRoom
         bool b_Running = true;
 
         glm::vec3 m_CamPosition;
+
+
+        // Model test
+        CustomSpace::Ref<Shader> m_ModelShader;
+        CustomSpace::Ref<CustomSpace::Model> m_HeadCrab;
 };

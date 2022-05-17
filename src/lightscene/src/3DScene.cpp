@@ -31,16 +31,15 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_OrthoCamera->SetPosition(glm::vec3(0, 0, -1.f));
 
-    // m_PersCamera = CreateRef<PerspectiveCamera>(60.f, ((float)width / (float) height), 1.f, 1000.f);
-
-    // m_PersCamera->SetPosition(glm::vec3(0, 0, 0));
-
-    // m_CamPosition = m_PersCamera->GetPosition();
     glm::vec3 CIP = glm::vec3(0);
 
     m_PersController = CreateRef<PerspectiveCameraController>(width, height, 60.f, 1.f, 1000.f, CIP);
 
     m_CamPosition = m_PersController->GetCamera().GetPosition();
+
+    m_ModelShader = CustomSpace::CreateRef<Shader>("../src/shader/3DModel.vert", "../src/shader/3DModel.frag");
+
+    m_HeadCrab = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/headcrab_noskeleton.obj");
 }
 
 LightTestRoom::~LightTestRoom()
@@ -79,9 +78,15 @@ void LightTestRoom::Run()
         m_Pyramid->GetVertexData()->m_Shader->SetInt("tex0", 0);
         m_StoneTex->UnBind();
 
-        // glm::mat4 _MM = m_Triangle->GetTransform()->GetTranslate() * m_Triangle->GetTransform()->GetRotate() * m_Triangle->GetTransform()->GetScale();
-        // m_Triangle->SetModelMatrix(_MM);
         CustomSpace::Render2D::RenderTarget(m_Triangle->GetVertexData()->m_Shader, m_Triangle);
+
+        m_ModelShader->Activate();
+        m_ModelShader->SetMat4("uVP", m_PersController->GetCamera().GetVPMatrix());
+        glm::mat4 model = glm::mat4(1.f);
+        model = glm::translate(model, glm::vec3(0.f));
+        model = glm::scale(model, glm::vec3(.05f));
+        m_ModelShader->SetMat4("uMV", model);
+        m_HeadCrab->Draw(*m_ModelShader);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
         {

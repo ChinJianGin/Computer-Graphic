@@ -15,4 +15,3 @@ add_subdirectory(physics)
 
 
 project(Practice1)
-

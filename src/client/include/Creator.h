@@ -84,12 +84,24 @@ namespace CustomSpace
         }
         else
         {
-            TempLayout = 
+            if(TemShape->GetType() == Shape::ShapeType::Model)
             {
-                {ShaderDataType::f_Vec3, "vPosition"},
-                {ShaderDataType::f_Vec3, "vColor"},
-                {ShaderDataType::f_Vec2, "vTexCoord"}
-            };
+                TempLayout = 
+                {
+                    {ShaderDataType::f_Vec3, "vPosition"},
+                    {ShaderDataType::f_Vec3, "vNormal"},
+                    {ShaderDataType::f_Vec2, "vTexCoord"}
+                };
+            }
+            else
+            {
+                TempLayout = 
+                {
+                    {ShaderDataType::f_Vec3, "vPosition"},
+                    {ShaderDataType::f_Vec3, "vColor"},
+                    {ShaderDataType::f_Vec2, "vTexCoord"}
+                };
+            }
         }
         TempVBO->SetLayout(TempLayout);
         TempVAO->AddVBO(TempVBO);

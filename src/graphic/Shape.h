@@ -35,7 +35,7 @@ namespace CustomSpace
 
             enum class ShapeType
             {
-                None = 0, Point = 1, Line = 2, Circle = 3, Triangle = 4, Quad = 5 
+                None = 0, Point = 1, Line = 2, Circle = 3, Triangle = 4, Quad = 5, Model = 6 
             };
 
             Shape();
