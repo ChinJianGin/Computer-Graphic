@@ -9,11 +9,13 @@ namespace CustomSpace
         public:
             ShapeFactory();
 
+            static ShapeFactory& Get() { return *Instance; }
+
             template<typename T>
-            Ref<Shape> ShapeCreator();
+            static Ref<Shape> ShapeCreator();
 
         private:
-
+            static ShapeFactory* Instance;
             void CalculateIndices(Shape::ShapeType type, std::vector<GLuint>& indices);
     };
 

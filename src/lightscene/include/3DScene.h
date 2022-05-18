@@ -50,5 +50,5 @@ class LightTestRoom
 
         // Model test
         CustomSpace::Ref<Shader> m_ModelShader;
-        CustomSpace::Ref<CustomSpace::Model> m_HeadCrab;
+        CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar;
 };

@@ -51,7 +51,7 @@ namespace CustomSpace
             else if(name == "texture_specular")
                 number == std::to_string(specularNr++);
 
-            shader.SetFloat(("material." + name + number).c_str(), i);
+            shader.SetFloat((name + number).c_str(), i);
             glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
         }
         glActiveTexture(GL_TEXTURE0);

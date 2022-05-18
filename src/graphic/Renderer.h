@@ -11,6 +11,7 @@
 #include "Line.h"
 #include "Circle.h"
 #include "3DModel.h"
+#include "Pyramid.h"
 
 namespace CustomSpace
 {

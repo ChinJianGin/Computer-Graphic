@@ -14,12 +14,13 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_Factory = CreateScope<ShapeFactory>();
 
-    m_Triangle = m_Factory->ShapeCreator<Triangle>();
+    m_Triangle = ShapeFactory::Get().ShapeCreator<Triangle>();
     m_Triangle->SetPosition(glm::vec3(-.5f, -.5f, 0.f));
     glm::mat4 _MM = m_Triangle->GetTransform()->GetTranslate() * m_Triangle->GetTransform()->GetRotate() * m_Triangle->GetTransform()->GetScale();
     m_Triangle->SetModelMatrix(_MM);
 
-    m_Pyramid = m_Factory->ShapeCreator<Pyramid>();
+    m_Pyramid = ShapeFactory::Get().ShapeCreator<Pyramid>();
+    m_Pyramid->SetPosition(glm::vec3(0.f, 0.f, -2.f));
     _MM = m_Pyramid->GetTransform()->GetTranslate();
     m_Pyramid->SetModelMatrix(_MM);
 
@@ -39,7 +40,9 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_ModelShader = CustomSpace::CreateRef<Shader>("../src/shader/3DModel.vert", "../src/shader/3DModel.frag");
 
-    m_HeadCrab = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/headcrab_noskeleton.obj");
+    m_HeadCrab = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/headcrab.obj");
+
+    m_Crowbar = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/crowbar.obj");
 }
 
 LightTestRoom::~LightTestRoom()
@@ -83,10 +86,14 @@ void LightTestRoom::Run()
         m_ModelShader->Activate();
         m_ModelShader->SetMat4("uVP", m_PersController->GetCamera().GetVPMatrix());
         glm::mat4 model = glm::mat4(1.f);
-        model = glm::translate(model, glm::vec3(0.f));
-        model = glm::scale(model, glm::vec3(.05f));
+        model = glm::translate(model, glm::vec3(2.f, 0.f, 2.f));
+        // model = glm::scale(model, glm::vec3(.05f));
         m_ModelShader->SetMat4("uMV", model);
         m_HeadCrab->Draw(*m_ModelShader);
+
+        model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, 2.f));
+        m_ModelShader->SetMat4("uMV", model);
+        m_Crowbar->Draw(*m_ModelShader);
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
         {
