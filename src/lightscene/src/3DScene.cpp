@@ -15,7 +15,7 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     m_Factory = CreateScope<ShapeFactory>();
 
     m_Triangle = ShapeFactory::Get().ShapeCreator<Triangle>();
-    m_Triangle->SetPosition(glm::vec3(-.5f, -.5f, 0.f));
+    m_Triangle->SetPosition(glm::vec3(-1.6f, -.9f, 0.f));
     glm::mat4 _MM = m_Triangle->GetTransform()->GetTranslate() * m_Triangle->GetTransform()->GetRotate() * m_Triangle->GetTransform()->GetScale();
     m_Triangle->SetModelMatrix(_MM);
 
@@ -43,6 +43,8 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     m_HeadCrab = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/headcrab.obj");
 
     m_Crowbar = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/crowbar.obj");
+
+    m_Interface = CreateScope<UserInterface>();
 }
 
 LightTestRoom::~LightTestRoom()
@@ -66,12 +68,8 @@ void LightTestRoom::Run()
 
         CustomSpace::WindowProps& prop = *(CustomSpace::WindowProps*)glfwGetWindowUserPointer((GLFWwindow*)m_Window->GetWindow());
 
-        // CORE_TRACE("width : {0} , height : {1}", prop.Width, prop.Height);
-        // CORE_TRACE("Mouse X : {0} , Mouse Y : {1}", CustomSpace::Input::MouseX, CustomSpace::Input::MouseY);
-
         m_Timer->CalculateTimer();
 
-        // CustomSpace::Renderer::BeginScene(*m_OrthoCamera);
         CustomSpace::PerspectiveCamera* m_PersCamera = &m_PersController->GetCamera();
         CustomSpace::Renderer::BeginScene(m_PersController->GetCamera());
         CustomSpace::Renderer::BeginScene(*m_OrthoCamera);
@@ -81,13 +79,13 @@ void LightTestRoom::Run()
         m_Pyramid->GetVertexData()->m_Shader->SetInt("tex0", 0);
         m_StoneTex->UnBind();
 
-        CustomSpace::Render2D::RenderTarget(m_Triangle->GetVertexData()->m_Shader, m_Triangle);
+        // CustomSpace::Render2D::RenderTarget(m_Triangle->GetVertexData()->m_Shader, m_Triangle);
+        m_Interface->OnUpdate(*m_Timer);
 
         m_ModelShader->Activate();
         m_ModelShader->SetMat4("uVP", m_PersController->GetCamera().GetVPMatrix());
         glm::mat4 model = glm::mat4(1.f);
         model = glm::translate(model, glm::vec3(2.f, 0.f, 2.f));
-        // model = glm::scale(model, glm::vec3(.05f));
         m_ModelShader->SetMat4("uMV", model);
         m_HeadCrab->Draw(*m_ModelShader);
 
@@ -133,6 +131,7 @@ void LightTestRoom::OnEvent(CustomSpace::Event& e)
     dispatcher.Dispatch<CustomSpace::WindowResizeEvent>(BIND_EVENT(LightTestRoom::OnWindowResizeEvent));
 
     m_PersController->OnEvent(e);
+    m_Interface->OnEvent(e);
 }
 
 bool LightTestRoom::OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event)
@@ -151,8 +150,7 @@ bool LightTestRoom::OnWindowResizeEvent(CustomSpace::WindowResizeEvent& event)
     {
         return false;
     }
+    m_OrthoCamera->SetProjection(event.GetWidth(), event.GetHeight(), -1.f, 1.f, -1.f, 1.f);
 
-    CORE_TRACE("Resize event");
-    // CustomSpace::Renderer::
     return false;
 }

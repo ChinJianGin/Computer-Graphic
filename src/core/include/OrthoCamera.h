@@ -12,7 +12,8 @@ namespace CustomSpace
             void SetPosition(const glm::vec3& position) { m_Position = position; LocalUpdate(); }
             void SetRotation(float rotation) { m_Rotation = rotation; LocalUpdate(); }
 
-            void SetProjection(float left, float right, float bottom, float top, float near, float far);
+            void SetProjection(float left, float right, float bottom, float top, float near = -1.f, float far = 1.f);
+            void SetProjection(unsigned int width, unsigned int height, float left, float right, float bottom, float top, float near = -1.f, float far = 1.f);
 
             const glm::vec3& GetPosition() const { return m_Position; }
             float GetRotation() const { return m_Rotation; }
@@ -21,7 +22,7 @@ namespace CustomSpace
             const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
             const glm::mat4& GetVPMatrix() const { return m_VPMatrix; }
         private:
-            glm::mat4 m_ViewMatrix;
+            glm::mat4 m_ViewMatrix = glm::inverse(glm::mat4(1.f));
             glm::mat4 m_ProjectionMatrix;
             glm::mat4 m_VPMatrix;
 

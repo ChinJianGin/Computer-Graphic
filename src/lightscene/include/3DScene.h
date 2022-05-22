@@ -9,6 +9,7 @@
 #include"../../core/include/WindowEvent.h"
 #include"../../core/include/PerspectiveCameraController.h"
 #include"../../graphic/ModelLoad/Model.h"
+#include"../../client/include/Interface.h"
 
 class LightTestRoom
 {
@@ -39,6 +40,8 @@ class LightTestRoom
         CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex;
 
         CustomSpace::Scope<CoreTimer> m_Timer;
+
+        CustomSpace::Scope<CustomSpace::UserInterface> m_Interface;
 
         static LightTestRoom* Instance;
         CustomSpace::Scope<CustomSpace::Windows> m_Window;

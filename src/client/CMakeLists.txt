@@ -4,4 +4,4 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 project(client)
 
-add_library(client ./src/Creator.cpp)
+add_library(client ./src/Creator.cpp ./src/Button.cpp ./src/Interface.cpp)
