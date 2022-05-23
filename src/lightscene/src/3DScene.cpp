@@ -130,8 +130,9 @@ void LightTestRoom::OnEvent(CustomSpace::Event& e)
     dispatcher.Dispatch<CustomSpace::KeyPressedEvent>(BIND_EVENT(LightTestRoom::OnKeyPressedEvent));
     dispatcher.Dispatch<CustomSpace::WindowResizeEvent>(BIND_EVENT(LightTestRoom::OnWindowResizeEvent));
 
-    m_PersController->OnEvent(e);
     m_Interface->OnEvent(e);
+    if(!m_Interface->IsFocusOnInterface())
+        m_PersController->OnEvent(e);
 }
 
 bool LightTestRoom::OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event)

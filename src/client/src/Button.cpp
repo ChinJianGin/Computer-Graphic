@@ -1,5 +1,5 @@
-#include"../include/Button.h"
-#include"../../graphic/Quad.h"
+#include "../include/Button.h"
+#include "../../graphic/Quad.h"
 namespace CustomSpace
 {
     Button::Button()
@@ -14,32 +14,37 @@ namespace CustomSpace
         m_OriginRT = glm::vec3(m_Body->GetPointsData()->Points[24], m_Body->GetPointsData()->Points[25], m_Body->GetPointsData()->Points[26]);
     }
 
-    void Button::OnUpdate(CoreTimer& timer)
+    void Button::OnUpdate(CoreTimer &timer)
     {
-
     }
 
-    bool Button::OnClicked(const glm::vec2& cpos)
+    bool Button::OnClicked(const glm::vec2 &cpos)
     {
+        if (cpos.x >= m_WorldLB.x && cpos.x <= m_WorldRT.x && cpos.y >= m_WorldLB.y && cpos.y <= m_WorldRT.y)
+        {
+            CORE_INFO("Clicked the button");
+            return true;
+        }
+
         return false;
     }
 
-    void Button::SetPosition(const glm::vec3& pos)
+    void Button::SetPosition(const glm::vec3 &pos)
     {
         m_Body->SetPosition(pos);
     }
 
-    void Button::SetRotation(const float rotation, const glm::vec3& axis)
+    void Button::SetRotation(const float rotation, const glm::vec3 &axis)
     {
         m_Body->SetRotation(rotation, axis);
     }
 
-    void Button::SetScale(const glm::vec3& scale)
+    void Button::SetScale(const glm::vec3 &scale)
     {
         m_Body->SetScale(scale);
     }
 
-    void Button::SetModelMatrix(const glm::mat4& model)
+    void Button::SetModelMatrix(const glm::mat4 &model)
     {
         m_Body->SetModelMatrix(model);
         m_WorldLB = glm::vec3(model * glm::vec4(m_OriginLB, 1.f));
@@ -48,7 +53,7 @@ namespace CustomSpace
         CORE_WARN("World RT X : {0} , Y : {1}", m_WorldRT.x, m_WorldRT.y);
     }
 
-    void Button::SetParentTransform(const Ref<Transform>& parent)
+    void Button::SetParentTransform(const Ref<Transform> &parent)
     {
         m_Body->SetParentTransform(parent);
     }
