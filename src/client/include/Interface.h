@@ -34,5 +34,7 @@ namespace CustomSpace
         float m_Aspecratio, m_MouseX, m_MouseY;
 
         bool b_FocusInterface = false;
+
+        std::vector<glm::vec4> m_ButtonColors; 
     };
 }

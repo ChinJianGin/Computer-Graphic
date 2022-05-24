@@ -1,5 +1,6 @@
 #include "../include/Interface.h"
 #include "../../lightscene/include/3DScene.h"
+#include "../../shader/ShaderPool.h"
 
 namespace CustomSpace
 {
@@ -10,6 +11,13 @@ namespace CustomSpace
 
     void UserInterface::Init()
     {
+        m_ButtonColors = 
+        {
+            glm::vec4(1.f, 0.f, 0.f, 1.f),
+            glm::vec4(0.f, 1.f, 0.f, 1.f),
+            glm::vec4(0.f, 0.f, 1.f, 1.f),
+            glm::vec4(0.f, 1.f, 1.f, 1.f)
+        };
         float _x = 1.5f, _y = .8f, _z = 0.f;
         float _xscale = .35f, _yscale = .2f;
         Ref<Button> button = CreateRef<Button>();
@@ -48,8 +56,10 @@ namespace CustomSpace
     {
         for (int i = 0; i < m_Buttons.size(); i++)
         {
-            Render2D::RenderTarget(m_Buttons[i]->GetBody()->GetVertexData()->m_Shader, m_Buttons[i]->GetBody());
-            m_Buttons[i]->GetBody()->GetVertexData()->m_Shader->SetInt("HaveTex", 0);
+            ShaderPool::Get().getShader(3)->Activate();
+            ShaderPool::Get().getShader(3)->SetInt("HaveTex", false);
+            ShaderPool::Get().getShader(3)->SetFloat4("uColor", m_ButtonColors[i]);
+            Render2D::RenderTarget(ShaderPool::Get().getShader(3), m_Buttons[i]->GetBody());
         }
     }
 

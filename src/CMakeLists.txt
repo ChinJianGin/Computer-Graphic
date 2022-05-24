@@ -12,6 +12,7 @@ add_subdirectory(lightscene)
 # add_subdirectory(game)
 add_subdirectory(graphic)
 add_subdirectory(physics)
+add_subdirectory(light)
 
 
 project(Practice1)

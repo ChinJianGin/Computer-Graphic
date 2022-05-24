@@ -9,7 +9,6 @@ namespace CustomSpace
     {
         Ref<VAO> m_VAO;
         Ref<VBO> m_VBO;
-        Ref<Shader> m_Shader;
 
         std::vector<GLuint> indices;
     };
@@ -35,7 +34,7 @@ namespace CustomSpace
 
             enum class ShapeType
             {
-                None = 0, Point = 1, Line = 2, Circle = 3, Triangle = 4, Quad = 5, Model = 6 
+                None = 0, Point = 1, Line = 2, Circle = 3, Triangle = 4, Quad = 5, Model = 6, Light = 7
             };
 
             Shape();

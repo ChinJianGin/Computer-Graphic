@@ -11,13 +11,29 @@ namespace CustomSpace
     {
         m_Transform = CreateRef<Transform>();
         m_VertexData = CreateRef<VertexData>();
+        m_Type = ShapeType::Model;
         std::vector<GLfloat> Points =
             {
-                -.5f, 0.f, .5f, .83f, .7f, .44f, 0.f, 0.f,
-                -.5f, 0.f, -.5f, .83f, .7f, .44f, 5.f, 0.f,
-                .5f, 0.f, -.5f, .83f, .7f, .44f, 0.f, 0.f,
-                .5f, 0.f, .5f, .83f, .7f, .44f, 5.f, 0.f,
-                0.f, .8f, 0.f, .92f, .86f, .76f, 2.5f, 5.f};
+                -.5f, 0.f,  .5f,    1.f, 1.f, 1.f,      0.f, 0.f,   0.f, -1.f, 0.f,
+                -.5f, 0.f, -.5f,    1.f, 1.f, 1.f,      0.f, 5.f,   0.f, -1.f, 0.f,
+                 .5f, 0.f, -.5f,    1.f, 1.f, 1.f,      5.f, 5.f,   0.f, -1.f, 0.f,
+                 .5f, 0.f,  .5f,    1.f, 1.f, 1.f,      5.f, 0.f,   0.f, -1.f, 0.f,
+
+                -.5f, 0.f,  .5f,    1.f, 1.f, 1.f,      0.f, 0.f,   -0.8f, .5f, 0.f,
+                -.5f, 0.f, -.5f,    1.f, 1.f, 1.f,      5.f, 0.f,   -0.8f, .5f, 0.f,
+                 0.f, .8f,  0.f,    1.f, 1.f, 1.f,     2.5f, 5.f,   -0.8f, .5f, 0.f,
+
+                -.5f, 0.f, -.5f,    1.f, 1.f, 1.f,      5.f, 0.f,   0.f, .5f, -.8f,
+                 .5f, 0.f, -.5f,    1.f, 1.f, 1.f,      0.f, 0.f,   0.f, .5f, -.8f,
+                 0.f, .8f,  0.f,    1.f, 1.f, 1.f,     2.5f, 5.f,   0.f, .5f, -.8f,
+
+                .5f, 0.f, -.5f,     1.f, 1.f, 1.f,      0.f, 0.f,   .8f, .5f, 0.f,
+                .5f, 0.f,  .5f,     1.f, 1.f, 1.f,      5.f, 0.f,   .8f, .5f, 0.f,
+                0.f, .8f,  0.f,     1.f, 1.f, 1.f,     2.5f, 5.f,   .8f, .5f, 0.f,
+
+                 .5f, 0.f, .5f,     1.f, 1.f, 1.f,      5.f, 0.f,   0.f, .5f, .8f,
+                -.5f, 0.f, .5f,     1.f, 1.f, 1.f,      0.f, 0.f,   0.f, .5f, .8f,
+                 0.f, .8f, 0.f,     1.f, 1.f, 1.f,     2.5f, 5.f,   0.f, .5f, .8f};
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());
 
@@ -25,10 +41,10 @@ namespace CustomSpace
             {
                 0, 1, 2,
                 0, 2, 3,
-                0, 1, 4,
-                1, 2, 4,
-                2, 3, 4,
-                3, 0, 4};
+                4, 6, 5,
+                7, 9, 8,
+                10, 12, 11,
+                13, 15, 14};
 
         m_VertexData->indices.assign(indices, indices + 18);
 

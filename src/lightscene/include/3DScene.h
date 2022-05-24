@@ -10,6 +10,7 @@
 #include"../../core/include/PerspectiveCameraController.h"
 #include"../../graphic/ModelLoad/Model.h"
 #include"../../client/include/Interface.h"
+#include"../../shader/ShaderPool.h"
 
 class LightTestRoom
 {
@@ -35,13 +36,15 @@ class LightTestRoom
 
         CustomSpace::Scope<CustomSpace::ShapeFactory> m_Factory;
         CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
-        CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
+        CustomSpace::Ref<CustomSpace::Shape> m_Pyramid, m_LightBox;
 
         CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex;
 
         CustomSpace::Scope<CoreTimer> m_Timer;
 
         CustomSpace::Scope<CustomSpace::UserInterface> m_Interface;
+
+        CustomSpace::Scope<ShaderPool> m_ShaderPool;
 
         static LightTestRoom* Instance;
         CustomSpace::Scope<CustomSpace::Windows> m_Window;
@@ -52,6 +55,5 @@ class LightTestRoom
 
 
         // Model test
-        CustomSpace::Ref<Shader> m_ModelShader;
         CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar;
 };

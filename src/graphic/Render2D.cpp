@@ -1,5 +1,5 @@
 #include "Render2D.h"
-
+#include"../shader/ShaderPool.h"
 namespace CustomSpace
 {
     Scope<Render2D::TwoDSceneData> Render2D::m_2DSceneData = CreateScope<Render2D::TwoDSceneData>();
@@ -22,7 +22,7 @@ namespace CustomSpace
 
     void Render2D::RenderTarget(const Ref<Shape> &shape)
     {
-        if(m_2DSceneData->m_Shader == nullptr) m_2DSceneData->m_Shader = shape->GetVertexData()->m_Shader;
+        if(m_2DSceneData->m_Shader == nullptr) m_2DSceneData->m_Shader = ShaderPool::Get().getShader(3);
         m_2DSceneData->m_Shader->SetMat4("uVP", m_2DSceneData->VPMatrix);
         m_2DSceneData->m_Shader->SetMat4("uMV", shape->GetTransform()->GetModelMatrix());
 
@@ -36,7 +36,6 @@ namespace CustomSpace
     void Render2D::RenderTarget(const Ref<Shader>& shader, const Ref<Shape>& shape)
     {
         m_2DSceneData->m_Shader = shader;
-        m_2DSceneData->m_Shader->Activate();
         m_2DSceneData->m_Shader->SetMat4("uVP", m_2DSceneData->VPMatrix);
         m_2DSceneData->m_Shader->SetMat4("uMV", shape->GetTransform()->GetModelMatrix());
 

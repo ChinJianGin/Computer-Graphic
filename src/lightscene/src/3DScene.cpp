@@ -24,6 +24,11 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     _MM = m_Pyramid->GetTransform()->GetTranslate();
     m_Pyramid->SetModelMatrix(_MM);
 
+    m_LightBox = ShapeFactory::Get().ShapeCreator<Box>();
+    m_LightBox->SetPosition(glm::vec3(1.f, 1.f, -3.f));
+    _MM = m_LightBox->GetTransform()->GetTranslate();
+    m_LightBox->SetModelMatrix(_MM);
+
     m_StoneTex = Texture2D::Create("../src/TextureSrc/stone_wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
 
     m_Timer = CreateScope<CoreTimer>(TARGET_FRAMERATE);
@@ -38,7 +43,13 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_CamPosition = m_PersController->GetCamera().GetPosition();
 
-    m_ModelShader = CustomSpace::CreateRef<Shader>("../src/shader/3DModel.vert", "../src/shader/3DModel.frag");
+    m_ShaderPool = CreateScope<ShaderPool>();
+
+    m_ShaderPool->getShader(0, "../src/shader/3DModel.vert", "../src/shader/3DModel.frag");
+    m_ShaderPool->getShader(1, "../src/shader/LightMaterial.vert", "../src/shader/LightMaterial.frag");
+    m_ShaderPool->getShader(2, "../src/shader/2DGameCircle.vert", "../src/shader/2DGameCircle.frag");
+    m_ShaderPool->getShader(3, "../src/shader/2DGameTexture.vert", "../src/shader/2DGameTexture.frag");
+    m_ShaderPool->getShader(4, "../src/shader/Light.vert", "../src/shader/Light.frag");
 
     m_HeadCrab = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/headcrab.obj");
 
@@ -63,7 +74,7 @@ void LightTestRoom::Run()
     while(b_Running)
     {
         b_Running = !glfwWindowShouldClose((GLFWwindow*)m_Window->GetWindow());
-        CustomSpace::RenderCommand::SetClearColor(glm::vec4(0.f, .3f, .65f, 1.f));
+        CustomSpace::RenderCommand::SetClearColor(glm::vec4(0.f, 0.f, 0.f, 1.f));
         CustomSpace::RenderCommand::Clear();
 
         CustomSpace::WindowProps& prop = *(CustomSpace::WindowProps*)glfwGetWindowUserPointer((GLFWwindow*)m_Window->GetWindow());
@@ -74,24 +85,32 @@ void LightTestRoom::Run()
         CustomSpace::Renderer::BeginScene(m_PersController->GetCamera());
         CustomSpace::Renderer::BeginScene(*m_OrthoCamera);
 
-        m_StoneTex->Bind();
-        CustomSpace::Renderer::Submit(m_Pyramid->GetVertexData()->m_Shader, m_Pyramid);
-        m_Pyramid->GetVertexData()->m_Shader->SetInt("tex0", 0);
-        m_StoneTex->UnBind();
-
-        // CustomSpace::Render2D::RenderTarget(m_Triangle->GetVertexData()->m_Shader, m_Triangle);
         m_Interface->OnUpdate(*m_Timer);
 
-        m_ModelShader->Activate();
-        m_ModelShader->SetMat4("uVP", m_PersController->GetCamera().GetVPMatrix());
+        m_StoneTex->Bind();
+        m_ShaderPool->getShader(1)->Activate();
+        m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+        m_ShaderPool->getShader(1)->SetInt("tex0", 0);
+        m_ShaderPool->getShader(1)->SetFloat3("lightColor", glm::vec4(1.f, 1.f, 1.f, 1.f));
+        m_ShaderPool->getShader(1)->SetFloat3("lightPos", m_LightBox->GetTransform()->GetLocalPosition());
+        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(1), m_Pyramid);
+        m_StoneTex->UnBind();
+
+        m_ShaderPool->getShader(4)->Activate();
+        m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(1.f, 1.f, 1.f, 1.f));
+        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_LightBox);
+
+
+        m_ShaderPool->getShader(0)->Activate();
+        m_ShaderPool->getShader(0)->SetMat4("uVP", m_PersController->GetCamera().GetVPMatrix());
         glm::mat4 model = glm::mat4(1.f);
         model = glm::translate(model, glm::vec3(2.f, 0.f, 2.f));
-        m_ModelShader->SetMat4("uMV", model);
-        m_HeadCrab->Draw(*m_ModelShader);
+        m_ShaderPool->getShader(0)->SetMat4("uMV", model);
+        m_HeadCrab->Draw(*m_ShaderPool->getShader(0));
 
         model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, 2.f));
-        m_ModelShader->SetMat4("uMV", model);
-        m_Crowbar->Draw(*m_ModelShader);
+        m_ShaderPool->getShader(0)->SetMat4("uMV", model);
+        m_Crowbar->Draw(*m_ShaderPool->getShader(0));
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
         {
