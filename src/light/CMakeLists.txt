@@ -5,4 +5,4 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 project(light)
 
-add_library(light ./SpotLight.cpp)
+add_library(light ./DirectionLight.cpp ./PointLight.cpp ./SpotLight.cpp)

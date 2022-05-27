@@ -7,6 +7,7 @@ layout (location = 3) in vec3 vNormal;
 
 uniform mat4 uVP;
 uniform mat4 uMV;
+uniform mat3 uULMM;
 
 out vec3 color;
 out vec2 texCoord;
@@ -19,5 +20,5 @@ void main()
     color = vColor;
     texCoord = vTexCoord;
     FragPos = vec3(uMV * vec4(vPosition, 1.0));
-    Normal = vNormal;
+    Normal = uULMM * vNormal;
 }

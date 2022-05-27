@@ -1,4 +1,7 @@
 #include"../include/3DScene.h"
+#include"../../light/DirectionLight.h"
+#include"../../light/PointLight.h"
+#include"../../light/SpotLight.h"
 
 LightTestRoom *LightTestRoom::Instance = nullptr;
 
@@ -21,15 +24,39 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_Pyramid = ShapeFactory::Get().ShapeCreator<Pyramid>();
     m_Pyramid->SetPosition(glm::vec3(0.f, 0.f, -2.f));
-    _MM = m_Pyramid->GetTransform()->GetTranslate();
+    m_Pyramid->SetScale(glm::vec3(2.f, 2.f, 2.f));
+    _MM = m_Pyramid->GetTransform()->GetTranslate() * m_Pyramid->GetTransform()->GetScale();
     m_Pyramid->SetModelMatrix(_MM);
 
-    m_LightBox = ShapeFactory::Get().ShapeCreator<Box>();
-    m_LightBox->SetPosition(glm::vec3(1.f, 1.f, -3.f));
-    _MM = m_LightBox->GetTransform()->GetTranslate();
-    m_LightBox->SetModelMatrix(_MM);
+    m_DirLight = CreateRef<DirectionLight>();
+    // m_DirLight->SetAmbient(glm::vec3(.94f, .92f, .78f));
+    m_DirLight->SetAmbient(glm::vec3(.01f, .01f, .01f));
+    m_DirLight->SetDirection(glm::vec3(-.2f, 1.f, -.3f));
+    m_DirLight->SetPosition(glm::vec3(1.f, 1.f, -1.f));
+    _MM = m_DirLight->GetTransform()->GetTranslate();
+    m_DirLight->SetModelMatrix(_MM);
+
+    m_PointLight = CreateRef<PointLight>();
+    auto _point = std::static_pointer_cast<PointLight>(m_PointLight);
+    m_PointLight->SetAmbient(glm::vec3(.05f, .05f, .5f));
+    m_PointLight->SetDiffuse(glm::vec3(.8f, .8f, .8f));
+    m_PointLight->SetSpecular(glm::vec3(1.f, 1.f, 1.f));
+    m_PointLight->SetPosition(glm::vec3(.2f, .2f, 2.f));
+    _MM = m_PointLight->GetTransform()->GetTranslate();
+    m_PointLight->SetModelMatrix(_MM);
+
+    m_SpotLight = CreateRef<SpotLight>();
+    auto _spot = std::static_pointer_cast<SpotLight>(m_SpotLight);
+    m_SpotLight->SetAmbient(glm::vec3(.0f, .5f, .0f));
+    m_SpotLight->SetDiffuse(glm::vec3(1.f, 1.f, 1.f));
+    m_SpotLight->SetSpecular(glm::vec3(1.f, 1.f, 1.f));
+    m_SpotLight->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+    m_SpotLight->SetDirection(glm::vec3(0.f, 0.f, -1.f));
+    _MM = m_SpotLight->GetTransform()->GetTranslate();
+    m_SpotLight->SetModelMatrix(_MM);
 
     m_StoneTex = Texture2D::Create("../src/TextureSrc/stone_wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_StoneSpec = Texture2D::Create("../src/TextureSrc/stone_wall_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
 
     m_Timer = CreateScope<CoreTimer>(TARGET_FRAMERATE);
 
@@ -74,7 +101,7 @@ void LightTestRoom::Run()
     while(b_Running)
     {
         b_Running = !glfwWindowShouldClose((GLFWwindow*)m_Window->GetWindow());
-        CustomSpace::RenderCommand::SetClearColor(glm::vec4(0.f, 0.f, 0.f, 1.f));
+        CustomSpace::RenderCommand::SetClearColor(glm::vec4(.2f, .2f, .2f, 1.f));
         CustomSpace::RenderCommand::Clear();
 
         CustomSpace::WindowProps& prop = *(CustomSpace::WindowProps*)glfwGetWindowUserPointer((GLFWwindow*)m_Window->GetWindow());
@@ -87,18 +114,28 @@ void LightTestRoom::Run()
 
         m_Interface->OnUpdate(*m_Timer);
 
+        CustomSpace::Ref<Shader> _shader = m_ShaderPool->getShader(1);
         m_StoneTex->Bind();
-        m_ShaderPool->getShader(1)->Activate();
-        m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
-        m_ShaderPool->getShader(1)->SetInt("tex0", 0);
-        m_ShaderPool->getShader(1)->SetFloat3("lightColor", glm::vec4(1.f, 1.f, 1.f, 1.f));
-        m_ShaderPool->getShader(1)->SetFloat3("lightPos", m_LightBox->GetTransform()->GetLocalPosition());
+        m_StoneSpec->Bind();
+        _shader->Activate();
+        _shader->SetInt("HaveTex", true);
+        _shader->SetInt("uMaterial.diffuse", 0);
+        _shader->SetInt("uMaterial.specular", 1);
+        _shader->SetFloat("uMaterial.shininess", 32.f);
+        _shader->SetMat3("uULMM", glm::mat3(m_Pyramid->GetTransform()->GetModelMatrix()));
+        _shader->SetFloat3("uViewPos", m_PersController->GetCamera().GetPosition());
+        this->LightControl();
         CustomSpace::Renderer::Submit(m_ShaderPool->getShader(1), m_Pyramid);
         m_StoneTex->UnBind();
+        m_StoneSpec->UnBind();
 
         m_ShaderPool->getShader(4)->Activate();
-        m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(1.f, 1.f, 1.f, 1.f));
-        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_LightBox);
+        m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_DirLight->GetLightData()->ambient, 1.0f));
+        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_DirLight->GetBody());
+        m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_PointLight->GetLightData()->ambient, 1.0f));
+        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_PointLight->GetBody());
+        m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_SpotLight->GetLightData()->ambient, 1.0f));
+        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_SpotLight->GetBody());
 
 
         m_ShaderPool->getShader(0)->Activate();
@@ -173,4 +210,37 @@ bool LightTestRoom::OnWindowResizeEvent(CustomSpace::WindowResizeEvent& event)
     m_OrthoCamera->SetProjection(event.GetWidth(), event.GetHeight(), -1.f, 1.f, -1.f, 1.f);
 
     return false;
+}
+
+void LightTestRoom::LightControl()
+{
+    CustomSpace::Ref<Shader> _shader = m_ShaderPool->getShader(1);
+    _shader->SetInt("HaveDirLight", true);
+    _shader->SetFloat3("uDirLight.direction", m_DirLight->GetLightData()->direction);
+    _shader->SetFloat3("uDirLight.ambient", m_DirLight->GetLightData()->ambient);
+    _shader->SetFloat3("uDirLight.diffuse", m_DirLight->GetLightData()->diffuse);
+    _shader->SetFloat3("uDirLight.specular", m_DirLight->GetLightData()->specular);
+    _shader->SetInt("HavePointLight", true);
+    _shader->SetFloat3("uPointLight[0].position", m_PointLight->GetBody()->GetTransform()->GetLocalPosition());
+    _shader->SetFloat3("uPointLight[0].ambient", m_PointLight->GetLightData()->ambient);
+    _shader->SetFloat3("uPointLight[0].diffuse", m_PointLight->GetLightData()->diffuse);
+    _shader->SetFloat3("uPointLight[0].specular", m_PointLight->GetLightData()->specular);
+    auto _point = std::static_pointer_cast<CustomSpace::PointLight>(m_PointLight);
+    _shader->SetFloat("uPointLight[0].constant", 1.f);
+    _shader->SetFloat("uPointLight[0].linear", _point->GetLinear());
+    _shader->SetFloat("uPointLight[0].quadratic", _point->GetQuadratic());
+    _shader->SetInt("HaveSpotLight", true);
+    _shader->SetFloat3("uSpotLight[0].position", m_SpotLight->GetBody()->GetTransform()->GetLocalPosition());
+    _shader->SetFloat3("uSpotLight[0].direction", m_SpotLight->GetLightData()->direction);
+    // _shader->SetFloat3("uSpotLight[0].position", m_PersController->GetCamera().GetPosition());
+    // _shader->SetFloat3("uSpotLight[0].direction", m_PersController->GetCamera().GetLookAt());
+    _shader->SetFloat3("uSpotLight[0].ambient", m_SpotLight->GetLightData()->ambient);
+    _shader->SetFloat3("uSpotLight[0].diffuse", m_SpotLight->GetLightData()->diffuse);
+    _shader->SetFloat3("uSpotLight[0].specular", m_SpotLight->GetLightData()->specular);
+    auto _spot = std::static_pointer_cast<CustomSpace::SpotLight>(m_SpotLight);
+    _shader->SetFloat("uSpotLight[0].constant", 1.f);
+    _shader->SetFloat("uSpotLight[0].linear", _spot->GetLinear());
+    _shader->SetFloat("uSpotLight[0].quadratic", _spot->GetQuadratic());
+    _shader->SetFloat("uSpotLight[0].innerCutOff", _spot->GetInner());
+    _shader->SetFloat("uSpotLight[0].outerCutOff", _spot->GetOuter());
 }

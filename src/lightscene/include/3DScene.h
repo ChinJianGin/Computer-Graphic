@@ -11,6 +11,7 @@
 #include"../../graphic/ModelLoad/Model.h"
 #include"../../client/include/Interface.h"
 #include"../../shader/ShaderPool.h"
+#include"../../light/Light.h"
 
 class LightTestRoom
 {
@@ -36,9 +37,10 @@ class LightTestRoom
 
         CustomSpace::Scope<CustomSpace::ShapeFactory> m_Factory;
         CustomSpace::Ref<CustomSpace::Shape> m_Triangle;
-        CustomSpace::Ref<CustomSpace::Shape> m_Pyramid, m_LightBox;
+        CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
+        CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight;
 
-        CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex;
+        CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec;
 
         CustomSpace::Scope<CoreTimer> m_Timer;
 
@@ -52,6 +54,8 @@ class LightTestRoom
         bool b_Running = true;
 
         glm::vec3 m_CamPosition;
+
+        void LightControl();
 
 
         // Model test
