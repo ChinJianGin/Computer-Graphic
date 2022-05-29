@@ -17,15 +17,19 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_Factory = CreateScope<ShapeFactory>();
 
-    m_Triangle = ShapeFactory::Get().ShapeCreator<Triangle>();
-    m_Triangle->SetPosition(glm::vec3(-1.6f, -.9f, 0.f));
-    glm::mat4 _MM = m_Triangle->GetTransform()->GetTranslate() * m_Triangle->GetTransform()->GetRotate() * m_Triangle->GetTransform()->GetScale();
-    m_Triangle->SetModelMatrix(_MM);
+    m_Box = ShapeFactory::Get().ShapeCreator<Box>();
+    m_Box->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+    m_Box->SetScale(glm::vec3(2.5f));
+    glm::mat4 _MM = m_Box->GetTransform()->GetTranslate() * m_Box->GetTransform()->GetRotate() * m_Box->GetTransform()->GetScale();
+    m_Box->SetModelMatrix(_MM);
+
+
+    this->RoomInit();
 
     m_Pyramid = ShapeFactory::Get().ShapeCreator<Pyramid>();
-    m_Pyramid->SetPosition(glm::vec3(0.f, 0.f, -2.f));
-    m_Pyramid->SetScale(glm::vec3(2.f, 2.f, 2.f));
-    _MM = m_Pyramid->GetTransform()->GetTranslate() * m_Pyramid->GetTransform()->GetScale();
+    m_Pyramid->SetPosition(glm::vec3(0.f, 0.f, -1.f));
+    // m_Pyramid->SetScale(glm::vec3(2.f, 2.f, 2.f));
+    _MM = m_Pyramid->GetTransform()->GetTranslate() * m_Pyramid->GetTransform()->GetRotate() * m_Pyramid->GetTransform()->GetScale();
     m_Pyramid->SetModelMatrix(_MM);
 
     m_DirLight = CreateRef<DirectionLight>();
@@ -38,10 +42,10 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_PointLight = CreateRef<PointLight>();
     auto _point = std::static_pointer_cast<PointLight>(m_PointLight);
-    m_PointLight->SetAmbient(glm::vec3(.05f, .05f, .5f));
-    m_PointLight->SetDiffuse(glm::vec3(.8f, .8f, .8f));
+    m_PointLight->SetAmbient(glm::vec3(.94f, .92f, .78f));
+    m_PointLight->SetDiffuse(glm::vec3(.08f, .08f, .08f));
     m_PointLight->SetSpecular(glm::vec3(1.f, 1.f, 1.f));
-    m_PointLight->SetPosition(glm::vec3(.2f, .2f, 2.f));
+    m_PointLight->SetPosition(glm::vec3(.2f, .2f, 1.f));
     _MM = m_PointLight->GetTransform()->GetTranslate();
     m_PointLight->SetModelMatrix(_MM);
 
@@ -50,21 +54,23 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     m_SpotLight->SetAmbient(glm::vec3(.0f, .5f, .0f));
     m_SpotLight->SetDiffuse(glm::vec3(1.f, 1.f, 1.f));
     m_SpotLight->SetSpecular(glm::vec3(1.f, 1.f, 1.f));
-    m_SpotLight->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+    m_SpotLight->SetPosition(glm::vec3(0.f, .5f, 0.f));
     m_SpotLight->SetDirection(glm::vec3(0.f, 0.f, -1.f));
     _MM = m_SpotLight->GetTransform()->GetTranslate();
     m_SpotLight->SetModelMatrix(_MM);
 
     m_StoneTex = Texture2D::Create("../src/TextureSrc/stone_wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_StoneSpec = Texture2D::Create("../src/TextureSrc/stone_wall_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+    m_WoodTex = Texture2D::Create("../src/TextureSrc/wood.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_WoodSpec = Texture2D::Create("../src/TextureSrc/wood_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
 
     m_Timer = CreateScope<CoreTimer>(TARGET_FRAMERATE);
 
-    m_OrthoCamera = CreateRef<OrthoCamera>(width, height, -1, 1, -1, 1);
+    m_OrthoCamera = CreateRef<OrthoCamera>(width, height, -1.f, 1.f, -1.f, 1.f);
 
-    m_OrthoCamera->SetPosition(glm::vec3(0, 0, -1.f));
+    m_OrthoCamera->SetPosition(glm::vec3(0.f, 0.f, -1.f));
 
-    glm::vec3 CIP = glm::vec3(0);
+    glm::vec3 CIP = glm::vec3(0.f);
 
     m_PersController = CreateRef<PerspectiveCameraController>(width, height, 60.f, 1.f, 1000.f, CIP);
 
@@ -107,6 +113,7 @@ void LightTestRoom::Run()
         CustomSpace::WindowProps& prop = *(CustomSpace::WindowProps*)glfwGetWindowUserPointer((GLFWwindow*)m_Window->GetWindow());
 
         m_Timer->CalculateTimer();
+        m_AllTime += m_Timer->GetTick();
 
         CustomSpace::PerspectiveCamera* m_PersCamera = &m_PersController->GetCamera();
         CustomSpace::Renderer::BeginScene(m_PersController->GetCamera());
@@ -115,17 +122,23 @@ void LightTestRoom::Run()
         m_Interface->OnUpdate(*m_Timer);
 
         CustomSpace::Ref<Shader> _shader = m_ShaderPool->getShader(1);
-        m_StoneTex->Bind();
-        m_StoneSpec->Bind();
         _shader->Activate();
         _shader->SetInt("HaveTex", true);
         _shader->SetInt("uMaterial.diffuse", 0);
         _shader->SetInt("uMaterial.specular", 1);
         _shader->SetFloat("uMaterial.shininess", 32.f);
-        _shader->SetMat3("uULMM", glm::mat3(m_Pyramid->GetTransform()->GetModelMatrix()));
         _shader->SetFloat3("uViewPos", m_PersController->GetCamera().GetPosition());
         this->LightControl();
+
+        m_SpotLight->SetDirection(glm::vec3(glm::cos(m_AllTime), 0.f, glm::sin(m_AllTime)));
+
+        this->RoomUpdate();
+
+        m_StoneTex->Bind();
+        m_StoneSpec->Bind();
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Pyramid->GetTransform()->GetModelMatrix())));
         CustomSpace::Renderer::Submit(m_ShaderPool->getShader(1), m_Pyramid);
+        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(1), m_Box);
         m_StoneTex->UnBind();
         m_StoneSpec->UnBind();
 
@@ -138,16 +151,21 @@ void LightTestRoom::Run()
         CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_SpotLight->GetBody());
 
 
-        m_ShaderPool->getShader(0)->Activate();
-        m_ShaderPool->getShader(0)->SetMat4("uVP", m_PersController->GetCamera().GetVPMatrix());
+        m_ShaderPool->getShader(1)->Activate();
+        m_ShaderPool->getShader(1)->SetMat4("uVP", m_PersController->GetCamera().GetVPMatrix());
         glm::mat4 model = glm::mat4(1.f);
-        model = glm::translate(model, glm::vec3(2.f, 0.f, 2.f));
-        m_ShaderPool->getShader(0)->SetMat4("uMV", model);
-        m_HeadCrab->Draw(*m_ShaderPool->getShader(0));
+        model = glm::translate(model, glm::vec3(0.f, 0.f, 0.f));
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+        m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+        m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+        m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+        m_HeadCrab->Draw(*m_ShaderPool->getShader(1));
 
         model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, 2.f));
-        m_ShaderPool->getShader(0)->SetMat4("uMV", model);
-        m_Crowbar->Draw(*m_ShaderPool->getShader(0));
+        m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+        m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+        m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+        m_Crowbar->Draw(*m_ShaderPool->getShader(1));
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
         {
@@ -212,6 +230,94 @@ bool LightTestRoom::OnWindowResizeEvent(CustomSpace::WindowResizeEvent& event)
     return false;
 }
 
+void LightTestRoom::RoomInit()
+{
+    using namespace CustomSpace;
+
+    glm::vec3 _scale = glm::vec3(2.5f, 1.f, 2.5f);
+    glm::mat4 _MM(1.f);
+
+    m_Ground = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Ground->SetPosition(glm::vec3(0.f, -.0001f, 0.f));
+    m_Ground->SetScale(_scale);
+    m_Ground->SetRotation(180.f);
+    _MM = m_Ground->GetTransform()->GetTranslate() * m_Ground->GetTransform()->GetRotate() * m_Ground->GetTransform()->GetScale();
+    m_Ground->SetModelMatrix(_MM);
+
+    m_Ceiling = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Ceiling->SetPosition(glm::vec3(0.f, 5.0001f, 0.f));
+    m_Ceiling->SetScale(_scale);
+    // m_Ceiling->SetRotation(180.f);
+    _MM = m_Ceiling->GetTransform()->GetTranslate() * m_Ceiling->GetTransform()->GetRotate() * m_Ceiling->GetTransform()->GetScale();
+    m_Ceiling->SetModelMatrix(_MM);
+
+    m_Wall[0] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Wall[0]->SetPosition(glm::vec3(2.5f, 2.5f, 0.f));
+    m_Wall[0]->SetScale(_scale);
+    m_Wall[0]->SetRotation(-90.f);
+
+    m_Wall[1] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Wall[1]->SetPosition(glm::vec3(-2.5f, 2.5f, 0.f));
+    m_Wall[1]->SetScale(_scale);
+    m_Wall[1]->SetRotation(90.f);
+
+    m_Wall[2] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Wall[2]->SetPosition(glm::vec3(0.f, 2.5f, 2.5f));
+    m_Wall[2]->SetScale(_scale);
+    m_Wall[2]->SetRotation(90.f, glm::vec3(1.f, 0, 0));
+
+    m_Wall[3] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Wall[3]->SetPosition(glm::vec3(0.f, 2.5f, -2.5f));
+    m_Wall[3]->SetScale(_scale);
+    m_Wall[3]->SetRotation(90.f, glm::vec3(1.f, 0, 0));
+
+    for(int i = 0; i < 4; i++)
+    {
+        if(i < 2)
+        {
+            _MM = m_Wall[i]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(1.f, 0, 0)) * m_Wall[i]->GetTransform()->GetRotate() * m_Wall[i]->GetTransform()->GetScale();
+        }
+        else if(i == 2)
+            _MM = m_Wall[i]->GetTransform()->GetTranslate() * m_Wall[i]->GetTransform()->GetRotate() * m_Wall[i]->GetTransform()->GetScale();
+        else
+            _MM = m_Wall[i]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(180.f), glm::vec3(0, 1.f, 0)) * m_Wall[i]->GetTransform()->GetRotate() * m_Wall[i]->GetTransform()->GetScale();
+        m_Wall[i]->SetModelMatrix(_MM);
+    }
+
+    m_CeilingTex = Texture2D::Create("../src/TextureSrc/concreteceiling001a.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_WallTex[0] = Texture2D::Create("../src/TextureSrc/building_template015b.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_WallTex[1] = Texture2D::Create("../src/TextureSrc/building_template015f.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+}
+
+void LightTestRoom::RoomUpdate()
+{
+    CustomSpace::Ref<Shader> _shader = m_ShaderPool->getShader(1);
+    m_WoodTex->Bind();
+    m_WoodSpec->Bind();
+    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Ground->GetTransform()->GetModelMatrix())));
+    CustomSpace::Renderer::Submit(_shader, m_Ground);
+    m_WoodTex->UnBind();
+    m_WoodSpec->UnBind();
+
+    m_CeilingTex->Bind();
+    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Ceiling->GetTransform()->GetModelMatrix())));
+    CustomSpace::Renderer::Submit(_shader, m_Ceiling);
+    m_CeilingTex->UnBind();
+
+    m_WallTex[1]->Bind();
+    for(int i = 0; i < 3; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_Wall[i]);
+    }
+    m_WallTex[1]->UnBind();
+
+    m_WallTex[0]->Bind();
+    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[3]->GetTransform()->GetModelMatrix())));
+    CustomSpace::Renderer::Submit(_shader, m_Wall[3]);
+    m_WallTex[0]->UnBind();
+}
+
 void LightTestRoom::LightControl()
 {
     CustomSpace::Ref<Shader> _shader = m_ShaderPool->getShader(1);
@@ -230,7 +336,7 @@ void LightTestRoom::LightControl()
     _shader->SetFloat("uPointLight[0].linear", _point->GetLinear());
     _shader->SetFloat("uPointLight[0].quadratic", _point->GetQuadratic());
     _shader->SetInt("HaveSpotLight", true);
-    _shader->SetFloat3("uSpotLight[0].position", m_SpotLight->GetBody()->GetTransform()->GetLocalPosition());
+    _shader->SetFloat3("uSpotLight[0].position", m_SpotLight->GetTransform()->GetLocalPosition());
     _shader->SetFloat3("uSpotLight[0].direction", m_SpotLight->GetLightData()->direction);
     // _shader->SetFloat3("uSpotLight[0].position", m_PersController->GetCamera().GetPosition());
     // _shader->SetFloat3("uSpotLight[0].direction", m_PersController->GetCamera().GetLookAt());

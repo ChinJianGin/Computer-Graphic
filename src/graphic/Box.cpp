@@ -1,4 +1,4 @@
-#include"./Box.h"
+#include "./Box.h"
 
 namespace CustomSpace
 {
@@ -11,43 +11,62 @@ namespace CustomSpace
     {
         m_Transform = CreateRef<Transform>();
         m_VertexData = CreateRef<VertexData>();
-        m_Type = ShapeType::Light;
+        m_Type = ShapeType::Model;
         std::vector<GLfloat> Points =
             {
-                -.1f, -.1f, .1f,
-                -.1f, -.1f, -.1f,
-                 .1f, -.1f, -.1f,
-                .1f, -.1f, .1f,
-                -.1f, .1f, .1f,
-                -.1f, .1f, -.1f,
-                .1f, .1f, -.1f,
-                .1f, .1f, .1f
-            };
+                -.5f, -.5f, -.5f, 0.f, 0.f, -1.f, 0.f, 0.f,
+                .5f, .5f, -.5f, 0.f, 0.f, -1.f, 1.f, 1.f,
+                .5f, -.5f, -.5f, 0.f, 0.f, -1.f, 1.f, 0.f,
+                -.5f, .5f, -.5f, 0.f, 0.f, -1.f, 0.f, 1.f,
+
+                -.5f, -.5f, .5f, 0.f, 0.f, 1.f, 0.f, 0.f,
+                .5f, -.5f, .5f, 0.f, 0.f, 1.f, 1.f, 0.f,
+                .5f, .5f, .5f, 0.f, 0.f, 1.f, 1.f, 1.f,
+                -.5f, .5f, .5f, 0.f, 0.f, 1.f, 0.f, 1.f,
+
+                -.5f, .5f, .5f, -1.f, 0.f, 0.f, 1.f, 0.f,
+                -.5f, .5f, -.5f, -1.f, 0.f, 0.f, 1.f, 1.f,
+                -.5f, -.5f, -.5f, -1.f, 0.f, 0.f, 0.f, 1.f,
+                -.5f, -.5f, .5f, -1.f, 0.f, 0.f, 0.f, 0.f,
+
+                .5f, .5f, .5f, 1.f, 0.f, 0.f, 1.f, 0.f,
+                .5f, -.5f, -.5f, 1.f, 0.f, 0.f, 0.f, 1.f,
+                .5f, .5f, -.5f, 1.f, 0.f, 0.f, 1.f, 1.f,
+                .5f, -.5f, .5f, 1.f, 0.f, 0.f, 0.f, 0.f,
+
+                -.5f, -.5f, -.5f, 0.f, -1.f, 0.f, 0.f, 1.f,
+                .5f, -.5f, -.5f, 0.f, -1.f, 0.f, 1.f, 1.f,
+                .5f, -.5f, .5f, 0.f, -1.f, 0.f, 1.f, 0.f,
+                -.5f, -.5f, .5f, 0.f, -1.f, 0.f, 0.f, 0.f,
+
+                -.5f, .5f, -.5f, 0.f, 1.f, 0.f, 0.f, 1.f,
+                .5f, .5f, .5f, 0.f, 1.f, 0.f, 1.f, 0.f,
+                .5f, .5f, -.5f, 0.f, 1.f, 0.f, 1.f, 1.f,
+                -.5f, .5f, .5f, 0.f, 1.f, 0.f, 0.f, 0.f};
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());
 
         GLuint indices[] =
             {
                 0, 1, 2,
-                0, 2, 3,
-                0, 4, 7,
-                0, 7, 3,
-                3, 7, 6,
-                3, 6, 2,
-                2, 6, 5,
-                2, 5, 1,
-                1, 5, 4,
-                1, 4, 0,
+                1, 0, 3,
                 4, 5, 6,
-                4, 6, 7
-            };
+                4, 6, 7,
+                8, 9, 10,
+                8, 10, 11,
+                12, 13, 14,
+                12, 15, 13,
+                16, 17, 18,
+                16, 18, 19,
+                20, 21, 22,
+                20, 23, 21};
 
         m_VertexData->indices.assign(indices, indices + 36);
 
         CORE_WARN("Create Box");
     }
 
-    void Box::SetPoints(const Ref<PointsData>& data)
+    void Box::SetPoints(const Ref<PointsData> &data)
     {
         m_PointsData = data;
     }

@@ -7,10 +7,10 @@ namespace CustomSpace
     {
         public:
         Transform(
-            const glm::vec3& pos = glm::vec3(0),
-            const glm::vec3& axis = glm::vec3(0, 0, 1),
-            const glm::vec3& scale = glm::vec3(1, 1, 1),
-            float radian = 0);
+            const glm::vec3& pos = glm::vec3(0.f),
+            const glm::vec3& axis = glm::vec3(0, 0, 1.f),
+            const glm::vec3& scale = glm::vec3(1.f, 1.f, 1.f),
+            float radian = 0.f);
         
 
         virtual void SetModelMatrix(const glm::mat4& model);

@@ -34,9 +34,8 @@ namespace CustomSpace
             TempLayout = 
             {
                 {ShaderDataType::f_Vec3, "vPosition"},
-                {ShaderDataType::f_Vec3, "vColor"},
-                {ShaderDataType::f_Vec2, "vTexCoord"},
-                {ShaderDataType::f_Vec3, "vNormal"}
+                {ShaderDataType::f_Vec3, "vNormal"},
+                {ShaderDataType::f_Vec2, "vTexCoord"}
             };
         }
         else

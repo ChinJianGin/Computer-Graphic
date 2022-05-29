@@ -1,6 +1,6 @@
 #pragma once
 #include"./Light.h"
-#include"../graphic/Box.h"
+#include"../graphic/LightBox.h"
 namespace CustomSpace
 {
     class DirectionLight : public Light

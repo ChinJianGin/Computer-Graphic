@@ -9,7 +9,7 @@ namespace CustomSpace
 
     void DirectionLight::Init()
     {
-        m_Body = ShapeFactory::Get().ShapeCreator<Box>();
+        m_Body = ShapeFactory::Get().ShapeCreator<LightBox>();
         m_Data = CreateRef<LightData>();
         m_Data->direction = glm::vec3(0.f, 0.f, -1.f);
         m_Data->ambient = glm::vec3(.2f, .2f, .2f);

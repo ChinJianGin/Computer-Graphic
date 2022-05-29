@@ -60,6 +60,9 @@ namespace CustomSpace
         M_Context = OpenGLContext::Create(M_Window);
         M_Context->Init();
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
 
         int screenWidth, screenHeight;
         glfwGetFramebufferSize(M_Window, &screenWidth, &screenHeight);

@@ -45,13 +45,18 @@ namespace CustomSpace
             glActiveTexture(GL_TEXTURE0 + i);
 
             std::string number;
+            std::string _type;
             std::string name = m_textures[i].type;
             if(name == "texture_diffuse")
-                number = std::to_string(diffuseNr++);
+                _type = "diffuse";
+                // number = std::to_string(diffuseNr++);
             else if(name == "texture_specular")
-                number == std::to_string(specularNr++);
+                _type = "specular";
+                // number = std::to_string(specularNr++);
 
-            shader.SetFloat((name + number).c_str(), i);
+            // shader.SetFloat((name + number).c_str(), i);
+            shader.SetInt(("uMaterial." + _type).c_str(), i);
+            shader.SetFloat(("uMaterial.shininess"), 32.f);
             glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
         }
         glActiveTexture(GL_TEXTURE0);

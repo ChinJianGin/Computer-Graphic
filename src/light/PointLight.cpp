@@ -1,6 +1,6 @@
 #include"./PointLight.h"
 #include"../client/include/Creator.h"
-#include"../graphic/Box.h"
+#include"../graphic/LightBox.h"
 
 namespace CustomSpace
 {
@@ -11,7 +11,7 @@ namespace CustomSpace
 
     void PointLight::Init()
     {
-        m_Body = ShapeFactory::Get().ShapeCreator<Box>();
+        m_Body = ShapeFactory::Get().ShapeCreator<LightBox>();
         m_Data = CreateRef<LightData>();
         m_Data->ambient = glm::vec3(.2f, .2f, .2f);
         m_Data->diffuse = glm::vec3(.5f, .5f, .5f);
