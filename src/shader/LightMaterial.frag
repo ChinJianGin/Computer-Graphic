@@ -68,7 +68,7 @@ uniform PointLight uPointLight[NR_POINT_NUM];
 uniform int uPointLightNum = NR_POINT_NUM;
 
 // Spot light
-#define NR_SPOT_NUM 1
+#define NR_SPOT_NUM 3
 uniform SpotLight uSpotLight[NR_SPOT_NUM];
 uniform int uSpotLightNum = NR_SPOT_NUM;
 

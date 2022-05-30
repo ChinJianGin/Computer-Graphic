@@ -39,7 +39,7 @@ class LightTestRoom
         CustomSpace::Ref<CustomSpace::Shape> m_Box, m_Ground, m_Ceiling;
         CustomSpace::Ref<CustomSpace::Shape> m_Wall[4];
         CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
-        CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight;
+        CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight[3];
 
         CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec;
         CustomSpace::Ref<CustomSpace::Texture2D> m_CeilingTex, m_WallTex[2];
@@ -66,5 +66,5 @@ class LightTestRoom
 
 
         // Model test
-        CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar;
+        CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar, m_PortalGun;
 };

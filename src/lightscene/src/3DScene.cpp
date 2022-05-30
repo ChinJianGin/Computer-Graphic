@@ -18,8 +18,9 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     m_Factory = CreateScope<ShapeFactory>();
 
     m_Box = ShapeFactory::Get().ShapeCreator<Box>();
-    m_Box->SetPosition(glm::vec3(0.f, 0.f, 0.f));
-    m_Box->SetScale(glm::vec3(2.5f));
+    m_Box->SetPosition(glm::vec3(0.f, .25f, 1.8f));
+    m_Box->SetScale(glm::vec3(.5f, .5f, .5f));
+    // m_Box->SetScale(glm::vec3(2.5f));
     glm::mat4 _MM = m_Box->GetTransform()->GetTranslate() * m_Box->GetTransform()->GetRotate() * m_Box->GetTransform()->GetScale();
     m_Box->SetModelMatrix(_MM);
 
@@ -27,37 +28,58 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     this->RoomInit();
 
     m_Pyramid = ShapeFactory::Get().ShapeCreator<Pyramid>();
-    m_Pyramid->SetPosition(glm::vec3(0.f, 0.f, -1.f));
+    m_Pyramid->SetPosition(glm::vec3(-1.8f, 0.f, -1.8f));
+    m_Pyramid->SetRotation(45.f, glm::vec3(0.f, 1.f, 0.f));
     // m_Pyramid->SetScale(glm::vec3(2.f, 2.f, 2.f));
     _MM = m_Pyramid->GetTransform()->GetTranslate() * m_Pyramid->GetTransform()->GetRotate() * m_Pyramid->GetTransform()->GetScale();
     m_Pyramid->SetModelMatrix(_MM);
 
     m_DirLight = CreateRef<DirectionLight>();
     // m_DirLight->SetAmbient(glm::vec3(.94f, .92f, .78f));
-    m_DirLight->SetAmbient(glm::vec3(.01f, .01f, .01f));
+    m_DirLight->SetAmbient(glm::vec3(.001f, .001f, .001f));
     m_DirLight->SetDirection(glm::vec3(-.2f, 1.f, -.3f));
-    m_DirLight->SetPosition(glm::vec3(1.f, 1.f, -1.f));
+    m_DirLight->SetPosition(glm::vec3(0.f, 6.f, 0.f));
     _MM = m_DirLight->GetTransform()->GetTranslate();
     m_DirLight->SetModelMatrix(_MM);
 
     m_PointLight = CreateRef<PointLight>();
     auto _point = std::static_pointer_cast<PointLight>(m_PointLight);
-    m_PointLight->SetAmbient(glm::vec3(.94f, .92f, .78f));
-    m_PointLight->SetDiffuse(glm::vec3(.08f, .08f, .08f));
-    m_PointLight->SetSpecular(glm::vec3(1.f, 1.f, 1.f));
-    m_PointLight->SetPosition(glm::vec3(.2f, .2f, 1.f));
+    // m_PointLight->SetAmbient(glm::vec3(.94f, .92f, .78f));
+    m_PointLight->SetAmbient(glm::vec3(.0094f, .0092f, .0078f));
+    m_PointLight->SetDiffuse(glm::vec3(.8f, .8f, .8f));
+    m_PointLight->SetSpecular(glm::vec3(.5f, .5f, .5f));
+    m_PointLight->SetPosition(glm::vec3(1.f, 1.5f, 1.f));
     _MM = m_PointLight->GetTransform()->GetTranslate();
     m_PointLight->SetModelMatrix(_MM);
 
-    m_SpotLight = CreateRef<SpotLight>();
-    auto _spot = std::static_pointer_cast<SpotLight>(m_SpotLight);
-    m_SpotLight->SetAmbient(glm::vec3(.0f, .5f, .0f));
-    m_SpotLight->SetDiffuse(glm::vec3(1.f, 1.f, 1.f));
-    m_SpotLight->SetSpecular(glm::vec3(1.f, 1.f, 1.f));
-    m_SpotLight->SetPosition(glm::vec3(0.f, .5f, 0.f));
-    m_SpotLight->SetDirection(glm::vec3(0.f, 0.f, -1.f));
-    _MM = m_SpotLight->GetTransform()->GetTranslate();
-    m_SpotLight->SetModelMatrix(_MM);
+    m_SpotLight[0] = CreateRef<SpotLight>();
+    m_SpotLight[0]->SetAmbient(glm::vec3(.0f, .5f, .0f));
+    m_SpotLight[0]->SetDiffuse(glm::vec3(1.f, 1.f, 1.f));
+    m_SpotLight[0]->SetSpecular(glm::vec3(1.f, 1.f, 1.f));
+    m_SpotLight[0]->SetPosition(glm::vec3(-1.f, 1.f, -1.f));
+    m_SpotLight[0]->SetDirection(glm::vec3(-1.f, -1.f, -1.f));
+
+    m_SpotLight[1] = CreateRef<SpotLight>();
+    m_SpotLight[1]->SetAmbient(glm::vec3(.5f, 0.f, .0f));
+    m_SpotLight[1]->SetDiffuse(glm::vec3(1.f, 1.f, 1.f));
+    m_SpotLight[1]->SetSpecular(glm::vec3(1.f, 1.f, 1.f));
+    m_SpotLight[1]->SetPosition(glm::vec3(0.f, 1.f, 1.f));
+    m_SpotLight[1]->SetDirection(glm::vec3(0.f, -1.f, 1.f));
+
+    m_SpotLight[2] = CreateRef<SpotLight>();
+    m_SpotLight[2]->SetAmbient(glm::vec3(.0f, 0.f, .5f));
+    m_SpotLight[2]->SetDiffuse(glm::vec3(1.f, 1.f, 1.f));
+    m_SpotLight[2]->SetSpecular(glm::vec3(1.f, 1.f, 1.f));
+    m_SpotLight[2]->SetPosition(glm::vec3(1.f, 1.f, -1.f));
+    m_SpotLight[2]->SetDirection(glm::vec3(1.f, -1.f, -1.f));
+    for(int i = 0; i < 3; i++)
+    {
+        auto _spot = std::static_pointer_cast<SpotLight>(m_SpotLight[i]);
+        _spot->SetInnerCutOff(25.5f);
+        _spot->SetOuterCutOff(30.5f);
+        _MM = m_SpotLight[i]->GetTransform()->GetTranslate();
+        m_SpotLight[i]->SetModelMatrix(_MM);
+    }
 
     m_StoneTex = Texture2D::Create("../src/TextureSrc/stone_wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_StoneSpec = Texture2D::Create("../src/TextureSrc/stone_wall_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
@@ -86,7 +108,9 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_HeadCrab = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/headcrab.obj");
 
-    m_Crowbar = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/crowbar.obj");
+    // m_Crowbar = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/crowbar.obj");
+
+    m_PortalGun = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portalgun.obj");
 
     m_Interface = CreateScope<UserInterface>();
 }
@@ -121,6 +145,8 @@ void LightTestRoom::Run()
 
         m_Interface->OnUpdate(*m_Timer);
 
+        glm::mat4 model = glm::mat4(1.f);
+
         CustomSpace::Ref<Shader> _shader = m_ShaderPool->getShader(1);
         _shader->Activate();
         _shader->SetInt("HaveTex", true);
@@ -130,7 +156,6 @@ void LightTestRoom::Run()
         _shader->SetFloat3("uViewPos", m_PersController->GetCamera().GetPosition());
         this->LightControl();
 
-        m_SpotLight->SetDirection(glm::vec3(glm::cos(m_AllTime), 0.f, glm::sin(m_AllTime)));
 
         this->RoomUpdate();
 
@@ -145,15 +170,22 @@ void LightTestRoom::Run()
         m_ShaderPool->getShader(4)->Activate();
         m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_DirLight->GetLightData()->ambient, 1.0f));
         CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_DirLight->GetBody());
+
         m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_PointLight->GetLightData()->ambient, 1.0f));
+        m_PointLight->SetPosition(glm::vec3(glm::cos(m_AllTime), m_PointLight->GetTransform()->GetLocalPosition().y, glm::sin(m_AllTime)));
+        model = m_PointLight->GetTransform()->GetTranslate() * m_PointLight->GetTransform()->GetRotate() * m_PointLight->GetTransform()->GetScale();
+        m_PointLight->SetModelMatrix(model);
         CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_PointLight->GetBody());
-        m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_SpotLight->GetLightData()->ambient, 1.0f));
-        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_SpotLight->GetBody());
 
+        for(int i = 0; i < 3; i++)
+        {
+            m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_SpotLight[i]->GetLightData()->ambient, 1.0f));
+            CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_SpotLight[i]->GetBody());
+        }
 
+        model = glm::mat4(1.f);
         m_ShaderPool->getShader(1)->Activate();
         m_ShaderPool->getShader(1)->SetMat4("uVP", m_PersController->GetCamera().GetVPMatrix());
-        glm::mat4 model = glm::mat4(1.f);
         model = glm::translate(model, glm::vec3(0.f, 0.f, 0.f));
         model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
         m_ShaderPool->getShader(1)->SetMat4("uMV", model);
@@ -161,11 +193,20 @@ void LightTestRoom::Run()
         m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
         m_HeadCrab->Draw(*m_ShaderPool->getShader(1));
 
-        model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, 2.f));
+        // model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, 2.f));
+        // m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+        // m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+        // m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+        // m_Crowbar->Draw(*m_ShaderPool->getShader(1));
+
+        model = glm::translate(glm::mat4(1.f), glm::vec3(2.f, .15f, -2.f));
+        model = glm::rotate(model, glm::radians(-10.f), glm::vec3(1, 0, 0));
+        model = glm::rotate(model, glm::radians(-45.f), glm::vec3(0, 1, 0));
+        model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
         m_ShaderPool->getShader(1)->SetMat4("uMV", model);
         m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
         m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-        m_Crowbar->Draw(*m_ShaderPool->getShader(1));
+        m_PortalGun->Draw(*m_ShaderPool->getShader(1));
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
         {
@@ -336,17 +377,20 @@ void LightTestRoom::LightControl()
     _shader->SetFloat("uPointLight[0].linear", _point->GetLinear());
     _shader->SetFloat("uPointLight[0].quadratic", _point->GetQuadratic());
     _shader->SetInt("HaveSpotLight", true);
-    _shader->SetFloat3("uSpotLight[0].position", m_SpotLight->GetTransform()->GetLocalPosition());
-    _shader->SetFloat3("uSpotLight[0].direction", m_SpotLight->GetLightData()->direction);
-    // _shader->SetFloat3("uSpotLight[0].position", m_PersController->GetCamera().GetPosition());
-    // _shader->SetFloat3("uSpotLight[0].direction", m_PersController->GetCamera().GetLookAt());
-    _shader->SetFloat3("uSpotLight[0].ambient", m_SpotLight->GetLightData()->ambient);
-    _shader->SetFloat3("uSpotLight[0].diffuse", m_SpotLight->GetLightData()->diffuse);
-    _shader->SetFloat3("uSpotLight[0].specular", m_SpotLight->GetLightData()->specular);
-    auto _spot = std::static_pointer_cast<CustomSpace::SpotLight>(m_SpotLight);
-    _shader->SetFloat("uSpotLight[0].constant", 1.f);
-    _shader->SetFloat("uSpotLight[0].linear", _spot->GetLinear());
-    _shader->SetFloat("uSpotLight[0].quadratic", _spot->GetQuadratic());
-    _shader->SetFloat("uSpotLight[0].innerCutOff", _spot->GetInner());
-    _shader->SetFloat("uSpotLight[0].outerCutOff", _spot->GetOuter());
+    _shader->SetInt("uSpotLightNum", 3);
+    for(int i = 0; i < 3; i++)
+    {
+        std::string s_i = std::to_string(i);
+        _shader->SetFloat3(("uSpotLight[" + s_i + "].position").c_str(), m_SpotLight[i]->GetTransform()->GetLocalPosition());
+        _shader->SetFloat3(("uSpotLight[" + s_i + "].direction").c_str(), m_SpotLight[i]->GetLightData()->direction);
+        _shader->SetFloat3(("uSpotLight[" + s_i + "].ambient").c_str(), m_SpotLight[i]->GetLightData()->ambient);
+        _shader->SetFloat3(("uSpotLight[" + s_i + "].diffuse").c_str(), m_SpotLight[i]->GetLightData()->diffuse);
+        _shader->SetFloat3(("uSpotLight[" + s_i + "].specular").c_str(), m_SpotLight[i]->GetLightData()->specular);
+        auto _spot = std::static_pointer_cast<CustomSpace::SpotLight>(m_SpotLight[i]);
+        _shader->SetFloat(("uSpotLight[" + s_i + "].constant").c_str(), 1.f);
+        _shader->SetFloat(("uSpotLight[" + s_i + "].linear").c_str(), _spot->GetLinear());
+        _shader->SetFloat(("uSpotLight[" + s_i + "].quadratic").c_str(), _spot->GetQuadratic());
+        _shader->SetFloat(("uSpotLight[" + s_i + "].innerCutOff").c_str(), _spot->GetInner());
+        _shader->SetFloat(("uSpotLight[" + s_i + "].outerCutOff").c_str(), _spot->GetOuter());
+    }
 }
