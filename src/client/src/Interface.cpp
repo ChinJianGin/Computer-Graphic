@@ -13,10 +13,10 @@ namespace CustomSpace
     {
         m_ButtonColors = 
         {
-            glm::vec4(1.f, 0.f, 0.f, 1.f),
+            glm::vec4(.94f, .92f, .78f, 1.f),
             glm::vec4(0.f, 1.f, 0.f, 1.f),
-            glm::vec4(0.f, 0.f, 1.f, 1.f),
-            glm::vec4(0.f, 1.f, 1.f, 1.f)
+            glm::vec4(1.f, 0.f, 0.f, 1.f),
+            glm::vec4(0.f, 0.f, 1.f, 1.f)
         };
         float _x = 1.5f, _y = .8f, _z = 0.f;
         float _xscale = .35f, _yscale = .2f;
@@ -58,7 +58,10 @@ namespace CustomSpace
         {
             ShaderPool::Get().getShader(3)->Activate();
             ShaderPool::Get().getShader(3)->SetInt("HaveTex", false);
-            ShaderPool::Get().getShader(3)->SetFloat4("uColor", m_ButtonColors[i]);
+            if(!b_ButtonIsActive[i])
+                ShaderPool::Get().getShader(3)->SetFloat4("uColor", m_ButtonColors[i]);
+            else
+                ShaderPool::Get().getShader(3)->SetFloat4("uColor", glm::vec4(.1f, .1f, .1f, 1.f));
             Render2D::RenderTarget(ShaderPool::Get().getShader(3), m_Buttons[i]->GetBody());
         }
     }
@@ -119,9 +122,22 @@ namespace CustomSpace
         {
             if (m_Buttons[i]->OnClicked(cpos))
             {
+                GAME_INFO("Button num : {0}", i);
+                b_ButtonIsActive[i] = !b_ButtonIsActive[i];
+                m_LastChoose = i;
                 b_FocusInterface = true;
                 break;
             }
         }
+    }
+
+    void UserInterface::Reset()
+    {
+        b_FocusInterface = false;
+        for(int i = 0; i < 4; i++)
+        {
+            b_ButtonIsActive[i] = false;
+        }
+        m_LastChoose = 0;
     }
 }

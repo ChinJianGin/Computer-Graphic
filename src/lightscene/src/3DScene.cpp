@@ -48,9 +48,11 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     m_PointLight->SetAmbient(glm::vec3(.0094f, .0092f, .0078f));
     m_PointLight->SetDiffuse(glm::vec3(.8f, .8f, .8f));
     m_PointLight->SetSpecular(glm::vec3(.5f, .5f, .5f));
-    m_PointLight->SetPosition(glm::vec3(1.f, 1.5f, 1.f));
+    m_PointLight->SetPosition(glm::vec3(glm::cos(m_AllTime), 1.5f, glm::sin(m_AllTime)));
     _MM = m_PointLight->GetTransform()->GetTranslate();
     m_PointLight->SetModelMatrix(_MM);
+    m_OriginAmbient[0] = m_PointLight->GetLightData()->ambient;
+    m_PointLightPos = m_PointLight->GetTransform()->GetLocalPosition();
 
     m_SpotLight[0] = CreateRef<SpotLight>();
     m_SpotLight[0]->SetAmbient(glm::vec3(.0f, .5f, .0f));
@@ -75,10 +77,11 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     for(int i = 0; i < 3; i++)
     {
         auto _spot = std::static_pointer_cast<SpotLight>(m_SpotLight[i]);
-        _spot->SetInnerCutOff(25.5f);
+        _spot->SetInnerCutOff(15.f);
         _spot->SetOuterCutOff(30.5f);
         _MM = m_SpotLight[i]->GetTransform()->GetTranslate();
         m_SpotLight[i]->SetModelMatrix(_MM);
+        m_OriginAmbient[i + 1] = m_SpotLight[i]->GetLightData()->ambient;
     }
 
     m_StoneTex = Texture2D::Create("../src/TextureSrc/stone_wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
@@ -95,6 +98,8 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     glm::vec3 CIP = glm::vec3(0.f);
 
     m_PersController = CreateRef<PerspectiveCameraController>(width, height, 60.f, 1.f, 1000.f, CIP);
+
+    m_PersController->GetCamera().SetPosition(glm::vec3(0.f, 2.5f, 0.f));
 
     m_CamPosition = m_PersController->GetCamera().GetPosition();
 
@@ -137,7 +142,6 @@ void LightTestRoom::Run()
         CustomSpace::WindowProps& prop = *(CustomSpace::WindowProps*)glfwGetWindowUserPointer((GLFWwindow*)m_Window->GetWindow());
 
         m_Timer->CalculateTimer();
-        m_AllTime += m_Timer->GetTick();
 
         CustomSpace::PerspectiveCamera* m_PersCamera = &m_PersController->GetCamera();
         CustomSpace::Renderer::BeginScene(m_PersController->GetCamera());
@@ -172,7 +176,11 @@ void LightTestRoom::Run()
         CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_DirLight->GetBody());
 
         m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_PointLight->GetLightData()->ambient, 1.0f));
-        m_PointLight->SetPosition(glm::vec3(glm::cos(m_AllTime), m_PointLight->GetTransform()->GetLocalPosition().y, glm::sin(m_AllTime)));
+        if(m_Interface->IsButtonActive()[0])
+        {
+            m_AllTime += m_Timer->GetTick();
+            m_PointLight->SetPosition(glm::vec3(glm::cos(m_AllTime), m_PointLight->GetTransform()->GetLocalPosition().y, glm::sin(m_AllTime)));
+        }
         model = m_PointLight->GetTransform()->GetTranslate() * m_PointLight->GetTransform()->GetRotate() * m_PointLight->GetTransform()->GetScale();
         m_PointLight->SetModelMatrix(model);
         CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_PointLight->GetBody());
@@ -255,6 +263,26 @@ bool LightTestRoom::OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event)
     if(event.GetKeyCode() == GLFW_KEY_ESCAPE)
     {
         exit(EXIT_SUCCESS);
+    }
+
+    if(event.GetKeyCode() == GLFW_KEY_R)
+    {
+        this->RGBControl(glm::vec3(.01, 0.f, 0.f));
+    }
+
+    if(event.GetKeyCode() == GLFW_KEY_G)
+    {
+        this->RGBControl(glm::vec3(0.f, .01f, 0.f));
+    }
+
+    if(event.GetKeyCode() == GLFW_KEY_B)
+    {
+        this->RGBControl(glm::vec3(0.f, 0.f, .01f));
+    }
+
+    if(event.GetKeyCode() == GLFW_KEY_P)
+    {
+        this->RoomReset();
     }
 
     return false;
@@ -380,17 +408,93 @@ void LightTestRoom::LightControl()
     _shader->SetInt("uSpotLightNum", 3);
     for(int i = 0; i < 3; i++)
     {
-        std::string s_i = std::to_string(i);
-        _shader->SetFloat3(("uSpotLight[" + s_i + "].position").c_str(), m_SpotLight[i]->GetTransform()->GetLocalPosition());
-        _shader->SetFloat3(("uSpotLight[" + s_i + "].direction").c_str(), m_SpotLight[i]->GetLightData()->direction);
-        _shader->SetFloat3(("uSpotLight[" + s_i + "].ambient").c_str(), m_SpotLight[i]->GetLightData()->ambient);
-        _shader->SetFloat3(("uSpotLight[" + s_i + "].diffuse").c_str(), m_SpotLight[i]->GetLightData()->diffuse);
-        _shader->SetFloat3(("uSpotLight[" + s_i + "].specular").c_str(), m_SpotLight[i]->GetLightData()->specular);
-        auto _spot = std::static_pointer_cast<CustomSpace::SpotLight>(m_SpotLight[i]);
-        _shader->SetFloat(("uSpotLight[" + s_i + "].constant").c_str(), 1.f);
-        _shader->SetFloat(("uSpotLight[" + s_i + "].linear").c_str(), _spot->GetLinear());
-        _shader->SetFloat(("uSpotLight[" + s_i + "].quadratic").c_str(), _spot->GetQuadratic());
-        _shader->SetFloat(("uSpotLight[" + s_i + "].innerCutOff").c_str(), _spot->GetInner());
-        _shader->SetFloat(("uSpotLight[" + s_i + "].outerCutOff").c_str(), _spot->GetOuter());
+        if(!m_Interface->IsButtonActive()[i + 1])
+        {
+            std::string s_i = std::to_string(i);
+            _shader->SetFloat3(("uSpotLight[" + s_i + "].position").c_str(), m_SpotLight[i]->GetTransform()->GetLocalPosition());
+            _shader->SetFloat3(("uSpotLight[" + s_i + "].direction").c_str(), m_SpotLight[i]->GetLightData()->direction);
+            _shader->SetFloat3(("uSpotLight[" + s_i + "].ambient").c_str(), m_SpotLight[i]->GetLightData()->ambient);
+            _shader->SetFloat3(("uSpotLight[" + s_i + "].diffuse").c_str(), m_SpotLight[i]->GetLightData()->diffuse);
+            _shader->SetFloat3(("uSpotLight[" + s_i + "].specular").c_str(), m_SpotLight[i]->GetLightData()->specular);
+            auto _spot = std::static_pointer_cast<CustomSpace::SpotLight>(m_SpotLight[i]);
+            _shader->SetFloat(("uSpotLight[" + s_i + "].constant").c_str(), 1.f);
+            _shader->SetFloat(("uSpotLight[" + s_i + "].linear").c_str(), _spot->GetLinear());
+            _shader->SetFloat(("uSpotLight[" + s_i + "].quadratic").c_str(), _spot->GetQuadratic());
+            _shader->SetFloat(("uSpotLight[" + s_i + "].innerCutOff").c_str(), _spot->GetInner());
+            _shader->SetFloat(("uSpotLight[" + s_i + "].outerCutOff").c_str(), _spot->GetOuter());
+        }
+        else
+        {
+            std::string s_i = std::to_string(i);
+            _shader->SetFloat3(("uSpotLight[" + s_i + "].position").c_str(), glm::vec3(0.f));
+            _shader->SetFloat3(("uSpotLight[" + s_i + "].direction").c_str(), glm::vec3(0.f));
+            _shader->SetFloat3(("uSpotLight[" + s_i + "].ambient").c_str(), glm::vec3(0.f));
+            _shader->SetFloat3(("uSpotLight[" + s_i + "].diffuse").c_str(), glm::vec3(0.f));
+            _shader->SetFloat3(("uSpotLight[" + s_i + "].specular").c_str(), glm::vec3(0.f));
+            auto _spot = std::static_pointer_cast<CustomSpace::SpotLight>(m_SpotLight[i]);
+            _shader->SetFloat(("uSpotLight[" + s_i + "].constant").c_str(), 1.f);
+            _shader->SetFloat(("uSpotLight[" + s_i + "].linear").c_str(), 0.f);
+            _shader->SetFloat(("uSpotLight[" + s_i + "].quadratic").c_str(), 0.f);
+            _shader->SetFloat(("uSpotLight[" + s_i + "].innerCutOff").c_str(), 0.f);
+            _shader->SetFloat(("uSpotLight[" + s_i + "].outerCutOff").c_str(), 0.f);
+        }
+    }
+}
+
+void LightTestRoom::RGBControl(const glm::vec3& value)
+{
+    switch (m_Interface->LastChooseButton())
+    {
+    case 0:
+        {
+            float r_v = m_PointLight->GetLightData()->ambient.r + value.r;
+            float g_v = m_PointLight->GetLightData()->ambient.g + value.g;
+            float b_v = m_PointLight->GetLightData()->ambient.b + value.b;
+            if(r_v > 1.f) r_v = 0.f; if(g_v > 1.f) g_v = 0; if(b_v > 1.f) b_v = 0; 
+            m_PointLight->SetAmbient(glm::vec3(r_v, g_v, b_v));
+        } 
+        break;
+    case 1:
+        {
+            float r_v = m_SpotLight[0]->GetLightData()->ambient.r + value.r;
+            float g_v = m_SpotLight[0]->GetLightData()->ambient.g + value.g;
+            float b_v = m_SpotLight[0]->GetLightData()->ambient.b + value.b;
+            if(r_v > 1.f) r_v = 0.f; if(g_v > 1.f) g_v = 0; if(b_v > 1.f) b_v = 0; 
+            m_SpotLight[0]->SetAmbient(glm::vec3(r_v, g_v, b_v));
+        }    
+        break;
+    case 2:
+        {
+            float r_v = m_SpotLight[1]->GetLightData()->ambient.r + value.r;
+            float g_v = m_SpotLight[1]->GetLightData()->ambient.g + value.g;
+            float b_v = m_SpotLight[1]->GetLightData()->ambient.b + value.b;
+            if(r_v > 1.f) r_v = 0.f; if(g_v > 1.f) g_v = 0; if(b_v > 1.f) b_v = 0; 
+            m_SpotLight[1]->SetAmbient(glm::vec3(r_v, g_v, b_v));
+        }
+        break;
+    case 3:
+        {
+            float r_v = m_SpotLight[2]->GetLightData()->ambient.r + value.r;
+            float g_v = m_SpotLight[2]->GetLightData()->ambient.g + value.g;
+            float b_v = m_SpotLight[2]->GetLightData()->ambient.b + value.b;
+            if(r_v > 1.f) r_v = 0.f; if(g_v > 1.f) g_v = 0; if(b_v > 1.f) b_v = 0; 
+            m_SpotLight[2]->SetAmbient(glm::vec3(r_v, g_v, b_v));
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void LightTestRoom::RoomReset()
+{
+    m_Interface->Reset();
+    m_AllTime = 0;
+    m_PointLight->SetPosition(m_PointLightPos);
+    m_PointLight->SetAmbient(m_OriginAmbient[0]);
+
+    for(int i = 0; i < SPOTLIGHTNUM; i++)
+    {
+        m_SpotLight[i]->SetAmbient(m_OriginAmbient[i + 1]);
     }
 }

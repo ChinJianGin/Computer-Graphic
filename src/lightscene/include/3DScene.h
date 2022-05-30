@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include"../../core/include/Core.h"
 #include"../../graphic/Renderer.h"
 #include"../../graphic/Texture.h"
@@ -12,6 +13,8 @@
 #include"../../client/include/Interface.h"
 #include"../../shader/ShaderPool.h"
 #include"../../light/Light.h"
+
+constexpr int SPOTLIGHTNUM = 3;
 
 class LightTestRoom
 {
@@ -39,7 +42,7 @@ class LightTestRoom
         CustomSpace::Ref<CustomSpace::Shape> m_Box, m_Ground, m_Ceiling;
         CustomSpace::Ref<CustomSpace::Shape> m_Wall[4];
         CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
-        CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight[3];
+        CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight[SPOTLIGHTNUM];
 
         CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec;
         CustomSpace::Ref<CustomSpace::Texture2D> m_CeilingTex, m_WallTex[2];
@@ -57,6 +60,8 @@ class LightTestRoom
 
         glm::vec3 m_CamPosition;
 
+        glm::vec3 m_OriginAmbient[4], m_PointLightPos;
+
         void LightControl();
 
         float m_AllTime = 0;
@@ -64,6 +69,9 @@ class LightTestRoom
         void RoomInit();
         void RoomUpdate();
 
+        void RGBControl(const glm::vec3& value);
+
+        void RoomReset();
 
         // Model test
         CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar, m_PortalGun;
