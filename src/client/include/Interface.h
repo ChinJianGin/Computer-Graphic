@@ -26,6 +26,7 @@ namespace CustomSpace
         const bool* IsButtonActive() { return this->b_ButtonIsActive; }
 
         void Clicked(const glm::vec2& cpos);
+        void Hovered(const glm::vec2& cpos);
 
         const bool IsFocusOnInterface() const { return b_FocusInterface; }
         void UnFocus() { b_FocusInterface = false; }
@@ -43,6 +44,8 @@ namespace CustomSpace
         bool b_ButtonIsActive[4] = {false};
 
         int m_LastChoose = 0;
+
+        glm::vec3 m_OrignScale;
 
         std::vector<glm::vec4> m_ButtonColors; 
     };

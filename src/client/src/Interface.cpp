@@ -20,6 +20,7 @@ namespace CustomSpace
         };
         float _x = 1.5f, _y = .8f, _z = 0.f;
         float _xscale = .35f, _yscale = .2f;
+        m_OrignScale = glm::vec3(_xscale, _yscale, 1.f);
         Ref<Button> button = CreateRef<Button>();
         button->SetPosition(glm::vec3(_x, _y, _z));
         button->SetScale(glm::vec3(_xscale, _yscale, 1.f));
@@ -100,6 +101,8 @@ namespace CustomSpace
         {
             m_MouseX = event.GetX();
             m_MouseY = event.GetY();
+            float normal_x = m_Aspecratio * (2.f * (float)m_MouseX / m_Width - 1.f) , normal_y = 2.f * (float)(m_Height - m_MouseY) / m_Height - 1.f;
+            this->Hovered(glm::vec2(normal_x, normal_y));
         }
         return false;
     }
@@ -127,6 +130,26 @@ namespace CustomSpace
                 m_LastChoose = i;
                 b_FocusInterface = true;
                 break;
+            }
+        }
+    }
+
+    void UserInterface::Hovered(const glm::vec2 &hpos)
+    {
+        for (int i = 0; i < m_Buttons.size(); i++)
+        {
+            if (m_Buttons[i]->OnHover(hpos))
+            {
+                m_Buttons[i]->SetScale(glm::vec3(m_OrignScale.x + .05f, m_OrignScale.y + .05f, 1.f));
+                glm::mat4 _MM = m_Buttons[i]->GetBody()->GetTransform()->GetTranslate() * m_Buttons[i]->GetBody()->GetTransform()->GetScale();
+                m_Buttons[i]->SetModelMatrix(_MM);
+                break;
+            }
+            else
+            {
+                m_Buttons[i]->SetScale(glm::vec3(m_OrignScale.x, m_OrignScale.y, 1.f));
+                glm::mat4 _MM = m_Buttons[i]->GetBody()->GetTransform()->GetTranslate() * m_Buttons[i]->GetBody()->GetTransform()->GetScale();
+                m_Buttons[i]->SetModelMatrix(_MM);
             }
         }
     }

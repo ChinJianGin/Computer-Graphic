@@ -37,7 +37,8 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     m_DirLight = CreateRef<DirectionLight>();
     // m_DirLight->SetAmbient(glm::vec3(.94f, .92f, .78f));
     m_DirLight->SetAmbient(glm::vec3(.001f, .001f, .001f));
-    m_DirLight->SetDirection(glm::vec3(-.2f, 1.f, -.3f));
+    m_DirLight->SetSpecular(glm::vec3(.1f, .1f, .1f));
+    m_DirLight->SetDirection(glm::vec3(-.2f, -1.f, -.3f));
     m_DirLight->SetPosition(glm::vec3(0.f, 6.f, 0.f));
     _MM = m_DirLight->GetTransform()->GetTranslate();
     m_DirLight->SetModelMatrix(_MM);
@@ -88,6 +89,8 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     m_StoneSpec = Texture2D::Create("../src/TextureSrc/stone_wall_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
     m_WoodTex = Texture2D::Create("../src/TextureSrc/wood.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_WoodSpec = Texture2D::Create("../src/TextureSrc/wood_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+    m_FriendCubeTex = Texture2D::Create("../src/TextureSrc/metal_box_lowres_skin001_a.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_FriendCubeSpec = Texture2D::Create("../src/TextureSrc/metal_box_lowres_skin001_a.tga", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
 
     m_Timer = CreateScope<CoreTimer>(TARGET_FRAMERATE);
 
@@ -97,7 +100,7 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     glm::vec3 CIP = glm::vec3(0.f);
 
-    m_PersController = CreateRef<PerspectiveCameraController>(width, height, 60.f, 1.f, 1000.f, CIP);
+    m_PersController = CreateRef<PerspectiveCameraController>(width, height, 60.f, .1f, 1000.f, CIP);
 
     m_PersController->GetCamera().SetPosition(glm::vec3(0.f, 2.5f, 0.f));
 
@@ -110,6 +113,7 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
     m_ShaderPool->getShader(2, "../src/shader/2DGameCircle.vert", "../src/shader/2DGameCircle.frag");
     m_ShaderPool->getShader(3, "../src/shader/2DGameTexture.vert", "../src/shader/2DGameTexture.frag");
     m_ShaderPool->getShader(4, "../src/shader/Light.vert", "../src/shader/Light.frag");
+    m_ShaderPool->getShader(5, "../src/shader/LightGouraudMaterial.vert", "../src/shader/LightGouraudMaterial.frag");
 
     m_HeadCrab = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/headcrab.obj");
 
@@ -166,10 +170,16 @@ void LightTestRoom::Run()
         m_StoneTex->Bind();
         m_StoneSpec->Bind();
         _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Pyramid->GetTransform()->GetModelMatrix())));
-        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(1), m_Pyramid);
-        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(1), m_Box);
+        CustomSpace::Renderer::Submit(_shader, m_Pyramid);
         m_StoneTex->UnBind();
         m_StoneSpec->UnBind();
+
+        m_FriendCubeTex->Bind();
+        m_FriendCubeSpec->Bind();
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Box->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_Box);
+        m_FriendCubeSpec->UnBind();
+        m_FriendCubeTex->UnBind();
 
         m_ShaderPool->getShader(4)->Activate();
         m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_DirLight->GetLightData()->ambient, 1.0f));
@@ -241,6 +251,18 @@ void LightTestRoom::Run()
             m_CamPosition += -m_PersCamera->GetUp() * glm::vec3(m_Timer->GetTick());
         }
 
+        if(m_CamPosition.x >= 2.f)
+            m_CamPosition.x = 2.f;
+        else if(m_CamPosition.x <= -2.f)
+            m_CamPosition.x = -2.f;
+        if(m_CamPosition.z >= 2.f)
+            m_CamPosition.z = 2.f;
+        else if(m_CamPosition.z <= -2.f)
+            m_CamPosition.z = -2.f;
+        if(m_CamPosition.y >= 4.5f)
+            m_CamPosition.y = 4.5f;
+        else if(m_CamPosition.y <= .5f)
+            m_CamPosition.y = .5f;
         m_PersCamera->SetPosition(m_CamPosition);
 
         m_Window->Update();

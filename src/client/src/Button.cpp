@@ -29,6 +29,16 @@ namespace CustomSpace
         return false;
     }
 
+    bool Button::OnHover(const glm::vec2 &hpos)
+    {
+        if (hpos.x >= m_WorldLB.x && hpos.x <= m_WorldRT.x && hpos.y >= m_WorldLB.y && hpos.y <= m_WorldRT.y)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     void Button::SetPosition(const glm::vec3 &pos)
     {
         m_Body->SetPosition(pos);
@@ -48,9 +58,7 @@ namespace CustomSpace
     {
         m_Body->SetModelMatrix(model);
         m_WorldLB = glm::vec3(model * glm::vec4(m_OriginLB, 1.f));
-        CORE_WARN("World LB X : {0} , Y : {1}", m_WorldLB.x, m_WorldLB.y);
         m_WorldRT = glm::vec3(model * glm::vec4(m_OriginRT, 1.f));
-        CORE_WARN("World RT X : {0} , Y : {1}", m_WorldRT.x, m_WorldRT.y);
     }
 
     void Button::SetParentTransform(const Ref<Transform> &parent)

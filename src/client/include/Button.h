@@ -14,7 +14,7 @@ namespace CustomSpace
             void OnUpdate(CoreTimer& timer);
 
             bool OnClicked(const glm::vec2& cpos);
-            void OnHover(glm::vec2& hpos);
+            bool OnHover(const glm::vec2& hpos);
 
 
             void SetPosition(const glm::vec3& pos);

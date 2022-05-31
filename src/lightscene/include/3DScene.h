@@ -44,7 +44,7 @@ class LightTestRoom
         CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
         CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight[SPOTLIGHTNUM];
 
-        CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec;
+        CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec, m_FriendCubeTex, m_FriendCubeSpec;
         CustomSpace::Ref<CustomSpace::Texture2D> m_CeilingTex, m_WallTex[2];
 
         CustomSpace::Scope<CoreTimer> m_Timer;
