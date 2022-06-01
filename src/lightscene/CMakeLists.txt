@@ -4,4 +4,4 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 project(lightscene)
 
-add_library(lightscene ./src/3DScene.cpp)
+add_library(lightscene ./src/Room.cpp)

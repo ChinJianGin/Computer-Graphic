@@ -64,5 +64,11 @@ namespace CustomSpace
         glBindVertexArray(m_VAO);
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
+
+        for(unsigned int i = 0; i < m_textures.size(); i++)
+        {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
     }
 }

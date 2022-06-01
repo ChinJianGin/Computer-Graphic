@@ -1,5 +1,6 @@
 #include "../include/PerspectiveCameraController.h"
-#include "../../lightscene/include/3DScene.h"
+// #include "../../lightscene/include/3DScene.h"
+#include "../../lightscene/include/Room.h"
 namespace CustomSpace
 {
     PerspectiveCameraController::PerspectiveCameraController(int width, int height, glm::vec3 &pos) : m_Width(width), m_Height(height), m_CameraPostition(pos)

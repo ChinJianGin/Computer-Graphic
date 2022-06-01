@@ -17,14 +17,18 @@ namespace CustomSpace
                 -1.f, 0.f, 1.f, 0.f, -1.f, 0.f, 0.f, 0.f,
                 -1.f, 0.f, -1.f, 0.f, -1.f, 0.f, 0.f, 1.f,
                 1.f, 0.f, -1.f, 0.f, -1.f, 0.f, 1.f, 1.f,
+
+                -1.f, 0.f, 1.f, 0.f, -1.f, 0.f, 0.f, 0.f,
+                1.f, 0.f, -1.f, 0.f, -1.f, 0.f, 1.f, 1.f,
                 1.f, 0.f, 1.f, 0.f, -1.f, 0.f, 1.f, 0.f};
+        CalTangentSpace(Points);
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());
 
         GLuint indices[] =
             {
                 0, 1, 2,
-                0, 2, 3
+                3, 4, 5
             };
 
         m_VertexData->indices.assign(indices, indices + 6);

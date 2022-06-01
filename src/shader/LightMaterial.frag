@@ -3,6 +3,7 @@
 struct Material{
     sampler2D diffuse;
     sampler2D specular;
+    sampler2D normalmap;
     float shininess;
 };
 
@@ -47,8 +48,10 @@ out vec4 FragColor;
 in vec2 texCoord;
 in vec3 Normal;
 in vec3 FragPos;
+in mat3 TBN;
 
 uniform bool HaveTex = true;
+uniform bool HaveNormal = false;
 uniform bool HaveDirLight = false;
 uniform bool HavePointLight = false;
 uniform bool HaveSpotLight = false;
@@ -84,7 +87,18 @@ void main()
     {
         vec3 result = vec3(0.0, 0.0, 0.0);
 
-        vec3 norm = normalize(Normal);
+        vec3 norm = vec3(0.0, 0.0, 0.0);
+
+        if(HaveNormal != true)
+        {
+            norm = normalize(Normal);
+        }
+        else
+        {
+            norm = texture(uMaterial.normalmap, texCoord).rgb;
+            norm = norm * 2.0 - 1.0;
+            norm = normalize(TBN * norm);
+        }
 
         vec3 viewDir = normalize(uViewPos - FragPos);
 

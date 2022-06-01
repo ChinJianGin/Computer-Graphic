@@ -17,35 +17,39 @@ namespace CustomSpace
                 -.5f, 0.f,  .5f,   0.f, -1.f, 0.f,       0.f, 0.f,   
                 -.5f, 0.f, -.5f,   0.f, -1.f, 0.f,       0.f, 5.f,   
                  .5f, 0.f, -.5f,   0.f, -1.f, 0.f,       5.f, 5.f,   
+
+                -.5f, 0.f,  .5f,   0.f, -1.f, 0.f,       0.f, 0.f,   
+                 .5f, 0.f, -.5f,   0.f, -1.f, 0.f,       5.f, 5.f,   
                  .5f, 0.f,  .5f,   0.f, -1.f, 0.f,       5.f, 0.f,   
 
-                -.5f, 0.f,  .5f,    .8f, -.5f, 0.f,      0.f, 0.f,   
-                -.5f, 0.f, -.5f,    .8f, -.5f, 0.f,      5.f, 0.f,   
-                 0.f, .8f,  0.f,    .8f, -.5f, 0.f,     2.5f, 5.f,   
+                 0.f, .8f,  0.f,    -.8f, .5f, 0.f,     2.5f, 5.f,   
+                -.5f, 0.f, -.5f,    -.8f, .5f, 0.f,      5.f, 0.f,   
+                -.5f, 0.f,  .5f,    -.8f, .5f, 0.f,      0.f, 0.f,   
 
-                -.5f, 0.f, -.5f,    0.f, .5f, -.8f,      5.f, 0.f,   
-                 .5f, 0.f, -.5f,    0.f, .5f, -.8f,      0.f, 0.f,   
                  0.f, .8f,  0.f,    0.f, .5f, -.8f,     2.5f, 5.f,   
+                 .5f, 0.f, -.5f,    0.f, .5f, -.8f,      0.f, 0.f,   
+                -.5f, 0.f, -.5f,    0.f, .5f, -.8f,      5.f, 0.f,   
 
-                .5f, 0.f, -.5f,     -.8f, -.5f, 0.f,      0.f, 0.f,   
-                .5f, 0.f,  .5f,     -.8f, -.5f, 0.f,      5.f, 0.f,   
-                0.f, .8f,  0.f,     -.8f, -.5f, 0.f,     2.5f, 5.f,   
+                0.f, .8f,  0.f,     -.8f, .5f, 0.f,     2.5f, 5.f,   
+                .5f, 0.f,  .5f,     -.8f, .5f, 0.f,      5.f, 0.f,   
+                .5f, 0.f, -.5f,     -.8f, .5f, 0.f,      0.f, 0.f,   
 
-                 .5f, 0.f, .5f,     0.f, .5f, .8f,      5.f, 0.f,   
+                 0.f, .8f, 0.f,     0.f, .5f, .8f,     2.5f, 5.f,
                 -.5f, 0.f, .5f,     0.f, .5f, .8f,      0.f, 0.f,   
-                 0.f, .8f, 0.f,     0.f, .5f, .8f,     2.5f, 5.f
+                 .5f, 0.f, .5f,     0.f, .5f, .8f,      5.f, 0.f   
             };
+        CalTangentSpace(Points);
         m_PointsData = CreateRef<PointsData>();
         m_PointsData->Points.assign(Points.begin(), Points.end());
 
         GLuint indices[] =
             {
                 0, 1, 2,
-                0, 2, 3,
-                4, 6, 5,
-                7, 9, 8,
-                10, 12, 11,
-                13, 15, 14};
+                3, 4, 5,
+                6, 7, 8,
+                9, 10, 11,
+                12, 13, 14,
+                15, 16, 17};
 
         m_VertexData->indices.assign(indices, indices + 18);
 

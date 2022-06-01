@@ -1,5 +1,7 @@
 #include "../include/Interface.h"
-#include "../../lightscene/include/3DScene.h"
+//#include "../../lightscene/include/3DScene.h"
+#include "../../lightscene/include/Room.h"
+
 #include "../../shader/ShaderPool.h"
 
 namespace CustomSpace
