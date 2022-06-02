@@ -13,6 +13,7 @@ namespace CustomSpace
             }
 
             void Draw(Shader& shader);
+            void DrawWithNormalMap(Shader& shader, bool normal = false);
 
         private:
             std::vector<Texture_str> textures_loaded;

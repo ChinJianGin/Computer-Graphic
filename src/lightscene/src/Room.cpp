@@ -212,7 +212,7 @@ void LightTestRoom::Run()
         m_ShaderPool->getShader(1)->SetMat4("uMV", model);
         m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
         m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-        m_HeadCrab->Draw(*m_ShaderPool->getShader(1));
+        m_HeadCrab->DrawWithNormalMap(*m_ShaderPool->getShader(1), true);
 
         // model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, 2.f));
         // m_ShaderPool->getShader(1)->SetMat4("uMV", model);

@@ -22,14 +22,15 @@ void main()
     Normal = uULMM * vNormal;
 
     vec3 T = normalize(vec3(uMV * vec4(vTangent, 0.0)));
-    vec3 B = normalize(vec3(uMV * vec4(vBitangent, 0.0)));
+    // vec3 B = normalize(vec3(uMV * vec4(vBitangent, 0.0)));
     vec3 N = normalize(vec3(uMV * vec4(vNormal, 0.0)));
-    TBN = mat3(T, B, N);
+    // TBN = mat3(T, B, N);
     // vec3 T = normalize(Normal * vTangent);
     // vec3 N = normalize(Normal * vNormal);
-    // T = normalize(T - dot(T, N) * N);
-    // vec3 B = cross(N, T);
+    T = normalize(T - dot(T, N) * N);
+    vec3 B = cross(N, T);
 
     // TBN = transpose(mat3(T, B, N));
+    TBN = mat3(T, B, N);
     gl_Position = uVP * uMV * vec4(vPosition, 1.0);
 }

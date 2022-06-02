@@ -33,6 +33,9 @@ namespace CustomSpace
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord));
 
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
+
         glBindVertexArray(0);
     }
 
@@ -52,9 +55,16 @@ namespace CustomSpace
                 // number = std::to_string(diffuseNr++);
             else if(name == "texture_specular")
                 _type = "specular";
+            else if(name == "texture_normal")
+                _type = "normalmap";
                 // number = std::to_string(specularNr++);
 
             // shader.SetFloat((name + number).c_str(), i);
+            if(b_HaveNormalMap)
+                shader.SetInt("HaveNormal", true);
+            else
+                shader.SetInt("HaveNormal", false);
+
             shader.SetInt(("uMaterial." + _type).c_str(), i);
             shader.SetFloat(("uMaterial.shininess"), 32.f);
             glBindTexture(GL_TEXTURE_2D, m_textures[i].id);

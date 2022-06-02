@@ -6,7 +6,7 @@ namespace CustomSpace
     void Model::loadModel(std::string path)
     {
         Assimp::Importer import;
-        const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+        const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
         if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
@@ -22,6 +22,15 @@ namespace CustomSpace
     {
         for(unsigned int i = 0; i < m_Meshes.size(); i++)
             m_Meshes[i].Draw(shader);
+    }
+
+    void Model::DrawWithNormalMap(Shader& shader, bool normal)
+    {
+        for(unsigned int i = 0; i < m_Meshes.size(); i++)
+        {
+            m_Meshes[i].HaveNormalMap(normal);
+            m_Meshes[i].Draw(shader);
+        }
     }
 
     void Model::processNode(aiNode* node, const aiScene* scene)
@@ -58,6 +67,11 @@ namespace CustomSpace
             vector.z = mesh->mNormals[i].z;
             vertex.Normal = vector;
 
+            vector.x = mesh->mTangents[i].x;
+            vector.y = mesh->mTangents[i].y;
+            vector.z = mesh->mTangents[i].z;
+            vertex.Tangent = vector;
+
             if(mesh->mTextureCoords[0])
             {
                 glm::vec2 vec;
@@ -85,9 +99,14 @@ namespace CustomSpace
             std::vector<Texture_str> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 
             textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+
             std::vector<Texture_str> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 
             textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+            std::vector<Texture_str> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+
+            textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
         }
         
         return Mesh(vertices, indices, textures);
