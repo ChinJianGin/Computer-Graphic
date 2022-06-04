@@ -41,4 +41,15 @@ namespace CustomSpace
         else
         RenderCommand::RenderTarget(shape->GetVertexData()->m_VAO, shape->GetVertexData()->m_VAO->GetEBO()->GetCount());  
     }
+
+    void Renderer::SubmitShadow(const Ref<Shader>& shader, const Ref<Shape>& shape)
+    {
+        shader->SetMat4("uMV", shape->GetTransform()->GetModelMatrix());
+
+        shape->GetVertexData()->m_VAO->Bind(); 
+        if(shape->GetType() == CustomSpace::Shape::ShapeType::Line)
+        RenderCommand::RenderLine(shape->GetVertexData()->m_VAO, shape->GetVertexData()->m_VAO->GetEBO()->GetCount());
+        else
+        RenderCommand::RenderTarget(shape->GetVertexData()->m_VAO, shape->GetVertexData()->m_VAO->GetEBO()->GetCount());  
+    }
 }

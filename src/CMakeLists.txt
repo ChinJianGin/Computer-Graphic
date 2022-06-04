@@ -13,6 +13,7 @@ add_subdirectory(lightscene)
 add_subdirectory(graphic)
 add_subdirectory(physics)
 add_subdirectory(light)
+add_subdirectory(framebuffer)
 
 
 project(Practice1)

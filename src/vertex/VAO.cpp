@@ -56,6 +56,7 @@ void VAO::AddVBO(const CustomSpace::Ref<VBO>& vbo)
         index++;
     }
     m_VBO.push_back(vbo);
+    vbo->UnBind();
 }
 
 void VAO::SetEBO(const CustomSpace::Ref<EBO>& ebo)

@@ -58,6 +58,55 @@ Shader::Shader(const char* vertexfile, const char* fragmentshader)
 	glDeleteShader(fragmentShader);
 }
 
+Shader::Shader(const char* vertexfile, const char* fragmentshader, const char* geometryshader)
+{
+    std::string VertexCode = get_file_contents(vertexfile);
+    std::string FragmentCode = get_file_contents(fragmentshader);
+    std::string GeometryCode = get_file_contents(geometryshader);
+
+    const char* VertexSource = VertexCode.c_str();
+    const char* FragmentSource = FragmentCode.c_str();
+    const char* GeometrySource = GeometryCode.c_str();
+
+    // Create Vertex Shader Object and get its reference
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	// Attach Vertex Shader source to the Vertex Shader Object
+	glShaderSource(vertexShader, 1, &VertexSource, NULL);
+	// Compile the Vertex Shader into machine code
+	glCompileShader(vertexShader);
+	CompileErrors(vertexShader, "VERTEX");
+
+	// Create Fragment Shader Object and get its reference
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	// Attach Fragment Shader source to the Fragment Shader Object
+	glShaderSource(fragmentShader, 1, &FragmentSource, NULL);
+	// Compile the Vertex Shader into machine code
+	glCompileShader(fragmentShader);
+	CompileErrors(fragmentShader, "FRAGMENT");
+
+	// Create Fragment Shader Object and get its reference
+	GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+	// Attach Fragment Shader source to the Fragment Shader Object
+	glShaderSource(geometryShader, 1, &GeometrySource, NULL);
+	// Compile the Vertex Shader into machine code
+	glCompileShader(geometryShader);
+	CompileErrors(geometryShader, "GEOMETRY");
+
+	// Create Shader Program Object and get its reference
+	ID = glCreateProgram();
+	// Attach the Vertex and Fragment Shaders to the Shader Program
+	glAttachShader(ID, vertexShader);
+	glAttachShader(ID, fragmentShader);
+	glAttachShader(ID, geometryShader);
+	// Wrap-up/Link all the shaders together into the Shader Program
+	glLinkProgram(ID);
+	CompileErrors(ID, "PROGRAM");
+
+	// Delete the now useless Vertex and Fragment Shader objects
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	glDeleteShader(geometryShader);
+}
 void Shader::Activate()
 {
     glUseProgram(ID);

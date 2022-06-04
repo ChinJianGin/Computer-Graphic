@@ -9,17 +9,20 @@ layout (location = 4) in vec3 vBitangent;
 uniform mat4 uVP;
 uniform mat4 uMV;
 uniform mat3 uULMM;
+// uniform mat4 ulightProjection;
 
 out vec2 texCoord;
 out vec3 Normal;
 out vec3 FragPos;
 out mat3 TBN;
+// out vec4 fragPosLight;
 
 void main()
 {
     FragPos = vec3(uMV * vec4(vPosition, 1.0));
     texCoord = vTexCoord;
     Normal = uULMM * vNormal;
+    // fragPosLight = ulightProjection * vec4(FragPos, 1.0);
 
     vec3 T = normalize(vec3(uMV * vec4(vTangent, 0.0)));
     // vec3 B = normalize(vec3(uMV * vec4(vBitangent, 0.0)));

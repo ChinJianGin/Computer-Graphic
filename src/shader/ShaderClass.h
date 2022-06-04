@@ -16,6 +16,7 @@ class Shader
     public:
         
         Shader(const char* vertexfile, const char* fragmentfile);
+        Shader(const char* vertexfile, const char* fragmentfile, const char* geometryfile);
 
         void Activate();
         void Delete();

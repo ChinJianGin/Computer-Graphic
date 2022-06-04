@@ -10,6 +10,7 @@ class ShaderPool
     static ShaderPool& Get() { return *Instance; }
     CustomSpace::Ref<Shader>& getShader(const int key);
     CustomSpace::Ref<Shader>& getShader(const int key, const char* vert, const char* frag);
+    CustomSpace::Ref<Shader>& getShader(const int key, const char* vert, const char* frag, const char* geom);
 
     private:
         static ShaderPool* Instance;

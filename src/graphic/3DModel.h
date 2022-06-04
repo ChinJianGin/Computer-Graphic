@@ -13,7 +13,7 @@ namespace CustomSpace
             int pointsNum = points.size() / 8;
             int trianglesNum = pointsNum / 3;
             int dataSize = points.size();
-            CORE_INFO("Num : {0}", pointsNum);
+            // CORE_INFO("Num : {0}", pointsNum);
             glm::vec3 pos[pointsNum];
             glm::vec2 uv[pointsNum];
             for(int i = 0; i < dataSize; i = i+8)

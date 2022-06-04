@@ -28,6 +28,7 @@ namespace CustomSpace
             static void EndScene();
 
             static void Submit(const Ref<Shader>& shader, const Ref<Shape>& shape);
+            static void SubmitShadow(const Ref<Shader>& shader, const Ref<Shape>& shape);
 
         private:
             struct SceneData

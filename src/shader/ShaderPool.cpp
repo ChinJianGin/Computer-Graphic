@@ -33,3 +33,13 @@ CustomSpace::Ref<Shader>& ShaderPool::getShader(const int key, const char* vert,
     m_ShaderPool.insert(std::pair<int, CustomSpace::Ref<Shader>>(key, _Shader));
     return m_ShaderPool[key];
 }
+CustomSpace::Ref<Shader>& ShaderPool::getShader(const int key, const char* vert, const char* frag, const char* geom)
+{
+    if(m_ShaderPool.find(key) != m_ShaderPool.end())
+    {
+        return m_ShaderPool[key];
+    }
+    CustomSpace::Ref<Shader> _Shader = CustomSpace::CreateRef<Shader>(Shader(vert, frag, geom));
+    m_ShaderPool.insert(std::pair<int, CustomSpace::Ref<Shader>>(key, _Shader));
+    return m_ShaderPool[key];
+}
