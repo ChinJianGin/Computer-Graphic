@@ -15,6 +15,7 @@
 #include"../../light/Light.h"
 #include"../../framebuffer/ShadowMapFBO.h"
 #include"../../framebuffer/OmniShadowMap.h"
+#include"../../graphic/Skybox.h"
 
 constexpr int SPOTLIGHTNUM = 3;
 constexpr int FLOORNUM = 6;
@@ -35,7 +36,6 @@ class LightTestRoom
 
         void Close();
 
-
         static LightTestRoom& Get() { return * Instance; }
         CustomSpace::Windows& GetWindow() { return *m_Window; }
 
@@ -44,9 +44,9 @@ class LightTestRoom
         CustomSpace::Ref<CustomSpace::PerspectiveCameraController> m_PersController;
 
         CustomSpace::Scope<CustomSpace::ShapeFactory> m_Factory;
-        CustomSpace::Ref<CustomSpace::Shape> m_Box, m_Ground[FLOORNUM], m_Ceiling;
-        CustomSpace::Ref<CustomSpace::Shape> m_Wall[4];
+        CustomSpace::Ref<CustomSpace::Shape> m_Box;
         CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
+        CustomSpace::Ref<CustomSpace::Shape> m_Wall[4], m_Ground[FLOORNUM], m_Ceiling;
         CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight[SPOTLIGHTNUM];
 
         CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec, m_FriendCubeTex, m_FriendCubeSpec, m_MetalFloorTex, m_MetalFloorSpec;
@@ -56,6 +56,8 @@ class LightTestRoom
 
         CustomSpace::Ref<CustomSpace::ShadowMap> m_ShadowMap;
         CustomSpace::Ref<CustomSpace::OmniShadowMap> m_OmniShadowMap;
+
+        CustomSpace::Ref<CustomSpace::Skybox> m_Skybox;
 
         CustomSpace::Scope<CoreTimer> m_Timer;
 
@@ -76,9 +78,20 @@ class LightTestRoom
 
         glm::mat4 m_LightProjection = glm::mat4(1.f);
 
-        void LightControl();
-
         float m_AllTime = 0;
+
+        void Init();
+
+        void ObjectInit();
+
+        void ModelInit();
+
+        void ShaderInit();
+
+        void TextureInit();
+
+        void LightInit();
+        void LightControl();
 
         void RoomInit();
         void RoomUpdate();
@@ -88,11 +101,14 @@ class LightTestRoom
         void RoomReset();
 
         void RenderQuad();
+        void RenderNormalScene();
+        void RenderShadowScene();
 
         int framebuffer_width = 0, framebuffer_height = 0;
 
         void ShadowMapUpdate();
+        void OmniShadowMapUpdate();
 
-        // Model test
+        // Model
         CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar, m_PortalGun;
 };

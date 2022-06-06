@@ -49,7 +49,7 @@ namespace CustomSpace
             CORE_ERROR("Frame buffer error, status : {0}", Status);
             return false;
         }
-        // glBindFramebuffer(GL_FRAMEBUFFER, 0); // Maybe have problem.
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // Maybe have problem.
         return true;
     }
     void OmniShadowMap::BindToWrite()

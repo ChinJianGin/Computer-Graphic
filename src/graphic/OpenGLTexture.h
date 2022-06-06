@@ -20,4 +20,20 @@ namespace CustomSpace
             uint32_t ID;
             GLenum m_Type, m_Slot;
     };
+
+    class OpenGLCubeTexture : public SkyboxTexture
+    {
+        public:
+            OpenGLCubeTexture(std::vector<std::string> path);
+            virtual ~OpenGLCubeTexture();
+            virtual uint32_t GetWidth() const override {return m_Width;};
+            virtual uint32_t GetHeight() const override {return m_Height;};
+
+            virtual void Bind() const override;
+            virtual void UnBind() const override; 
+        private:
+            std::vector<std::string> m_Path;
+            uint32_t m_Width, m_Height;
+            uint32_t ID;
+    };
 }

@@ -6,4 +6,9 @@ namespace CustomSpace
     {
         return CreateRef<OpenGLTexture2D>(path, texturetype, slot, pixeltype);
     }
+
+    Ref<SkyboxTexture> SkyboxTexture::Create(std::vector<std::string> path)
+    {
+        return CreateRef<OpenGLCubeTexture>(path);
+    }
 }

@@ -20,4 +20,10 @@ namespace CustomSpace
         public:
             static Ref<Texture2D> Create(const char* path, GLenum texturetype, GLenum slot, GLenum pixeltype);
     };
+
+    class SkyboxTexture : public Texture
+    {
+        public:
+            static Ref<SkyboxTexture> Create(std::vector<std::string> path);
+    };
 }

@@ -119,7 +119,7 @@ namespace CustomSpace
 
         if(b_ZoomUpdate)
         {
-            m_Camera->SetProjecttion(m_ZoomLevel, m_AspectRatio, 1.f, 1000.f);
+            m_Camera->SetProjecttion(m_ZoomLevel, m_AspectRatio, .1f, 1000.f);
             b_ZoomUpdate = false;
         }
     }
