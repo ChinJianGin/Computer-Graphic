@@ -101,27 +101,32 @@ void LightTestRoom::ShaderInit()
     m_ShaderPool->getShader(9, "../src/shader/Skybox.vert", "../src/shader/Skybox.frag");
     m_ShaderPool->getShader(1)->SetInt("uMaterial.diffuse", 0);
     m_ShaderPool->getShader(1)->SetInt("uMaterial.specular", 1);
-    m_ShaderPool->getShader(1)->SetFloat("uMaterial.shininess", 64.f);
+    m_ShaderPool->getShader(1)->SetFloat("uMaterial.shininess", 32.f);
 }
 
 void LightTestRoom::TextureInit()
 {
     using namespace CustomSpace;
-    m_CeilingTex = Texture2D::Create("../src/TextureSrc/concreteceiling001a.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
-    m_WallTex[0] = Texture2D::Create("../src/TextureSrc/building_template015b.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
-    m_WallTex[1] = Texture2D::Create("../src/TextureSrc/building_template015f.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_hl2_ceiling = Texture2D::Create("../src/TextureSrc/concreteceiling001a.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_hl2_wall[0] = Texture2D::Create("../src/TextureSrc/building_template015b.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_hl2_wall[1] = Texture2D::Create("../src/TextureSrc/building_template015f.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_StoneTex = Texture2D::Create("../src/TextureSrc/stone_wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_StoneSpec = Texture2D::Create("../src/TextureSrc/stone_wall_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
     m_WoodTex = Texture2D::Create("../src/TextureSrc/wood.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_WoodSpec = Texture2D::Create("../src/TextureSrc/wood_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
     m_FriendCubeTex = Texture2D::Create("../src/TextureSrc/metal_box_lowres_skin001_na.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_FriendCubeSpec = Texture2D::Create("../src/TextureSrc/metal_box_lowres_skin001_a.tga", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
-    m_MetalFloorTex = Texture2D::Create("../src/TextureSrc/black_floor_metal_001na.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
-    m_MetalFloorSpec = Texture2D::Create("../src/TextureSrc/black_floor_metal_001a-RGB.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
-    m_FloorNomrmal = Texture2D::Create("../src/TextureSrc/black_floor_metal_001a_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
+    m_pt2_tile = Texture2D::Create("../src/TextureSrc/black_floor_metal_001na.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_pt2_tile_spec = Texture2D::Create("../src/TextureSrc/black_floor_metal_001a-RGB.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+    m_pt2_floor_normal = Texture2D::Create("../src/TextureSrc/black_floor_metal_001a_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
     m_hl2_tile = Texture2D::Create("../src/TextureSrc/tilefloor009b.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_hl2_tile_spec = Texture2D::Create("../src/TextureSrc/tilefloor009b_spec_2.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
     m_hl2_floor_normal = Texture2D::Create("../src/TextureSrc/tilefloor009b_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
+    m_pt2_wall[0] = Texture2D::Create("../src/TextureSrc/white_wall_tile003b.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_pt2_wall_spec = Texture2D::Create("../src/TextureSrc/white_wall_tile003b_spec.tga", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+    m_pt2_wall_normal = Texture2D::Create("../src/TextureSrc/white_wall_tile003b_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
+    m_pt2_ceiling = Texture2D::Create("../src/TextureSrc/white_ceiling_tile002a.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_pt2_ceiling_normal = Texture2D::Create("../src/TextureSrc/white_ceiling_tile002a_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
 }
 
 void LightTestRoom::LightInit()
@@ -141,8 +146,8 @@ void LightTestRoom::LightInit()
     auto _point = std::static_pointer_cast<PointLight>(m_PointLight);
     m_PointLight->SetAmbient(glm::vec3(.94f, .92f, .78f));
     // m_PointLight->SetAmbient(glm::vec3(.001f, .001f, .001f));
-    m_PointLight->SetDiffuse(glm::vec3(.5f, .5f, .5f));
-    m_PointLight->SetSpecular(glm::vec3(.25f, .25f, .25f));
+    m_PointLight->SetDiffuse(glm::vec3(.1f, .1f, .1f));
+    m_PointLight->SetSpecular(glm::vec3(.5f, .5f, .5f));
     m_PointLight->SetPosition(glm::vec3(glm::cos(m_AllTime), 1.5f, glm::sin(m_AllTime)));
     _MM = m_PointLight->GetTransform()->GetTranslate();
     m_PointLight->SetModelMatrix(_MM);
@@ -447,61 +452,102 @@ void LightTestRoom::RoomInit()
         m_Ground[i] = ShapeFactory::Get().ShapeCreator<Plane>();
         if(i < 3)
         {
-            float _x = 0.f; float _y = -.0001f; float _z = i * -5.f;
+            float _x = 2.5f; float _y = -.0001f; float _z = i * -5.f;
             m_Ground[i]->SetPosition(glm::vec3(_x, _y, _z));
 
         }
         else
         {
-            float _x = -5.f; float _y = -.0001f; float _z = (i - 3) * -5.f;
+            float _x = -2.5f; float _y = -.0001f; float _z = (i - 3) * -5.f;
             m_Ground[i]->SetPosition(glm::vec3(_x, _y, _z));
         }
         m_Ground[i]->SetScale(_scale);
         m_Ground[i]->SetRotation(180.f);
         _MM = m_Ground[i]->GetTransform()->GetTranslate() * m_Ground[i]->GetTransform()->GetRotate() * m_Ground[i]->GetTransform()->GetScale();
         m_Ground[i]->SetModelMatrix(_MM);
-        m_MeshContainer.push_back(m_Ground[i]);
+        // m_MeshContainer.push_back(m_Ground[i]);
     }
 
-    m_Ceiling = ShapeFactory::Get().ShapeCreator<Plane>();
-    m_Ceiling->SetPosition(glm::vec3(0.f, 5.0001f, 0.f));
-    m_Ceiling->SetScale(_scale);
-    _MM = m_Ceiling->GetTransform()->GetTranslate() * m_Ceiling->GetTransform()->GetRotate() * m_Ceiling->GetTransform()->GetScale();
-    m_Ceiling->SetModelMatrix(_MM);
-    m_MeshContainer.push_back(m_Ceiling);
+    for(int i = 0; i < CEILINGNUM; i++)
+    {
+        m_Ceiling[i] = ShapeFactory::Get().ShapeCreator<Plane>();
+        if(i < 3)
+        {
+            float _z = i * -5.f;
+            m_Ceiling[i]->SetPosition(glm::vec3(2.5f, 5.0001f, _z));
+        }
+        else
+        {
+            float _z = (i - 3) * -5.f;
+            m_Ceiling[i]->SetPosition(glm::vec3(-2.5f, 5.0001f, _z));
+        }
+        m_Ceiling[i]->SetScale(_scale);
 
+        
+        _MM = m_Ceiling[i]->GetTransform()->GetTranslate() * m_Ceiling[i]->GetTransform()->GetRotate() * m_Ceiling[i]->GetTransform()->GetScale();
+        m_Ceiling[i]->SetModelMatrix(_MM);
+    }
+// Half life 2
     m_Wall[0] = ShapeFactory::Get().ShapeCreator<Plane>();
-    m_Wall[0]->SetPosition(glm::vec3(2.5f, 2.5f, 0.f));
+    m_Wall[0]->SetPosition(glm::vec3(5.f, 2.5f, 0.f));
     m_Wall[0]->SetScale(_scale);
     m_Wall[0]->SetRotation(-90.f);
 
     m_Wall[1] = ShapeFactory::Get().ShapeCreator<Plane>();
-    m_Wall[1]->SetPosition(glm::vec3(-2.5f, 2.5f, 0.f));
+    m_Wall[1]->SetPosition(glm::vec3(5.f, 2.5f, -10.f));
     m_Wall[1]->SetScale(_scale);
-    m_Wall[1]->SetRotation(90.f);
+    m_Wall[1]->SetRotation(-90.f);
 
     m_Wall[2] = ShapeFactory::Get().ShapeCreator<Plane>();
-    m_Wall[2]->SetPosition(glm::vec3(0.f, 2.5f, 2.5f));
+    m_Wall[2]->SetPosition(glm::vec3(2.5f, 2.5f, 2.5f));
     m_Wall[2]->SetScale(_scale);
     m_Wall[2]->SetRotation(90.f, glm::vec3(1.f, 0, 0));
 
     m_Wall[3] = ShapeFactory::Get().ShapeCreator<Plane>();
-    m_Wall[3]->SetPosition(glm::vec3(0.f, 2.5f, -2.5f));
+    m_Wall[3]->SetPosition(glm::vec3(2.5f, 2.5f, -12.5f));
     m_Wall[3]->SetScale(_scale);
-    m_Wall[3]->SetRotation(90.f, glm::vec3(1.f, 0, 0));
+    m_Wall[3]->SetRotation(-90.f, glm::vec3(1, 0, 0));
 
-    for(int i = 0; i < 4; i++)
+    m_Wall[4] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Wall[4]->SetPosition(glm::vec3(5.f, 2.5f, -5.f));
+    m_Wall[4]->SetScale(_scale);
+    m_Wall[4]->SetRotation(-90.f);
+
+// Portal 2
+    m_Wall[5] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Wall[5]->SetPosition(glm::vec3(-5.f, 2.5f, 0.f));
+    m_Wall[5]->SetScale(_scale);
+    m_Wall[5]->SetRotation(90.f);
+
+    m_Wall[6] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Wall[6]->SetPosition(glm::vec3(-5.f, 2.5f, -10.f));
+    m_Wall[6]->SetScale(_scale);
+    m_Wall[6]->SetRotation(90.f);
+
+    m_Wall[7] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Wall[7]->SetPosition(glm::vec3(-2.5f, 2.5f, 2.5f));
+    m_Wall[7]->SetScale(_scale);
+    m_Wall[7]->SetRotation(90.f, glm::vec3(1.f, 0, 0));
+
+    m_Wall[8] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Wall[8]->SetPosition(glm::vec3(-2.5f, 2.5f, -12.5f));
+    m_Wall[8]->SetScale(_scale);
+    m_Wall[8]->SetRotation(-90.f, glm::vec3(1, 0, 0));
+
+    m_Wall[9] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Wall[9]->SetPosition(glm::vec3(-5.f, 2.5f, -5.f));
+    m_Wall[9]->SetScale(_scale);
+    m_Wall[9]->SetRotation(90.f);
+    for(int i = 0; i < 10; i++)
     {
-        if(i < 2)
-        {
-            _MM = m_Wall[i]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(1.f, 0, 0)) * m_Wall[i]->GetTransform()->GetRotate() * m_Wall[i]->GetTransform()->GetScale();
-        }
-        else if(i == 2)
+        if(i == 2 || i == 7)
             _MM = m_Wall[i]->GetTransform()->GetTranslate() * m_Wall[i]->GetTransform()->GetRotate() * m_Wall[i]->GetTransform()->GetScale();
+        else if(i == 3 || i == 8)
+            _MM = m_Wall[i]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(180.f), glm::vec3(0, 0, 1)) * m_Wall[i]->GetTransform()->GetRotate() * m_Wall[i]->GetTransform()->GetScale();
         else
-            _MM = m_Wall[i]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(180.f), glm::vec3(0, 1.f, 0)) * m_Wall[i]->GetTransform()->GetRotate() * m_Wall[i]->GetTransform()->GetScale();
+            _MM = m_Wall[i]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(1.f, 0, 0)) * m_Wall[i]->GetTransform()->GetRotate() * m_Wall[i]->GetTransform()->GetScale();
         m_Wall[i]->SetModelMatrix(_MM);
-        m_MeshContainer.push_back(m_Wall[i]);
+        // m_MeshContainer.push_back(m_Wall[i]);
     }
 
 }
@@ -585,37 +631,62 @@ void LightTestRoom::RoomUpdate()
         }
         else
         {
-            m_MetalFloorTex->Bind();
-            m_MetalFloorSpec->Bind();
-            m_FloorNomrmal->Bind();
+            m_pt2_tile->Bind();
+            m_pt2_tile_spec->Bind();
+            m_pt2_floor_normal->Bind();
             _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Ground[i]->GetTransform()->GetModelMatrix())));
             CustomSpace::Renderer::Submit(_shader, m_Ground[i]);
-            m_MetalFloorTex->UnBind();
-            m_MetalFloorSpec->UnBind();
-            m_FloorNomrmal->UnBind();
+            m_pt2_tile->UnBind();
+            m_pt2_tile_spec->UnBind();
+            m_pt2_floor_normal->UnBind();
         }
     }
-
     _shader->SetInt("HaveNormal", false);
-    m_CeilingTex->Bind();
-    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Ceiling->GetTransform()->GetModelMatrix())));
-    CustomSpace::Renderer::Submit(_shader, m_Ceiling);
-    m_CeilingTex->UnBind();
 
-    m_WallTex[1]->Bind();
+    m_hl2_ceiling->Bind();
     for(int i = 0; i < 3; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Ceiling[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_Ceiling[i]);
+    }
+    m_hl2_ceiling->UnBind();
+
+    m_hl2_wall[1]->Bind();
+    for(int i = 0; i < 4; i++)
     {
         _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[i]->GetTransform()->GetModelMatrix())));
         CustomSpace::Renderer::Submit(_shader, m_Wall[i]);
     }
-    m_WallTex[1]->UnBind();
+    m_hl2_wall[1]->UnBind();
 
-    // glDisable(GL_CULL_FACE);
-    // m_WallTex[0]->Bind();
-    // _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[3]->GetTransform()->GetModelMatrix())));
-    // CustomSpace::Renderer::Submit(_shader, m_Wall[3]);
-    // m_WallTex[0]->UnBind();
-    // glEnable(GL_CULL_FACE);
+    m_hl2_wall[0]->Bind();
+    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[4]->GetTransform()->GetModelMatrix())));
+    CustomSpace::Renderer::Submit(_shader, m_Wall[4]);
+    m_hl2_wall[0]->UnBind();
+
+    _shader->SetInt("HaveNormal", true);
+    m_pt2_wall[0]->Bind();
+    m_pt2_wall_spec->Bind();
+    m_pt2_wall_normal->Bind();
+    for(int i = 5; i < 10; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_Wall[i]);
+    }
+    m_pt2_wall[0]->UnBind();
+    m_pt2_wall_spec->UnBind();
+    m_pt2_wall_normal->UnBind();
+    
+    m_pt2_ceiling->Bind();
+    m_pt2_ceiling_normal->Bind();
+    for(int i = 3; i < CEILINGNUM; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Ceiling[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_Ceiling[i]);
+    }
+    m_pt2_ceiling->UnBind();
+    m_pt2_ceiling_normal->UnBind();
+    _shader->SetInt("HaveNormal", false);
 }
 
 void LightTestRoom::LightControl()

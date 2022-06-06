@@ -19,6 +19,7 @@
 
 constexpr int SPOTLIGHTNUM = 3;
 constexpr int FLOORNUM = 6;
+constexpr int CEILINGNUM = 6;
 const unsigned int SHADOW_MAP_WIDTH = 2048;
 const unsigned int SHADOW_MAP_HEIGHT = 2048;
 
@@ -46,13 +47,15 @@ class LightTestRoom
         CustomSpace::Scope<CustomSpace::ShapeFactory> m_Factory;
         CustomSpace::Ref<CustomSpace::Shape> m_Box;
         CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
-        CustomSpace::Ref<CustomSpace::Shape> m_Wall[4], m_Ground[FLOORNUM], m_Ceiling;
+        CustomSpace::Ref<CustomSpace::Shape> m_Wall[10], m_Ground[FLOORNUM], m_Ceiling[CEILINGNUM];
         CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight[SPOTLIGHTNUM];
 
-        CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec, m_FriendCubeTex, m_FriendCubeSpec, m_MetalFloorTex, m_MetalFloorSpec;
-        CustomSpace::Ref<CustomSpace::Texture2D> m_CeilingTex, m_WallTex[2];
-        CustomSpace::Ref<CustomSpace::Texture2D> m_FloorNomrmal;
+        CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec, m_FriendCubeTex, m_FriendCubeSpec;
+        CustomSpace::Ref<CustomSpace::Texture2D> m_hl2_ceiling, m_hl2_wall[2];
         CustomSpace::Ref<CustomSpace::Texture2D> m_hl2_tile, m_hl2_tile_spec, m_hl2_floor_normal;
+
+        CustomSpace::Ref<CustomSpace::Texture2D> m_pt2_ceiling, m_pt2_ceiling_normal, m_pt2_wall[2], m_pt2_wall_normal, m_pt2_wall_spec;
+        CustomSpace::Ref<CustomSpace::Texture2D> m_pt2_tile, m_pt2_tile_spec, m_pt2_floor_normal;
 
         CustomSpace::Ref<CustomSpace::ShadowMap> m_ShadowMap;
         CustomSpace::Ref<CustomSpace::OmniShadowMap> m_OmniShadowMap;

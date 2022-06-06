@@ -140,7 +140,7 @@ void main()
 
         if(texture(uMaterial.diffuse, texCoord).a < 0.1)
             discard;
-        FragColor = vec4(result, 1);
+        FragColor = vec4(result, 1.0);
         // FragColor = vec4(vec3(linearizeDepth(gl_FragCoord.z) / far), 1.0);
     }
     else
