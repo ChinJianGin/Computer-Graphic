@@ -108,8 +108,14 @@ void LightTestRoom::TextureInit()
 {
     using namespace CustomSpace;
     m_hl2_ceiling = Texture2D::Create("../src/TextureSrc/concreteceiling001a.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
-    m_hl2_wall[0] = Texture2D::Create("../src/TextureSrc/building_template015b.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_hl2_wall[0] = Texture2D::Create("../src/TextureSrc/building_template015b_a5.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_hl2_wall[1] = Texture2D::Create("../src/TextureSrc/building_template015f.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_hl2_wall_normal[0] = Texture2D::Create("../src/TextureSrc/building_template015b_a1_normal.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
+    m_hl2_wall_normal[1] = Texture2D::Create("../src/TextureSrc/building_template015f_normal.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
+    m_hl2_wall_middle = Texture2D::Create("../src/TextureSrc/building_template015a.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_hl2_wall_middle_normal = Texture2D::Create("../src/TextureSrc/building_template015a_normal.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
+    m_hl2_wood_door = Texture2D::Create("../src/TextureSrc/wooddoor014a.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_hl2_wood_door_normal = Texture2D::Create("../src/TextureSrc/wooddoor014a_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
     m_StoneTex = Texture2D::Create("../src/TextureSrc/stone_wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_StoneSpec = Texture2D::Create("../src/TextureSrc/stone_wall_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
     m_WoodTex = Texture2D::Create("../src/TextureSrc/wood.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
@@ -228,6 +234,15 @@ void LightTestRoom::Run()
         CustomSpace::Renderer::BeginScene(*m_OrthoCamera);
         glm::mat4 model = glm::mat4(1.f);
 
+        glDepthFunc(GL_LEQUAL);
+        m_ShaderPool->getShader(9)->Activate();
+        glm::mat4 view = glm::mat4(glm::mat3(m_PersController->GetCamera().GetViewMatrix())); 
+        m_ShaderPool->getShader(9)->SetMat4("projection", m_PersController->GetCamera().GetProjectionMatrix());
+        m_ShaderPool->getShader(9)->SetMat4("view", view);
+        m_ShaderPool->getShader(9)->SetInt("skybox", 0);
+        m_Skybox->Draw();
+        glDepthFunc(GL_LESS);
+
         CustomSpace::Ref<Shader> _shader = m_ShaderPool->getShader(1);
         _shader->Activate();
         _shader->SetMat4("ulightProjection", m_LightProjection);
@@ -246,6 +261,7 @@ void LightTestRoom::Run()
         this->RoomUpdate();
 
         this->RenderNormalScene();
+
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
         {
@@ -285,15 +301,6 @@ void LightTestRoom::Run()
         // else if(m_CamPosition.y <= .5f)
         //     m_CamPosition.y = .5f;
         m_PersCamera->SetPosition(m_CamPosition);
-
-        glDepthFunc(GL_LEQUAL);
-        m_ShaderPool->getShader(9)->Activate();
-        glm::mat4 view = glm::mat4(glm::mat3(m_PersController->GetCamera().GetViewMatrix())); 
-        m_ShaderPool->getShader(9)->SetMat4("projection", m_PersController->GetCamera().GetProjectionMatrix());
-        m_ShaderPool->getShader(9)->SetMat4("view", view);
-        m_ShaderPool->getShader(9)->SetInt("skybox", 0);
-        m_Skybox->Draw();
-        glDepthFunc(GL_LESS);
 
         m_Window->Update();
     }
@@ -550,6 +557,48 @@ void LightTestRoom::RoomInit()
         // m_MeshContainer.push_back(m_Wall[i]);
     }
 
+// Inner wall
+    _scale = glm::vec3(1.f, 1.f, 2.5f);
+    glm::vec3 _axis = glm::vec3(1.f, 0.f, 0.f);
+    float _radians = 90.f;
+    for(int i = 0; i < 4; i++)
+    {
+        m_InnerWall[i] = ShapeFactory::Get().ShapeCreator<Plane>();
+        if(i < 2)
+        {
+            m_InnerWall[i]->SetPosition(glm::vec3(1 + (i * 3), 2.5f, -2.5));
+        }
+        else
+        {
+            m_InnerWall[i]->SetPosition(glm::vec3(1 + ((i - 2) * 3), 2.5f, -7.5));
+        }
+        m_InnerWall[i]->SetScale(_scale);
+        m_InnerWall[i]->SetRotation(_radians, _axis);
+        _MM =  m_InnerWall[i]->GetTransform()->GetTranslate() * m_InnerWall[i]->GetTransform()->GetRotate() * m_InnerWall[i]->GetTransform()->GetScale();
+        m_InnerWall[i]->SetModelMatrix(_MM);
+        m_MeshContainer.push_back(m_InnerWall[i]);
+    }
+
+    _scale = glm::vec3(.5f, 1.f, 1.25f);
+    for(int i = 0; i < 2; i++)
+    {
+        m_Middle_Wall[i] = ShapeFactory::Get().ShapeCreator<Plane>();
+        m_Middle_Wall[i]->SetPosition(glm::vec3(2.5f, 3.75f, -2.5 + (i * -5.f)));
+        m_Middle_Wall[i]->SetScale(_scale);
+        m_Middle_Wall[i]->SetRotation(_radians, _axis);
+        _MM = m_Middle_Wall[i]->GetTransform()->GetTranslate() * m_Middle_Wall[i]->GetTransform()->GetRotate() * m_Middle_Wall[i]->GetTransform()->GetScale();
+        m_Middle_Wall[i]->SetModelMatrix(_MM);
+        m_MeshContainer.push_back(m_Middle_Wall[i]);
+
+        m_WoodDoor[i] = ShapeFactory::Get().ShapeCreator<Plane>();
+        m_WoodDoor[i]->SetPosition(glm::vec3(2.5f, 1.25f, -2.5  + (i * -5.f)));
+        m_WoodDoor[i]->SetScale(_scale);
+        m_WoodDoor[i]->SetRotation(_radians, _axis);
+        _MM = m_WoodDoor[i]->GetTransform()->GetTranslate() * m_WoodDoor[i]->GetTransform()->GetRotate() * m_WoodDoor[i]->GetTransform()->GetScale();
+        m_WoodDoor[i]->SetModelMatrix(_MM);
+        m_MeshContainer.push_back(m_WoodDoor[i]);
+    }
+
 }
 
 void LightTestRoom::ShadowMapUpdate()
@@ -641,7 +690,57 @@ void LightTestRoom::RoomUpdate()
             m_pt2_floor_normal->UnBind();
         }
     }
-    _shader->SetInt("HaveNormal", false);
+
+    m_hl2_wall[1]->Bind();
+    m_hl2_wall_normal[1]->Bind();
+    for(int i = 0; i < 4; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_Wall[i]);
+    }
+
+    //  Inner update
+    glDisable(GL_CULL_FACE);
+    for(int i = 0; i < 4; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_InnerWall[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_InnerWall[i]);
+    }
+
+    m_hl2_wall_middle->Bind();
+    m_hl2_wall_middle_normal->Bind();
+    for(int i = 0; i < 2; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Middle_Wall[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_Middle_Wall[i]);
+    }
+    m_hl2_wall_middle->UnBind();
+    m_hl2_wall_middle_normal->UnBind();
+
+    m_hl2_wood_door->Bind();
+    m_hl2_wood_door_normal->Bind();
+    for(int i = 0; i < 2; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_WoodDoor[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_WoodDoor[i]);
+    }
+    m_hl2_wood_door->UnBind();
+    m_hl2_wood_door_normal->UnBind();
+
+    glEnable(GL_CULL_FACE); // Double faces
+
+    m_hl2_wall_normal[1]->UnBind();
+    m_hl2_wall[1]->UnBind();
+
+    m_hl2_wall[0]->Bind();
+    m_hl2_wall_normal[0]->Bind();
+    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[4]->GetTransform()->GetModelMatrix())));
+    CustomSpace::Renderer::Submit(_shader, m_Wall[4]);
+    m_hl2_wall[0]->UnBind();
+    m_hl2_wall_normal[0]->UnBind();
+
+
+    _shader->SetInt("HaveNormal", false); // Normal section
 
     m_hl2_ceiling->Bind();
     for(int i = 0; i < 3; i++)
@@ -651,18 +750,7 @@ void LightTestRoom::RoomUpdate()
     }
     m_hl2_ceiling->UnBind();
 
-    m_hl2_wall[1]->Bind();
-    for(int i = 0; i < 4; i++)
-    {
-        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[i]->GetTransform()->GetModelMatrix())));
-        CustomSpace::Renderer::Submit(_shader, m_Wall[i]);
-    }
-    m_hl2_wall[1]->UnBind();
 
-    m_hl2_wall[0]->Bind();
-    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[4]->GetTransform()->GetModelMatrix())));
-    CustomSpace::Renderer::Submit(_shader, m_Wall[4]);
-    m_hl2_wall[0]->UnBind();
 
     _shader->SetInt("HaveNormal", true);
     m_pt2_wall[0]->Bind();

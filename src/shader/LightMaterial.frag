@@ -140,7 +140,7 @@ void main()
 
         if(texture(uMaterial.diffuse, texCoord).a < 0.1)
             discard;
-        FragColor = vec4(result, 1.0);
+        FragColor = texture2D(uMaterial.diffuse, texCoord) * vec4(result, 1.0);
         // FragColor = vec4(vec3(linearizeDepth(gl_FragCoord.z) / far), 1.0);
     }
     else
@@ -223,7 +223,7 @@ vec3 CalDirLight(DirLight light, vec3 normal, vec3 viewDir)
     vec3 specular = light.specular * spec;// * vec3(texture(uMaterial.specular, texCoord));
 
 
-    return (ambient + (1.0 - shadow) * (diffuse + specular)) * texture(uMaterial.diffuse, texCoord).rgb;
+    return (ambient + (1.0 - shadow) * (diffuse + specular));// * texture(uMaterial.diffuse, texCoord).rgb;
 }
 
 vec3 CalPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
@@ -246,8 +246,8 @@ vec3 CalPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float shadow = 0.0;
 
     shadow = ShadowCalculation(fragPos);
-    vec3 ambient = light.ambient * vec3(texture(uMaterial.diffuse, texCoord));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(uMaterial.diffuse, texCoord));
+    vec3 ambient = light.ambient;// * vec3(texture(uMaterial.diffuse, texCoord));
+    vec3 diffuse = light.diffuse * diff;// * vec3(texture(uMaterial.diffuse, texCoord));
     vec3 specular = light.specular * spec * vec3(texture(uMaterial.specular, texCoord));
 
     ambient *= attenuation;
@@ -277,8 +277,8 @@ vec3 CalSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
             float distance =  length(light.position - fragPos);
             float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-            vec3 ambient = light.ambient * vec3(texture(uMaterial.diffuse, texCoord));
-            vec3 diffuse = light.diffuse * diff * vec3(texture(uMaterial.diffuse, texCoord));
+            vec3 ambient = light.ambient;// * vec3(texture(uMaterial.diffuse, texCoord));
+            vec3 diffuse = light.diffuse * diff;// * vec3(texture(uMaterial.diffuse, texCoord));
             vec3 specular = light.specular * spec * vec3(texture(uMaterial.specular, texCoord));
 
             float epsilon = light.innerCutOff - light.outerCutOff;
