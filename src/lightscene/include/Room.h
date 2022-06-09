@@ -47,7 +47,7 @@ class LightTestRoom
         CustomSpace::Scope<CustomSpace::ShapeFactory> m_Factory;
         CustomSpace::Ref<CustomSpace::Shape> m_Box;
         CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
-        CustomSpace::Ref<CustomSpace::Shape> m_Wall[10], m_Ground[FLOORNUM], m_Ceiling[CEILINGNUM], m_InnerWall[4], m_Middle_Wall[2], m_WoodDoor[2];
+        CustomSpace::Ref<CustomSpace::Shape> m_Wall[10], m_Ground[FLOORNUM], m_Ceiling[CEILINGNUM], m_InnerWall[8], m_Middle_Wall[3], m_WoodDoor[2];
         CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight[SPOTLIGHTNUM];
 
         CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec, m_FriendCubeTex, m_FriendCubeSpec;
@@ -113,5 +113,5 @@ class LightTestRoom
         void OmniShadowMapUpdate();
 
         // Model
-        CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar, m_PortalGun;
+        CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar, m_PortalGun, m_Turret, m_portal_left_door, m_portal_right_door, m_portal_root_door;
 };

@@ -26,7 +26,7 @@ namespace CustomSpace
             m_ModelMatrix = model;
         else
             m_ModelMatrix = m_ParentTransform->GetModelMatrix() * model;
-        // glm::decompose(m_ModelMatrix, m_ScaleValue, m_QuatRotation, m_Position, m_Skew, m_Perspective);
+        glm::decompose(m_ModelMatrix, m_ScaleValue, m_QuatRotation, m_Position, m_Skew, m_Perspective);
     }
 
     void Transform::SetPosition(const glm::vec3& pos)

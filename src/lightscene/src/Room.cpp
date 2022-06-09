@@ -78,11 +78,19 @@ void LightTestRoom::ObjectInit()
 
 void LightTestRoom::ModelInit()
 {
-    m_HeadCrab = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/headcrab.obj");
+    m_HeadCrab = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/headcrab/headcrab.obj");
 
-    m_Crowbar = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/crowbar.obj");
+    m_Crowbar = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/crowbar/crowbar.obj");
 
-    m_PortalGun = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portalgun.obj");
+    m_PortalGun = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portalgun/portalgun.obj");
+
+    m_Turret = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/turret/portalturret.obj");
+
+    m_portal_left_door = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_left.obj");
+
+    m_portal_right_door = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_right.obj");
+
+    m_portal_root_door = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_root.obj");
 }
 
 void LightTestRoom::ShaderInit()
@@ -420,6 +428,31 @@ void LightTestRoom::RenderNormalScene()
     m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
     m_PortalGun->Draw(*m_ShaderPool->getShader(1));
+
+    model = glm::translate(glm::mat4(1.f), glm::vec3(1.5f, 0.f, -1.f));
+    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+    m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+    m_Turret->Draw(*m_ShaderPool->getShader(1));
+
+    model = glm::translate(glm::mat4(1.f), glm::vec3(-0.001f, 0.f, 0.f));
+    model = glm::rotate(model, glm::radians(-90.f), glm::vec3(0, 1, 0));
+    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+    m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+    m_portal_left_door->Draw(*_shader);
+
+    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+    m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+    m_portal_right_door->Draw(*_shader);
+
+    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+    m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+    m_portal_root_door->Draw(*_shader);
 }
 
 void LightTestRoom::RenderShadowScene()
@@ -445,6 +478,21 @@ void LightTestRoom::RenderShadowScene()
     model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
     _shader->SetMat4("uMV", model);
     m_PortalGun->Draw(*_shader);
+
+    model = glm::translate(glm::mat4(1.f), glm::vec3(1.5f, 0.f, -1.f));
+    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    _shader->SetMat4("uMV", model);
+    m_Turret->Draw(*_shader);
+
+    // model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, -1.f));
+    // model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    // _shader->SetMat4("uMV", model);
+    // m_portal_left_door->Draw(*_shader);
+
+    // model = glm::translate(glm::mat4(1.f), glm::vec3(-1.f, 0.f, -1.f));
+    // model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    // _shader->SetMat4("uMV", model);
+    // m_portal_right_door->Draw(*_shader);
 }
 
 void LightTestRoom::RoomInit()
@@ -579,6 +627,21 @@ void LightTestRoom::RoomInit()
         m_MeshContainer.push_back(m_InnerWall[i]);
     }
 
+    for(int i = 4; i < 8; i++)
+    {
+        m_InnerWall[i] = ShapeFactory::Get().ShapeCreator<Plane>();
+        if(i < 6)
+            m_InnerWall[i]->SetPosition(glm::vec3(0.f, 2.5f, 1.5f - (i - 4) * 3.f));
+        else
+            m_InnerWall[i]->SetPosition(glm::vec3(0.f, 2.5f, -3.5f - (i - 6) * 3.f));
+        m_InnerWall[i]->SetRotation(_radians, _axis);
+        m_InnerWall[i]->SetScale(_scale);
+
+        _MM = m_InnerWall[i]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(0, 1, 0)) *m_InnerWall[i]->GetTransform()->GetRotate() * m_InnerWall[i]->GetTransform()->GetScale();
+
+        m_InnerWall[i]->SetModelMatrix(_MM);
+    }
+
     _scale = glm::vec3(.5f, 1.f, 1.25f);
     for(int i = 0; i < 2; i++)
     {
@@ -598,6 +661,13 @@ void LightTestRoom::RoomInit()
         m_WoodDoor[i]->SetModelMatrix(_MM);
         m_MeshContainer.push_back(m_WoodDoor[i]);
     }
+
+    m_Middle_Wall[2] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Middle_Wall[2]->SetPosition(glm::vec3(0.f, 3.75f, 0.f));
+    m_Middle_Wall[2]->SetScale(_scale);
+    m_Middle_Wall[2]->SetRotation(_radians, _axis);
+    _MM = m_Middle_Wall[2]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(0, 1, 0)) * m_Middle_Wall[2]->GetTransform()->GetRotate() * m_Middle_Wall[2]->GetTransform()->GetScale();
+    m_Middle_Wall[2]->SetModelMatrix(_MM);
 
 }
 
@@ -699,6 +769,12 @@ void LightTestRoom::RoomUpdate()
         CustomSpace::Renderer::Submit(_shader, m_Wall[i]);
     }
 
+    for(int i = 4; i < 8; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_InnerWall[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_InnerWall[i]);
+    }
+
     //  Inner update
     glDisable(GL_CULL_FACE);
     for(int i = 0; i < 4; i++)
@@ -714,6 +790,8 @@ void LightTestRoom::RoomUpdate()
         _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Middle_Wall[i]->GetTransform()->GetModelMatrix())));
         CustomSpace::Renderer::Submit(_shader, m_Middle_Wall[i]);
     }
+    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Middle_Wall[2]->GetTransform()->GetModelMatrix())));
+    CustomSpace::Renderer::Submit(_shader, m_Middle_Wall[2]);
     m_hl2_wall_middle->UnBind();
     m_hl2_wall_middle_normal->UnBind();
 
