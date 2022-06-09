@@ -47,11 +47,11 @@ class LightTestRoom
         CustomSpace::Scope<CustomSpace::ShapeFactory> m_Factory;
         CustomSpace::Ref<CustomSpace::Shape> m_Box;
         CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
-        CustomSpace::Ref<CustomSpace::Shape> m_Wall[10], m_Ground[FLOORNUM], m_Ceiling[CEILINGNUM], m_InnerWall[8], m_Middle_Wall[3], m_WoodDoor[2];
+        CustomSpace::Ref<CustomSpace::Shape> m_Wall[10], m_Ground[FLOORNUM], m_Ceiling[CEILINGNUM], m_InnerWall[8], m_InnerWall_pt2[7], m_Middle_Wall[2], m_Middle_Wall_pt2, m_WoodDoor[2], m_InnerWindow[2];
         CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight[SPOTLIGHTNUM];
 
         CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec, m_FriendCubeTex, m_FriendCubeSpec;
-        CustomSpace::Ref<CustomSpace::Texture2D> m_hl2_ceiling, m_hl2_wall[2], m_hl2_wall_normal[2], m_hl2_wall_middle, m_hl2_wall_middle_normal;
+        CustomSpace::Ref<CustomSpace::Texture2D> m_hl2_ceiling, m_hl2_wall[2], m_hl2_wall_normal[2], m_hl2_wall_middle, m_hl2_wall_middle_normal, m_hl2_glass_window;
         CustomSpace::Ref<CustomSpace::Texture2D> m_hl2_tile, m_hl2_tile_spec, m_hl2_floor_normal, m_hl2_wood_door, m_hl2_wood_door_normal;
 
         CustomSpace::Ref<CustomSpace::Texture2D> m_pt2_ceiling, m_pt2_ceiling_normal, m_pt2_wall[2], m_pt2_wall_normal, m_pt2_wall_spec;
@@ -113,5 +113,5 @@ class LightTestRoom
         void OmniShadowMapUpdate();
 
         // Model
-        CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar, m_PortalGun, m_Turret, m_portal_left_door, m_portal_right_door, m_portal_root_door;
+        CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar, m_PortalGun, m_Turret, m_portal_left_door[2], m_portal_right_door[2], m_portal_root_door[2];
 };

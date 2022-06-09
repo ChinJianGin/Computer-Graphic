@@ -86,11 +86,14 @@ void LightTestRoom::ModelInit()
 
     m_Turret = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/turret/portalturret.obj");
 
-    m_portal_left_door = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_left.obj");
+    for(int i = 0; i < 2; i++)
+    {
+        m_portal_left_door[i] = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_left.obj");
 
-    m_portal_right_door = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_right.obj");
+        m_portal_right_door[i] = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_right.obj");
 
-    m_portal_root_door = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_root.obj");
+        m_portal_root_door[i] = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_root.obj");
+    }
 }
 
 void LightTestRoom::ShaderInit()
@@ -124,6 +127,7 @@ void LightTestRoom::TextureInit()
     m_hl2_wall_middle_normal = Texture2D::Create("../src/TextureSrc/building_template015a_normal.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
     m_hl2_wood_door = Texture2D::Create("../src/TextureSrc/wooddoor014a.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_hl2_wood_door_normal = Texture2D::Create("../src/TextureSrc/wooddoor014a_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
+    m_hl2_glass_window = Texture2D::Create("../src/TextureSrc/glasswindow028d.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_StoneTex = Texture2D::Create("../src/TextureSrc/stone_wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_StoneSpec = Texture2D::Create("../src/TextureSrc/stone_wall_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
     m_WoodTex = Texture2D::Create("../src/TextureSrc/wood.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
@@ -266,10 +270,10 @@ void LightTestRoom::Run()
         _shader->SetFloat3("uViewPos", m_PersController->GetCamera().GetPosition());
         this->LightControl();
 
-        this->RoomUpdate();
 
         this->RenderNormalScene();
 
+        this->RoomUpdate();
 
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
         {
@@ -442,17 +446,19 @@ void LightTestRoom::RenderNormalScene()
     m_ShaderPool->getShader(1)->SetMat4("uMV", model);
     m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_portal_left_door->Draw(*_shader);
+    m_portal_left_door[0]->Draw(*_shader);
+    m_portal_right_door[0]->Draw(*_shader);
+    m_portal_root_door[0]->Draw(*_shader);
 
+    model = glm::translate(glm::mat4(1.f), glm::vec3(-2.5f, 0.f, -2.501f));
+    model = glm::rotate(model, glm::radians(180.f), glm::vec3(0, 1, 0));
+    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
     m_ShaderPool->getShader(1)->SetMat4("uMV", model);
     m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_portal_right_door->Draw(*_shader);
-
-    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
-    m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
-    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_portal_root_door->Draw(*_shader);
+    m_portal_left_door[1]->Draw(*_shader);
+    m_portal_right_door[1]->Draw(*_shader);
+    m_portal_root_door[1]->Draw(*_shader);
 }
 
 void LightTestRoom::RenderShadowScene()
@@ -627,6 +633,25 @@ void LightTestRoom::RoomInit()
         m_MeshContainer.push_back(m_InnerWall[i]);
     }
 
+    for(int i = 0; i < 2; i++)
+    {
+        m_InnerWall_pt2[i] = ShapeFactory::Get().ShapeCreator<Plane>();
+        m_InnerWall_pt2[i]->SetPosition(glm::vec3(-1 - (i * 3), 2.5f, -2.5f));
+        m_InnerWall_pt2[i]->SetScale(_scale);
+        m_InnerWall_pt2[i]->SetRotation(_radians, _axis);
+        _MM =  m_InnerWall_pt2[i]->GetTransform()->GetTranslate() * m_InnerWall_pt2[i]->GetTransform()->GetRotate() * m_InnerWall_pt2[i]->GetTransform()->GetScale();
+        m_InnerWall_pt2[i]->SetModelMatrix(_MM);
+        m_MeshContainer.push_back(m_InnerWall_pt2[i]);
+    }
+
+    m_InnerWall_pt2[2] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_InnerWall_pt2[2]->SetPosition(glm::vec3(-2.5f, 2.5f, -7.5f));
+    m_InnerWall_pt2[2]->SetScale(glm::vec3(2.5f, 1.f, 2.5f));
+    m_InnerWall_pt2[2]->SetRotation(_radians, _axis);
+    _MM =  m_InnerWall_pt2[2]->GetTransform()->GetTranslate() * m_InnerWall_pt2[2]->GetTransform()->GetRotate() * m_InnerWall_pt2[2]->GetTransform()->GetScale();
+    m_InnerWall_pt2[2]->SetModelMatrix(_MM);
+    m_MeshContainer.push_back(m_InnerWall_pt2[2]);
+
     for(int i = 4; i < 8; i++)
     {
         m_InnerWall[i] = ShapeFactory::Get().ShapeCreator<Plane>();
@@ -641,6 +666,22 @@ void LightTestRoom::RoomInit()
 
         m_InnerWall[i]->SetModelMatrix(_MM);
     }
+
+    for(int i = 3; i < 7; i++)
+    {
+        m_InnerWall_pt2[i] = ShapeFactory::Get().ShapeCreator<Plane>();
+        if(i < 5)
+            m_InnerWall_pt2[i]->SetPosition(glm::vec3(-0.0001f, 2.5f, 1.5f - (i - 3) * 3.f));
+        else
+            m_InnerWall_pt2[i]->SetPosition(glm::vec3(-0.0001f, 2.5f, -3.5f - (i - 5) * 3.f));
+        m_InnerWall_pt2[i]->SetRotation(_radians, _axis);
+        m_InnerWall_pt2[i]->SetScale(_scale);
+
+        _MM = m_InnerWall_pt2[i]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(0, 1, 0)) *m_InnerWall_pt2[i]->GetTransform()->GetRotate() * m_InnerWall_pt2[i]->GetTransform()->GetScale();
+
+        m_InnerWall_pt2[i]->SetModelMatrix(_MM);
+    }
+
 
     _scale = glm::vec3(.5f, 1.f, 1.25f);
     for(int i = 0; i < 2; i++)
@@ -662,13 +703,28 @@ void LightTestRoom::RoomInit()
         m_MeshContainer.push_back(m_WoodDoor[i]);
     }
 
-    m_Middle_Wall[2] = ShapeFactory::Get().ShapeCreator<Plane>();
-    m_Middle_Wall[2]->SetPosition(glm::vec3(0.f, 3.75f, 0.f));
-    m_Middle_Wall[2]->SetScale(_scale);
-    m_Middle_Wall[2]->SetRotation(_radians, _axis);
-    _MM = m_Middle_Wall[2]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(0, 1, 0)) * m_Middle_Wall[2]->GetTransform()->GetRotate() * m_Middle_Wall[2]->GetTransform()->GetScale();
-    m_Middle_Wall[2]->SetModelMatrix(_MM);
+    m_Middle_Wall_pt2 = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_Middle_Wall_pt2->SetPosition(glm::vec3(-2.5f, 3.75f, -2.5f));
+    m_Middle_Wall_pt2->SetScale(_scale);
+    m_Middle_Wall_pt2->SetRotation(_radians, _axis);
+    _MM = m_Middle_Wall_pt2->GetTransform()->GetTranslate() * m_Middle_Wall_pt2->GetTransform()->GetRotate() * m_Middle_Wall_pt2->GetTransform()->GetScale();
+    m_Middle_Wall_pt2->SetModelMatrix(_MM);
+    m_MeshContainer.push_back(m_Middle_Wall_pt2);
 
+    m_InnerWindow[0] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_InnerWindow[0]->SetPosition(glm::vec3(0.f, 3.75f, 0.f));
+    m_InnerWindow[0]->SetScale(_scale);
+    m_InnerWindow[0]->SetRotation(_radians, _axis);
+    _MM = m_InnerWindow[0]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(0, 1, 0)) * m_InnerWindow[0]->GetTransform()->GetRotate() * m_InnerWindow[0]->GetTransform()->GetScale();
+    m_InnerWindow[0]->SetModelMatrix(_MM);
+
+    _scale = glm::vec3(.5f, 1.f, 2.5f);
+    m_InnerWindow[1] = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_InnerWindow[1]->SetPosition(glm::vec3(0.f, 2.5f, -5.f));
+    m_InnerWindow[1]->SetScale(_scale);
+    m_InnerWindow[1]->SetRotation(_radians, _axis);
+    _MM = m_InnerWindow[1]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(0, 1, 0)) * m_InnerWindow[1]->GetTransform()->GetRotate() * m_InnerWindow[1]->GetTransform()->GetScale();
+    m_InnerWindow[1]->SetModelMatrix(_MM);
 }
 
 void LightTestRoom::ShadowMapUpdate()
@@ -790,8 +846,6 @@ void LightTestRoom::RoomUpdate()
         _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Middle_Wall[i]->GetTransform()->GetModelMatrix())));
         CustomSpace::Renderer::Submit(_shader, m_Middle_Wall[i]);
     }
-    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Middle_Wall[2]->GetTransform()->GetModelMatrix())));
-    CustomSpace::Renderer::Submit(_shader, m_Middle_Wall[2]);
     m_hl2_wall_middle->UnBind();
     m_hl2_wall_middle_normal->UnBind();
 
@@ -804,6 +858,7 @@ void LightTestRoom::RoomUpdate()
     }
     m_hl2_wood_door->UnBind();
     m_hl2_wood_door_normal->UnBind();
+
 
     glEnable(GL_CULL_FACE); // Double faces
 
@@ -828,8 +883,6 @@ void LightTestRoom::RoomUpdate()
     }
     m_hl2_ceiling->UnBind();
 
-
-
     _shader->SetInt("HaveNormal", true);
     m_pt2_wall[0]->Bind();
     m_pt2_wall_spec->Bind();
@@ -838,6 +891,22 @@ void LightTestRoom::RoomUpdate()
     {
         _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[i]->GetTransform()->GetModelMatrix())));
         CustomSpace::Renderer::Submit(_shader, m_Wall[i]);
+    }
+
+    glDisable(GL_CULL_FACE);
+    for(int i = 0; i < 3; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_InnerWall_pt2[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_InnerWall_pt2[i]);
+    }
+
+    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Middle_Wall_pt2->GetTransform()->GetModelMatrix())));
+    CustomSpace::Renderer::Submit(_shader, m_Middle_Wall_pt2);
+    glEnable(GL_CULL_FACE);
+    for(int i = 0; i < 4; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_InnerWall_pt2[i + 3]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_InnerWall_pt2[i + 3]);
     }
     m_pt2_wall[0]->UnBind();
     m_pt2_wall_spec->UnBind();
@@ -853,6 +922,16 @@ void LightTestRoom::RoomUpdate()
     m_pt2_ceiling->UnBind();
     m_pt2_ceiling_normal->UnBind();
     _shader->SetInt("HaveNormal", false);
+
+    glDisable(GL_CULL_FACE);
+    m_hl2_glass_window->Bind();
+    for(int i = 0; i < 2; i++)
+    {
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_InnerWindow[i]->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_InnerWindow[i]);
+    }
+    m_hl2_glass_window->UnBind();
+    glEnable(GL_CULL_FACE);
 }
 
 void LightTestRoom::LightControl()
