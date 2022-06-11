@@ -14,6 +14,7 @@ add_subdirectory(graphic)
 add_subdirectory(physics)
 add_subdirectory(light)
 add_subdirectory(framebuffer)
+add_subdirectory(lightroom)
 
 
 project(Practice1)

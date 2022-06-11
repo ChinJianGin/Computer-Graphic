@@ -9,7 +9,7 @@
 #include"../../core/include/KeyEvent.h"
 #include"../../core/include/WindowEvent.h"
 #include"../../core/include/PerspectiveCameraController.h"
-#include"../../graphic/ModelLoad/Model.h"
+#include"../../lightroom/ModelObject.h"
 #include"../../client/include/Interface.h"
 #include"../../shader/ShaderPool.h"
 #include"../../light/Light.h"
@@ -113,5 +113,5 @@ class LightTestRoom
         void OmniShadowMapUpdate();
 
         // Model
-        CustomSpace::Ref<CustomSpace::Model> m_HeadCrab, m_Crowbar, m_PortalGun, m_Turret, m_portal_left_door[2], m_portal_right_door[2], m_portal_root_door[2];
+        CustomSpace::Ref<CustomSpace::ModelObject> m_HeadCrab, m_Crowbar, m_PortalGun, m_Turret, m_portal_left_door[2], m_portal_right_door[2], m_portal_root_door[2];
 };

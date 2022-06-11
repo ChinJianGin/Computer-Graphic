@@ -60,7 +60,7 @@ void LightTestRoom::ObjectInit()
 {
     using namespace CustomSpace;
     m_Box = ShapeFactory::Get().ShapeCreator<Box>();
-    m_Box->SetPosition(glm::vec3(1.5f, 1.f, 0.f));
+    m_Box->SetPosition(glm::vec3(-2.5f, 2.5f, 0.f));
     m_Box->SetScale(glm::vec3(.5f, .5f, .5f));
     // m_Box->SetScale(glm::vec3(2.5f));
     glm::mat4 _MM = m_Box->GetTransform()->GetTranslate() * m_Box->GetTransform()->GetRotate() * m_Box->GetTransform()->GetScale();
@@ -68,7 +68,7 @@ void LightTestRoom::ObjectInit()
     m_MeshContainer.push_back(m_Box);
 
     m_Pyramid = ShapeFactory::Get().ShapeCreator<Pyramid>();
-    m_Pyramid->SetPosition(glm::vec3(-1.8f, 0.f, -2.f));
+    m_Pyramid->SetPosition(glm::vec3(3.75f, 0.f, 1.25f));
     m_Pyramid->SetRotation(45.f, glm::vec3(0.f, 1.f, 0.f));
     // m_Pyramid->SetScale(glm::vec3(2.f, 2.f, 2.f));
     _MM = m_Pyramid->GetTransform()->GetTranslate() * m_Pyramid->GetTransform()->GetRotate() * m_Pyramid->GetTransform()->GetScale();
@@ -78,21 +78,59 @@ void LightTestRoom::ObjectInit()
 
 void LightTestRoom::ModelInit()
 {
-    m_HeadCrab = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/headcrab/headcrab.obj");
+    glm::mat4 model = glm::mat4(1.f);
+    m_HeadCrab = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/headcrab/headcrab.obj");
 
-    m_Crowbar = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/crowbar/crowbar.obj");
+    model = glm::translate(model, glm::vec3(2.5f, 0.f, -5.f));
+    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+    m_HeadCrab->SetModelMatrix(model);
 
-    m_PortalGun = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portalgun/portalgun.obj");
+    m_Crowbar = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/crowbar/crowbar.obj");
 
-    m_Turret = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/turret/portalturret.obj");
+    model = glm::translate(glm::mat4(1.f), glm::vec3(3.75f, .7f, -7.2f));
+    model = glm::rotate(model, glm::radians(70.f), glm::vec3(1, 0, 0));
+    model = glm::scale(model, glm::vec3(0.35f, 0.35f, 0.35f));
 
+    m_Crowbar->SetModelMatrix(model);
+
+    m_PortalGun = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/portalgun/portalgun.obj");
+
+    model = glm::translate(glm::mat4(1.f), glm::vec3(-1.5f, .15f, -7.f));
+    model = glm::rotate(model, glm::radians(-10.f), glm::vec3(1, 0, 0));
+    model = glm::rotate(model, glm::radians(-45.f), glm::vec3(0, 1, 0));
+    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+
+    m_PortalGun->SetModelMatrix(model);
+
+    m_Turret = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/turret/portalturret.obj");
+
+    model = glm::translate(glm::mat4(1.f), glm::vec3(-2.5f, 0.f, -5.f));
+    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+
+    m_Turret->SetModelMatrix(model);
     for(int i = 0; i < 2; i++)
     {
-        m_portal_left_door[i] = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_left.obj");
+        m_portal_left_door[i] = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/portaldoor/portaldoor_left.obj");
 
-        m_portal_right_door[i] = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_right.obj");
+        m_portal_right_door[i] = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/portaldoor/portaldoor_right.obj");
 
-        m_portal_root_door[i] = CustomSpace::CreateRef<CustomSpace::Model>("../src/Model/portaldoor/portaldoor_root.obj");
+        m_portal_root_door[i] = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/portaldoor/portaldoor_root.obj");
+        if(i == 0)
+        {
+            model = glm::translate(glm::mat4(1.f), glm::vec3(-0.001f, 0.f, 0.f));
+            model = glm::rotate(model, glm::radians(-90.f), glm::vec3(0, 1, 0));
+            model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+        }
+        else
+        {
+            model = glm::translate(glm::mat4(1.f), glm::vec3(-2.5f, 0.f, -2.501f));
+            model = glm::rotate(model, glm::radians(180.f), glm::vec3(0, 1, 0));
+            model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+        }
+
+        m_portal_left_door[i]->SetModelMatrix(model);
+        m_portal_right_door[i]->SetModelMatrix(model);
+        m_portal_root_door[i]->SetModelMatrix(model);
     }
 }
 
@@ -411,54 +449,46 @@ void LightTestRoom::RenderNormalScene()
     model = glm::mat4(1.f);
     m_ShaderPool->getShader(1)->Activate();
     m_ShaderPool->getShader(1)->SetMat4("uVP", m_PersController->GetCamera().GetVPMatrix());
-    model = glm::translate(model, glm::vec3(0.f, 0.f, 0.f));
-    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
-    m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
-    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_HeadCrab->DrawWithNormalMap(*m_ShaderPool->getShader(1), true);
 
-    model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, 2.f));
+    model = m_HeadCrab->GetTransform()->GetModelMatrix();
     m_ShaderPool->getShader(1)->SetMat4("uMV", model);
     m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_Crowbar->DrawWithNormalMap(*m_ShaderPool->getShader(1), false);
+    m_HeadCrab->UpdateWithNormal(*m_ShaderPool->getShader(1), true);
 
-    model = glm::translate(glm::mat4(1.f), glm::vec3(2.f, .15f, -2.f));
-    model = glm::rotate(model, glm::radians(-10.f), glm::vec3(1, 0, 0));
-    model = glm::rotate(model, glm::radians(-45.f), glm::vec3(0, 1, 0));
-    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    model = m_Crowbar->GetTransform()->GetModelMatrix();
     m_ShaderPool->getShader(1)->SetMat4("uMV", model);
     m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_PortalGun->Draw(*m_ShaderPool->getShader(1));
+    m_Crowbar->UpdateWithNormal(*m_ShaderPool->getShader(1), false);
 
-    model = glm::translate(glm::mat4(1.f), glm::vec3(1.5f, 0.f, -1.f));
-    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    model = m_PortalGun->GetTransform()->GetModelMatrix();
     m_ShaderPool->getShader(1)->SetMat4("uMV", model);
     m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_Turret->Draw(*m_ShaderPool->getShader(1));
+    m_PortalGun->Update(*m_ShaderPool->getShader(1));
 
-    model = glm::translate(glm::mat4(1.f), glm::vec3(-0.001f, 0.f, 0.f));
-    model = glm::rotate(model, glm::radians(-90.f), glm::vec3(0, 1, 0));
-    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    model = m_Turret->GetTransform()->GetModelMatrix();
     m_ShaderPool->getShader(1)->SetMat4("uMV", model);
     m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_portal_left_door[0]->Draw(*_shader);
-    m_portal_right_door[0]->Draw(*_shader);
-    m_portal_root_door[0]->Draw(*_shader);
+    m_Turret->Update(*m_ShaderPool->getShader(1));
 
-    model = glm::translate(glm::mat4(1.f), glm::vec3(-2.5f, 0.f, -2.501f));
-    model = glm::rotate(model, glm::radians(180.f), glm::vec3(0, 1, 0));
-    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    model = m_portal_root_door[0]->GetTransform()->GetModelMatrix();
     m_ShaderPool->getShader(1)->SetMat4("uMV", model);
     m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_portal_left_door[1]->Draw(*_shader);
-    m_portal_right_door[1]->Draw(*_shader);
-    m_portal_root_door[1]->Draw(*_shader);
+    m_portal_left_door[0]->Update(*_shader);
+    m_portal_right_door[0]->Update(*_shader);
+    m_portal_root_door[0]->Update(*_shader);
+
+    model = m_portal_root_door[1]->GetTransform()->GetModelMatrix();
+    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+    m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+    m_portal_left_door[1]->Update(*_shader);
+    m_portal_right_door[1]->Update(*_shader);
+    m_portal_root_door[1]->Update(*_shader);
 }
 
 void LightTestRoom::RenderShadowScene()
@@ -469,26 +499,21 @@ void LightTestRoom::RenderShadowScene()
     {
         CustomSpace::Renderer::SubmitShadow(_shader, m_MeshContainer[i]);
     }
-    model = glm::translate(model, glm::vec3(0.f, 0.f, 0.f));
-    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+    model = m_HeadCrab->GetTransform()->GetModelMatrix();
     _shader->SetMat4("uMV", model);
-    m_HeadCrab->Draw(*_shader);
+    m_HeadCrab->Update(*_shader);
 
-    model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, 2.f));
+    model = m_Crowbar->GetTransform()->GetModelMatrix();
     _shader->SetMat4("uMV", model);
-    m_Crowbar->Draw(*_shader);
+    m_Crowbar->Update(*_shader);
 
-    model = glm::translate(glm::mat4(1.f), glm::vec3(2.f, .15f, -2.f));
-    model = glm::rotate(model, glm::radians(-10.f), glm::vec3(1, 0, 0));
-    model = glm::rotate(model, glm::radians(-45.f), glm::vec3(0, 1, 0));
-    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    model = m_PortalGun->GetTransform()->GetModelMatrix();
     _shader->SetMat4("uMV", model);
-    m_PortalGun->Draw(*_shader);
+    m_PortalGun->Update(*_shader);
 
-    model = glm::translate(glm::mat4(1.f), glm::vec3(1.5f, 0.f, -1.f));
-    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+    model = m_Turret->GetTransform()->GetModelMatrix();
     _shader->SetMat4("uMV", model);
-    m_Turret->Draw(*_shader);
+    m_Turret->Update(*_shader);
 
     // model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, -1.f));
     // model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
