@@ -16,8 +16,9 @@
 #include"../../framebuffer/ShadowMapFBO.h"
 #include"../../framebuffer/OmniShadowMap.h"
 #include"../../graphic/Skybox.h"
+#include"../../lightroom/TriggerBox.h"
 
-constexpr int SPOTLIGHTNUM = 3;
+constexpr int SPOTLIGHTNUM = 2;
 constexpr int FLOORNUM = 6;
 constexpr int CEILINGNUM = 6;
 const unsigned int SHADOW_MAP_WIDTH = 2048;
@@ -52,7 +53,7 @@ class LightTestRoom
 
         CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec, m_FriendCubeTex, m_FriendCubeSpec;
         CustomSpace::Ref<CustomSpace::Texture2D> m_hl2_ceiling, m_hl2_wall[2], m_hl2_wall_normal[2], m_hl2_wall_middle, m_hl2_wall_middle_normal, m_hl2_glass_window;
-        CustomSpace::Ref<CustomSpace::Texture2D> m_hl2_tile, m_hl2_tile_spec, m_hl2_floor_normal, m_hl2_wood_door, m_hl2_wood_door_normal;
+        CustomSpace::Ref<CustomSpace::Texture2D> m_hl2_tile, m_hl2_tile_spec, m_hl2_floor_normal, m_hl2_wood_door, m_hl2_wood_door_normal, m_hl2_logo;
 
         CustomSpace::Ref<CustomSpace::Texture2D> m_pt2_ceiling, m_pt2_ceiling_normal, m_pt2_wall[2], m_pt2_wall_normal, m_pt2_wall_spec;
         CustomSpace::Ref<CustomSpace::Texture2D> m_pt2_tile, m_pt2_tile_spec, m_pt2_floor_normal;
@@ -69,19 +70,20 @@ class LightTestRoom
         CustomSpace::Scope<ShaderPool> m_ShaderPool;
 
         std::vector<CustomSpace::Ref<CustomSpace::Shape>> m_MeshContainer;
+        std::vector<CustomSpace::Ref<CustomSpace::TriggerBox>> m_TriggerBoxes;
 
         static LightTestRoom* Instance;
         CustomSpace::Scope<CustomSpace::Windows> m_Window;
 
-        bool b_Running = true;
+        bool b_Running = true, b_Flashlight = false;
 
-        glm::vec3 m_CamPosition;
+        glm::vec3 m_CamPosition, m_OriginDoorPos;
 
         glm::vec3 m_OriginAmbient[4], m_PointLightPos;
 
         glm::mat4 m_LightProjection = glm::mat4(1.f);
 
-        float m_AllTime = 0;
+        float m_AllTime = 0, m_AnimationTime = 0.f;
 
         void Init();
 
@@ -106,6 +108,8 @@ class LightTestRoom
         void RenderQuad();
         void RenderNormalScene();
         void RenderShadowScene();
+
+        void Trigger(const glm::vec3& pos);
 
         int framebuffer_width = 0, framebuffer_height = 0;
 
