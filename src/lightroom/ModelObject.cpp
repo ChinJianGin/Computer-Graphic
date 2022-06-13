@@ -28,27 +28,27 @@ namespace CustomSpace
         m_Model->DrawWithNormalMap(shader, normal);
     }
 
-    void ModelObject::SetModelMatrix(glm::mat4& model)
+    void ModelObject::SetModelMatrix(const glm::mat4& model)
     {
         m_Transform->SetModelMatrix(model);
     }
 
-    void ModelObject::SetPosition(glm::vec3& pos)
+    void ModelObject::SetPosition(const glm::vec3& pos)
     {
         m_Transform->SetPosition(pos);
     }
 
-    void ModelObject::SetRotation(float radians, glm::vec3& axis)
+    void ModelObject::SetRotation(const float radians, const glm::vec3& axis)
     {
         m_Transform->SetRotation(radians, axis);
     }
 
-    void ModelObject::SetScale(glm::vec3& scale)
+    void ModelObject::SetScale(const glm::vec3& scale)
     {
         m_Transform->SetScaleValue(scale);
     }
 
-    void ModelObject::SetParent(Ref<Transform>& parent)
+    void ModelObject::SetParent(const Ref<Transform>& parent)
     {
         m_Transform->SetParentTransform(parent);
     }

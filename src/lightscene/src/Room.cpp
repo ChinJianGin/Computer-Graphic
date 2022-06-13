@@ -31,7 +31,7 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_PersController = CreateRef<PerspectiveCameraController>(width, height, 60.f, .1f, 1000.f, CIP);
 
-    m_PersController->GetCamera().SetPosition(glm::vec3(0.f, 2.5f, 0.f));
+    m_PersController->GetCamera().SetPosition(glm::vec3(2.5f, 2.5f, 0.f));
 
     m_CamPosition = m_PersController->GetCamera().GetPosition();
 
@@ -79,6 +79,20 @@ void LightTestRoom::ObjectInit()
     _MM = _trigger->GetTransform()->GetTranslate() * _trigger->GetTransform()->GetScale();
     _trigger->SetModelMatrix(_MM);
     m_TriggerBoxes.push_back(_trigger);
+
+    _trigger = CreateRef<TriggerBox>();
+    _trigger->SetPosition(glm::vec3(0.f, 2.f, 0.f));
+    _trigger->SetScale(glm::vec3(10.f, 18.f, 10.f));
+    _MM = _trigger->GetTransform()->GetTranslate() * _trigger->GetTransform()->GetScale();
+    _trigger->SetModelMatrix(_MM);
+    m_TriggerBoxes.push_back(_trigger);
+
+    _trigger = CreateRef<TriggerBox>();
+    _trigger->SetPosition(glm::vec3(-2.5f, 2.f, -2.5f));
+    _trigger->SetScale(glm::vec3(10.f, 18.f, 10.f));
+    _MM = _trigger->GetTransform()->GetTranslate() * _trigger->GetTransform()->GetScale();
+    _trigger->SetModelMatrix(_MM);
+    m_TriggerBoxes.push_back(_trigger);
 }
 
 void LightTestRoom::ModelInit()
@@ -92,7 +106,7 @@ void LightTestRoom::ModelInit()
 
     m_Crowbar = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/crowbar/crowbar.obj");
 
-    model = glm::translate(glm::mat4(1.f), glm::vec3(3.75f, .7f, -7.2f));
+    model = glm::translate(glm::mat4(1.f), glm::vec3(3.75f, .7f, -7.f));
     model = glm::rotate(model, glm::radians(70.f), glm::vec3(1, 0, 0));
     model = glm::scale(model, glm::vec3(0.35f, 0.35f, 0.35f));
 
@@ -113,6 +127,12 @@ void LightTestRoom::ModelInit()
     model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
 
     m_Turret->SetModelMatrix(model);
+
+    m_Button = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/button/combinebutton.obj");
+    model = glm::translate(glm::mat4(1.f), glm::vec3(4.7f, 1.4f, -5.1f));
+    model = glm::rotate(model, glm::radians(-90.f), glm::vec3(0, 1, 0));
+    m_Button->SetModelMatrix(model);
+
     for(int i = 0; i < 2; i++)
     {
         m_portal_left_door[i] = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/portaldoor/portaldoor_left.obj");
@@ -125,12 +145,26 @@ void LightTestRoom::ModelInit()
             model = glm::translate(glm::mat4(1.f), glm::vec3(-0.001f, 0.f, 0.f));
             model = glm::rotate(model, glm::radians(-90.f), glm::vec3(0, 1, 0));
             model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+            m_portal_left_door[i]->SetPosition(glm::vec3(-.001f, 0.f, 0.f));
+            m_portal_left_door[i]->SetRotation(-90.f, glm::vec3(0.f, 1.f, 0.f));
+            m_portal_left_door[i]->SetScale(glm::vec3(.5f, .5f, .5f));
+            m_portal_right_door[i]->SetPosition(glm::vec3(-.001f, 0.f, 0.f));
+            m_portal_right_door[i]->SetRotation(-90.f, glm::vec3(0.f, 1.f, 0.f));
+            m_portal_right_door[i]->SetScale(glm::vec3(.5f, .5f, .5f));
+            m_OriginDoorPos[1] = glm::vec3(-0.001f, 0.f, 0.f);
         }
         else
         {
             model = glm::translate(glm::mat4(1.f), glm::vec3(-2.5f, 0.f, -2.501f));
             model = glm::rotate(model, glm::radians(180.f), glm::vec3(0, 1, 0));
             model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+            m_portal_left_door[i]->SetPosition(glm::vec3(-2.5f, 0.f, -2.501f));
+            m_portal_left_door[i]->SetRotation(180.f, glm::vec3(0, 1, 0));
+            m_portal_left_door[i]->SetScale(glm::vec3(.5f, .5f, .5f));
+            m_portal_right_door[i]->SetPosition(glm::vec3(-2.5f, 0.f, -2.501f));
+            m_portal_right_door[i]->SetRotation(180.f, glm::vec3(0, 1, 0));
+            m_portal_right_door[i]->SetScale(glm::vec3(.5f, .5f, .5f));
+            m_OriginDoorPos[2] = glm::vec3(-2.5f, 0.f, -2.501f);
         }
 
         m_portal_left_door[i]->SetModelMatrix(model);
@@ -337,18 +371,18 @@ void LightTestRoom::Run()
             m_CamPosition += -m_PersCamera->GetUp() * glm::vec3(m_Timer->GetTick());
         }
 
-        // if(m_CamPosition.x >= 2.f)
-        //     m_CamPosition.x = 2.f;
-        // else if(m_CamPosition.x <= -2.f)
-        //     m_CamPosition.x = -2.f;
-        // if(m_CamPosition.z >= 2.f)
-        //     m_CamPosition.z = 2.f;
-        // else if(m_CamPosition.z <= -2.f)
-        //     m_CamPosition.z = -2.f;
-        // if(m_CamPosition.y >= 4.5f)
-        //     m_CamPosition.y = 4.5f;
-        // else if(m_CamPosition.y <= .5f)
-        //     m_CamPosition.y = .5f;
+        if(m_CamPosition.x >= 4.8f)
+            m_CamPosition.x = 4.8f;
+        else if(m_CamPosition.x <= -4.8f)
+            m_CamPosition.x = -4.8f;
+        if(m_CamPosition.z >= 2.3f)
+            m_CamPosition.z = 2.3f;
+        else if(m_CamPosition.z <= -7.3f)
+            m_CamPosition.z = -7.3f;
+        if(m_CamPosition.y >= 4.5f)
+            m_CamPosition.y = 4.5f;
+        else if(m_CamPosition.y <= .5f)
+            m_CamPosition.y = .5f;
         m_PersCamera->SetPosition(m_CamPosition);
         glm::vec3 CamWorldPos = glm::vec3(glm::translate(glm::mat4(1.f), m_PersCamera->GetPosition()) * glm::vec4(0.f, 0.f, 0.f, 1.f));
         this->Trigger(CamWorldPos);
@@ -485,17 +519,38 @@ void LightTestRoom::RenderNormalScene()
     m_ShaderPool->getShader(1)->SetMat4("uMV", model);
     m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_portal_left_door[0]->Update(*_shader);
-    m_portal_right_door[0]->Update(*_shader);
     m_portal_root_door[0]->Update(*_shader);
+
+    model = m_portal_left_door[0]->GetTransform()->GetModelMatrix();
+    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+    m_portal_left_door[0]->Update(*_shader);
+
+    model = m_portal_right_door[0]->GetTransform()->GetModelMatrix();
+    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+    m_portal_right_door[0]->Update(*_shader);
 
     model = m_portal_root_door[1]->GetTransform()->GetModelMatrix();
     m_ShaderPool->getShader(1)->SetMat4("uMV", model);
     m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_portal_left_door[1]->Update(*_shader);
-    m_portal_right_door[1]->Update(*_shader);
     m_portal_root_door[1]->Update(*_shader);
+
+    model = m_portal_left_door[1]->GetTransform()->GetModelMatrix();
+    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+    m_portal_left_door[1]->Update(*_shader);
+
+    model = m_portal_right_door[1]->GetTransform()->GetModelMatrix();
+    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+    m_portal_right_door[1]->Update(*_shader);
+
+    model = m_Button->GetTransform()->GetModelMatrix();
+    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+    m_Button->Update(*_shader);
 }
 
 void LightTestRoom::RenderShadowScene()
@@ -506,9 +561,6 @@ void LightTestRoom::RenderShadowScene()
     {
         CustomSpace::Renderer::SubmitShadow(_shader, m_MeshContainer[i]);
     }
-    model = m_HeadCrab->GetTransform()->GetModelMatrix();
-    _shader->SetMat4("uMV", model);
-    m_HeadCrab->Update(*_shader);
 
     model = m_Crowbar->GetTransform()->GetModelMatrix();
     _shader->SetMat4("uMV", model);
@@ -521,6 +573,14 @@ void LightTestRoom::RenderShadowScene()
     model = m_Turret->GetTransform()->GetModelMatrix();
     _shader->SetMat4("uMV", model);
     m_Turret->Update(*_shader);
+
+    model = m_Button->GetTransform()->GetModelMatrix();
+    _shader->SetMat4("uMV", model);
+    m_Button->Update(*_shader);
+
+    model = m_HeadCrab->GetTransform()->GetModelMatrix();
+    _shader->SetMat4("uMV", model);
+    m_HeadCrab->Update(*_shader);
 
     // model = glm::translate(glm::mat4(1.f), glm::vec3(-2.f, 0.f, -1.f));
     // model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
@@ -709,6 +769,7 @@ void LightTestRoom::RoomInit()
         _MM = m_InnerWall_pt2[i]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(0, 1, 0)) *m_InnerWall_pt2[i]->GetTransform()->GetRotate() * m_InnerWall_pt2[i]->GetTransform()->GetScale();
 
         m_InnerWall_pt2[i]->SetModelMatrix(_MM);
+        m_MeshContainer.push_back(m_InnerWall_pt2[i]);
     }
 
 
@@ -724,14 +785,14 @@ void LightTestRoom::RoomInit()
         m_MeshContainer.push_back(m_Middle_Wall[i]);
 
         m_WoodDoor[i] = ShapeFactory::Get().ShapeCreator<Plane>();
-        m_WoodDoor[i]->SetPosition(glm::vec3(2.5f, 1.25f, -2.5  + (i * -4.9f)));
+        m_WoodDoor[i]->SetPosition(glm::vec3(2.5f, 1.25f, -2.5  + (i * -5.f)));
         m_WoodDoor[i]->SetScale(_scale);
         m_WoodDoor[i]->SetRotation(_radians, _axis);
-        _MM = m_WoodDoor[i]->GetTransform()->GetTranslate() * m_WoodDoor[i]->GetTransform()->GetRotate() * m_WoodDoor[i]->GetTransform()->GetScale();
+        _MM = m_WoodDoor[i]->GetTransform()->GetTranslate() * glm::rotate(glm::mat4(1.f), glm::radians(180.f), glm::vec3(0, 1, 0)) * m_WoodDoor[i]->GetTransform()->GetRotate() * m_WoodDoor[i]->GetTransform()->GetScale();
         m_WoodDoor[i]->SetModelMatrix(_MM);
         m_MeshContainer.push_back(m_WoodDoor[i]);
 
-        m_OriginDoorPos = m_WoodDoor[0]->GetTransform()->GetLocalPosition();
+        m_OriginDoorPos[0] = m_WoodDoor[0]->GetTransform()->GetLocalPosition();
     }
 
     m_Middle_Wall_pt2 = ShapeFactory::Get().ShapeCreator<Plane>();
@@ -1122,28 +1183,89 @@ void LightTestRoom::RoomReset()
 
 void LightTestRoom::Trigger(const glm::vec3& pos)
 {
-    for(int i = 0; i < m_TriggerBoxes.size(); i++)
+    if(m_TriggerBoxes[0]->BeginOverlap(pos))
     {
-        if(m_TriggerBoxes[i]->BeginOverlap(pos))
-        {
-            float _sin = sinf(m_AnimationTime);
-            float _y = 1.25f + (_sin * 2.5f);
-            m_WoodDoor[0]->SetPosition(glm::vec3(m_OriginDoorPos.x, _y, m_OriginDoorPos.z + .001f));
-            glm::mat4 _MM = m_WoodDoor[0]->GetTransform()->GetTranslate() * m_WoodDoor[0]->GetTransform()->GetRotate() * m_WoodDoor[0]->GetTransform()->GetScale();
-            m_WoodDoor[0]->SetModelMatrix(_MM);
-            m_AnimationTime += m_Timer->GetTick();
-            if(m_AnimationTime >= M_PI_2) m_AnimationTime = M_PI_2;
-        }
-        else
-        {
-            float _sin = sinf(m_AnimationTime);
-            float _y = 1.25f + (_sin * 2.5f);
-            m_WoodDoor[0]->SetPosition(glm::vec3(m_OriginDoorPos.x, _y, m_OriginDoorPos.z + .001f));
-            glm::mat4 _MM = m_WoodDoor[0]->GetTransform()->GetTranslate() * m_WoodDoor[0]->GetTransform()->GetRotate() * m_WoodDoor[0]->GetTransform()->GetScale();
-            m_WoodDoor[0]->SetModelMatrix(_MM);
-            m_AnimationTime -= m_Timer->GetTick();
-            if(m_AnimationTime <= 0.f) m_AnimationTime = 0.f;
-        }
+        float _sin = sinf(m_AnimationTime[0]);
+        float _y = 1.25f + (_sin * 2.5f);
+        m_WoodDoor[0]->SetPosition(glm::vec3(m_OriginDoorPos[0].x, _y, m_OriginDoorPos[0].z + .001f));
+        glm::mat4 _MM = m_WoodDoor[0]->GetTransform()->GetTranslate() * m_WoodDoor[0]->GetTransform()->GetRotate() * m_WoodDoor[0]->GetTransform()->GetScale();
+        m_WoodDoor[0]->SetModelMatrix(_MM);
+        m_AnimationTime[0] += m_Timer->GetTick();
+        if(m_AnimationTime[0] >= M_PI_2) m_AnimationTime[0] = M_PI_2;
+    }
+    else
+    {
+        float _sin = sinf(m_AnimationTime[0]);
+        float _y = 1.25f + (_sin * 2.5f);
+        m_WoodDoor[0]->SetPosition(glm::vec3(m_OriginDoorPos[0].x, _y, m_OriginDoorPos[0].z + .001f));
+        glm::mat4 _MM = m_WoodDoor[0]->GetTransform()->GetTranslate() * m_WoodDoor[0]->GetTransform()->GetRotate() * m_WoodDoor[0]->GetTransform()->GetScale();
+        m_WoodDoor[0]->SetModelMatrix(_MM);
+        m_AnimationTime[0] -= m_Timer->GetTick();
+        if(m_AnimationTime[0] <= 0.f) m_AnimationTime[0] = 0.f;
+    }
+
+    if(m_TriggerBoxes[1]->BeginOverlap(pos))
+    {
+        float _sin = sinf(m_AnimationTime[1]);
+        float _z = m_OriginDoorPos[1].z + (_sin * -1.f);
+        m_portal_left_door[0]->SetPosition(glm::vec3(m_OriginDoorPos[1].x, m_OriginDoorPos[1].y, _z));
+        glm::mat4 _MM = m_portal_left_door[0]->GetTransform()->GetTranslate() * m_portal_left_door[0]->GetTransform()->GetRotate() * m_portal_left_door[0]->GetTransform()->GetScale();
+        m_portal_left_door[0]->SetModelMatrix(_MM);
+
+        m_portal_right_door[0]->SetPosition(glm::vec3(m_OriginDoorPos[1].x, m_OriginDoorPos[1].y, -_z));
+        _MM = m_portal_right_door[0]->GetTransform()->GetTranslate() * m_portal_right_door[0]->GetTransform()->GetRotate() * m_portal_right_door[0]->GetTransform()->GetScale();
+        m_portal_right_door[0]->SetModelMatrix(_MM);
+
+        m_AnimationTime[1] += m_Timer->GetTick();
+        if(m_AnimationTime[1] >= M_PI_2) m_AnimationTime[1] = M_PI_2;
+    }
+    else
+    {
+        float _sin = sinf(m_AnimationTime[1]);
+        float _z = m_OriginDoorPos[1].z + (_sin * -1.f);
+        m_portal_left_door[0]->SetPosition(glm::vec3(m_OriginDoorPos[1].x, m_OriginDoorPos[1].y, _z));
+        glm::mat4 _MM = m_portal_left_door[0]->GetTransform()->GetTranslate() * m_portal_left_door[0]->GetTransform()->GetRotate() * m_portal_left_door[0]->GetTransform()->GetScale();
+        m_portal_left_door[0]->SetModelMatrix(_MM);
+
+        m_portal_right_door[0]->SetPosition(glm::vec3(m_OriginDoorPos[1].x, m_OriginDoorPos[1].y, -_z));
+        _MM = m_portal_right_door[0]->GetTransform()->GetTranslate() * m_portal_right_door[0]->GetTransform()->GetRotate() * m_portal_right_door[0]->GetTransform()->GetScale();
+        m_portal_right_door[0]->SetModelMatrix(_MM);
+
+        m_AnimationTime[1] -= m_Timer->GetTick();
+        if(m_AnimationTime[1] <= 0.f) m_AnimationTime[1] = 0.f;
+    }
+
+    if(m_TriggerBoxes[2]->BeginOverlap(pos))
+    {
+        float _sin = sinf(m_AnimationTime[2]);
+        float _x = m_OriginDoorPos[2].x + (_sin * 1.f);
+        m_portal_left_door[1]->SetPosition(glm::vec3(_x, m_OriginDoorPos[2].y, m_OriginDoorPos[2].z));
+        glm::mat4 _MM = m_portal_left_door[1]->GetTransform()->GetTranslate() * m_portal_left_door[1]->GetTransform()->GetRotate() * m_portal_left_door[1]->GetTransform()->GetScale();
+        m_portal_left_door[1]->SetModelMatrix(_MM);
+
+        _x = m_OriginDoorPos[2].x + (_sin * -1.f);
+        m_portal_right_door[1]->SetPosition(glm::vec3(_x, m_OriginDoorPos[2].y, m_OriginDoorPos[2].z));
+        _MM = m_portal_right_door[1]->GetTransform()->GetTranslate() * m_portal_right_door[1]->GetTransform()->GetRotate() * m_portal_right_door[1]->GetTransform()->GetScale();
+        m_portal_right_door[1]->SetModelMatrix(_MM);
+
+        m_AnimationTime[2] += m_Timer->GetTick();
+        if(m_AnimationTime[2] >= M_PI_2) m_AnimationTime[2] = M_PI_2;
+    }
+    else
+    {
+        float _sin = sinf(m_AnimationTime[2]);
+        float _x = m_OriginDoorPos[2].x + (_sin * 1.f);
+        m_portal_left_door[1]->SetPosition(glm::vec3(_x, m_OriginDoorPos[2].y, m_OriginDoorPos[2].z));
+        glm::mat4 _MM = m_portal_left_door[1]->GetTransform()->GetTranslate() * m_portal_left_door[1]->GetTransform()->GetRotate() * m_portal_left_door[1]->GetTransform()->GetScale();
+        m_portal_left_door[1]->SetModelMatrix(_MM);
+
+        _x = m_OriginDoorPos[2].x + (_sin * -1.f);
+        m_portal_right_door[1]->SetPosition(glm::vec3(_x, m_OriginDoorPos[2].y, m_OriginDoorPos[2].z));
+        _MM = m_portal_right_door[1]->GetTransform()->GetTranslate() * m_portal_right_door[1]->GetTransform()->GetRotate() * m_portal_right_door[1]->GetTransform()->GetScale();
+        m_portal_right_door[1]->SetModelMatrix(_MM);
+
+        m_AnimationTime[2] -= m_Timer->GetTick();
+        if(m_AnimationTime[2] <= 0.f) m_AnimationTime[2] = 0.f;
     }
 }
 

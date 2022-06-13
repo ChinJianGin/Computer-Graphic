@@ -18,11 +18,11 @@ namespace CustomSpace
         void UpdateWithNormal(Shader& shader, bool normal = false);
 
         Ref<Transform>& GetTransform() { return this->m_Transform; }
-        void SetModelMatrix(glm::mat4& model);
-        void SetPosition(glm::vec3& pos);
-        void SetRotation(float radians, glm::vec3& axis);
-        void SetScale(glm::vec3& scale);
-        void SetParent(Ref<Transform>& parent);
+        void SetModelMatrix(const glm::mat4& model);
+        void SetPosition(const glm::vec3& pos);
+        void SetRotation(const float radians, const glm::vec3& axis);
+        void SetScale(const glm::vec3& scale);
+        void SetParent(const Ref<Transform>& parent);
         protected:
         Ref<Transform> m_Transform;
         Ref<Model> m_Model;
