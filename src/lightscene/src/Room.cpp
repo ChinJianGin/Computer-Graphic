@@ -37,6 +37,7 @@ LightTestRoom::LightTestRoom(int width, int height, const char* title, bool scre
 
     m_Interface = CreateScope<UserInterface>();
 
+
     m_ShadowMap = CreateRef<ShadowMap>();
     if(!m_ShadowMap->Init(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT))
         CORE_ERROR("Shadow map not init.");
@@ -90,6 +91,13 @@ void LightTestRoom::ObjectInit()
     _trigger = CreateRef<TriggerBox>();
     _trigger->SetPosition(glm::vec3(-2.5f, 2.f, -2.5f));
     _trigger->SetScale(glm::vec3(10.f, 18.f, 10.f));
+    _MM = _trigger->GetTransform()->GetTranslate() * _trigger->GetTransform()->GetScale();
+    _trigger->SetModelMatrix(_MM);
+    m_TriggerBoxes.push_back(_trigger);
+
+    _trigger = CreateRef<TriggerBox>();
+    _trigger->SetPosition(glm::vec3(4.7f, 1.4f, -5.1f));
+    _trigger->SetScale(glm::vec3(5.f, 10.f, 5.f));
     _MM = _trigger->GetTransform()->GetTranslate() * _trigger->GetTransform()->GetScale();
     _trigger->SetModelMatrix(_MM);
     m_TriggerBoxes.push_back(_trigger);
@@ -384,9 +392,11 @@ void LightTestRoom::Run()
         else if(m_CamPosition.y <= .5f)
             m_CamPosition.y = .5f;
         m_PersCamera->SetPosition(m_CamPosition);
+        m_PersController->Update(*m_Timer);
+        CORE_INFO("Ray X : {0} , Y : {1} , Z : {2}", m_PersController->GetCurrentRay().x, m_PersController->GetCurrentRay().y, m_PersController->GetCurrentRay().z);
+
         glm::vec3 CamWorldPos = glm::vec3(glm::translate(glm::mat4(1.f), m_PersCamera->GetPosition()) * glm::vec4(0.f, 0.f, 0.f, 1.f));
         this->Trigger(CamWorldPos);
-        // GAME_INFO("Cam X : {0} , Y : {1} , Z : {2}", CamWorldPos.x, CamWorldPos.y, CamWorldPos.z);
 
         m_Window->Update();
     }
@@ -468,8 +478,11 @@ void LightTestRoom::RenderNormalScene()
     m_FriendCubeTex->UnBind();
 
     m_ShaderPool->getShader(4)->Activate();
-    // m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_DirLight->GetLightData()->ambient, 1.0f));
-    // CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_DirLight->GetBody());
+    m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_DirLight->GetLightData()->ambient, 1.0f));
+    m_DirLight->SetPosition(m_PersController->GetCurrentRay() + m_PersController->GetCamera().GetPosition());
+    model = m_DirLight->GetTransform()->GetTranslate();
+    m_DirLight->SetModelMatrix(model);
+    CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_DirLight->GetBody());
 
     m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_PointLight->GetLightData()->ambient, 1.0f));
     if(m_Interface->IsButtonActive()[0])
@@ -1183,6 +1196,7 @@ void LightTestRoom::RoomReset()
 
 void LightTestRoom::Trigger(const glm::vec3& pos)
 {
+    // Wood door open trigger
     if(m_TriggerBoxes[0]->BeginOverlap(pos))
     {
         float _sin = sinf(m_AnimationTime[0]);
@@ -1204,6 +1218,7 @@ void LightTestRoom::Trigger(const glm::vec3& pos)
         if(m_AnimationTime[0] <= 0.f) m_AnimationTime[0] = 0.f;
     }
 
+    // First portal door trigger
     if(m_TriggerBoxes[1]->BeginOverlap(pos))
     {
         float _sin = sinf(m_AnimationTime[1]);
@@ -1235,6 +1250,7 @@ void LightTestRoom::Trigger(const glm::vec3& pos)
         if(m_AnimationTime[1] <= 0.f) m_AnimationTime[1] = 0.f;
     }
 
+    // Second portal door trigger
     if(m_TriggerBoxes[2]->BeginOverlap(pos))
     {
         float _sin = sinf(m_AnimationTime[2]);
@@ -1266,6 +1282,12 @@ void LightTestRoom::Trigger(const glm::vec3& pos)
 
         m_AnimationTime[2] -= m_Timer->GetTick();
         if(m_AnimationTime[2] <= 0.f) m_AnimationTime[2] = 0.f;
+    }
+
+    if(m_TriggerBoxes[3]->BeginOverlap(pos))
+    {
+        GAME_INFO("Press button");
+        m_Interface->OnUpdate(*m_Timer);
     }
 }
 

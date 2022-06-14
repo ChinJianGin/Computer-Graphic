@@ -11,6 +11,7 @@ namespace CustomSpace
         m_Yaw = -90.f;
         m_Pitch = 0.f;
         m_Sensitivity = .1f;
+        m_Raycasting = CreateScope<Raycasting>(*m_Camera, width, height);
     }
 
     PerspectiveCameraController::PerspectiveCameraController(int width, int height, float fov, float near, float far, glm::vec3 &pos) : m_Width(width), m_Height(height), m_CameraPostition(pos)
@@ -21,6 +22,7 @@ namespace CustomSpace
         m_Yaw = -90.f;
         m_Pitch = 0.f;
         m_Sensitivity = .1f;
+        m_Raycasting = CreateScope<Raycasting>(*m_Camera, width, height);
     }
 
     PerspectiveCameraController::~PerspectiveCameraController()
@@ -30,6 +32,8 @@ namespace CustomSpace
 
     void PerspectiveCameraController::Update(CoreTimer &timer)
     {
+        if(b_Reset)
+        m_Raycasting->Update(timer);
     }
 
     void PerspectiveCameraController::OnEvent(Event &event)
@@ -42,6 +46,7 @@ namespace CustomSpace
 
     void PerspectiveCameraController::OnResize(int width, int height)
     {
+        m_Raycasting->SetWindowSize(width, height);
     }
 
     bool PerspectiveCameraController::OnMouseInput(MouseButtonPressedEvent &event)

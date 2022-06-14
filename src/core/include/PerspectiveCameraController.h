@@ -3,6 +3,7 @@
 #include"./PerspectiveCamera.h"
 #include"./Event.h"
 #include"./MouseEvent.h"
+#include"./Raycasting.h"
 
 namespace CustomSpace
 {
@@ -24,6 +25,7 @@ namespace CustomSpace
 
         PerspectiveCamera& GetCamera() { return *this->m_Camera; }
         const PerspectiveCamera& GetCamera() const { return *this->m_Camera; }
+        const glm::vec3& GetCurrentRay() const { return this->m_Raycasting->GetCurrentRay(); }
         private:
         int m_Width, m_Height;
         float m_AspectRatio;
@@ -35,6 +37,8 @@ namespace CustomSpace
         float m_LastX, m_LastY, m_Yaw, m_Pitch, m_Sensitivity, m_ZoomLevel = 1.f;
 
         void LocalUpdate();
+
+        Scope<Raycasting> m_Raycasting;
 
         bool b_Reset = false, b_ZoomUpdate = false, b_LookAtUpdate = false;
 
