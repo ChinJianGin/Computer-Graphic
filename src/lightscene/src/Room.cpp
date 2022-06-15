@@ -75,22 +75,22 @@ void LightTestRoom::ObjectInit()
     m_Pyramid->SetModelMatrix(_MM);
 
     Ref<TriggerBox> _trigger = CreateRef<TriggerBox>();
-    _trigger->SetPosition(glm::vec3(2.5f, 2.f, -2.5f));
-    _trigger->SetScale(glm::vec3(10.f, 18.f, 10.f));
+    _trigger->SetPosition(glm::vec3(2.5f, 1.25f, -2.5f));
+    _trigger->SetScale(glm::vec3(5.f, 13.5f, 10.f));
     _MM = _trigger->GetTransform()->GetTranslate() * _trigger->GetTransform()->GetScale();
     _trigger->SetModelMatrix(_MM);
     m_TriggerBoxes.push_back(_trigger);
 
     _trigger = CreateRef<TriggerBox>();
-    _trigger->SetPosition(glm::vec3(0.f, 2.f, 0.f));
-    _trigger->SetScale(glm::vec3(10.f, 18.f, 10.f));
+    _trigger->SetPosition(glm::vec3(0.f, 1.25f, 0.f));
+    _trigger->SetScale(glm::vec3(10.f, 13.5f, 5.f));
     _MM = _trigger->GetTransform()->GetTranslate() * _trigger->GetTransform()->GetScale();
     _trigger->SetModelMatrix(_MM);
     m_TriggerBoxes.push_back(_trigger);
 
     _trigger = CreateRef<TriggerBox>();
-    _trigger->SetPosition(glm::vec3(-2.5f, 2.f, -2.5f));
-    _trigger->SetScale(glm::vec3(10.f, 18.f, 10.f));
+    _trigger->SetPosition(glm::vec3(-2.5f, 1.25f, -2.5f));
+    _trigger->SetScale(glm::vec3(5.f, 13.5f, 10.f));
     _MM = _trigger->GetTransform()->GetTranslate() * _trigger->GetTransform()->GetScale();
     _trigger->SetModelMatrix(_MM);
     m_TriggerBoxes.push_back(_trigger);
@@ -101,6 +101,18 @@ void LightTestRoom::ObjectInit()
     _MM = _trigger->GetTransform()->GetTranslate() * _trigger->GetTransform()->GetScale();
     _trigger->SetModelMatrix(_MM);
     m_TriggerBoxes.push_back(_trigger);
+
+    m_InnerWallCollider[0] = CreateRef<TriggerBox>();
+    m_InnerWallCollider[0]->SetPosition(glm::vec3(0.f, 2.5f, -2.5f));
+    m_InnerWallCollider[0]->SetScale(glm::vec3(50.f, 25.f, 5.f));
+    _MM = m_InnerWallCollider[0]->GetTransform()->GetTranslate() * m_InnerWallCollider[0]->GetTransform()->GetScale();
+    m_InnerWallCollider[0]->SetModelMatrix(_MM);
+
+    m_InnerWallCollider[1] = CreateRef<TriggerBox>();
+    m_InnerWallCollider[1]->SetPosition(glm::vec3(0.f, 2.5f, -2.5f));
+    m_InnerWallCollider[1]->SetScale(glm::vec3(5.f, 25.f, 50.f));
+    _MM = m_InnerWallCollider[1]->GetTransform()->GetTranslate() * m_InnerWallCollider[1]->GetTransform()->GetScale();
+    m_InnerWallCollider[1]->SetModelMatrix(_MM);
 }
 
 void LightTestRoom::ModelInit()
@@ -391,9 +403,11 @@ void LightTestRoom::Run()
             m_CamPosition.y = 4.5f;
         else if(m_CamPosition.y <= .5f)
             m_CamPosition.y = .5f;
+
+        this->WallCollide(m_CamPosition);
         m_PersCamera->SetPosition(m_CamPosition);
         m_PersController->Update(*m_Timer);
-        CORE_INFO("Ray X : {0} , Y : {1} , Z : {2}", m_PersController->GetCurrentRay().x, m_PersController->GetCurrentRay().y, m_PersController->GetCurrentRay().z);
+        // CORE_INFO("Ray X : {0} , Y : {1} , Z : {2}", m_PersController->GetCurrentRay().x, m_PersController->GetCurrentRay().y, m_PersController->GetCurrentRay().z);
 
         glm::vec3 CamWorldPos = glm::vec3(glm::translate(glm::mat4(1.f), m_PersCamera->GetPosition()) * glm::vec4(0.f, 0.f, 0.f, 1.f));
         this->Trigger(CamWorldPos);
@@ -407,6 +421,7 @@ void LightTestRoom::OnEvent(CustomSpace::Event& e)
     CustomSpace::EventDispatcher dispatcher(e);
     dispatcher.Dispatch<CustomSpace::KeyPressedEvent>(BIND_EVENT(LightTestRoom::OnKeyPressedEvent));
     dispatcher.Dispatch<CustomSpace::WindowResizeEvent>(BIND_EVENT(LightTestRoom::OnWindowResizeEvent));
+    dispatcher.Dispatch<CustomSpace::MouseButtonPressedEvent>(BIND_EVENT(LightTestRoom::OnMouseButtonPressedEvent));
 
     m_Interface->OnEvent(e);
     if(!m_Interface->IsFocusOnInterface())
@@ -456,6 +471,15 @@ bool LightTestRoom::OnWindowResizeEvent(CustomSpace::WindowResizeEvent& event)
     }
     m_OrthoCamera->SetProjection(event.GetWidth(), event.GetHeight(), -1.f, 1.f, -1.f, 1.f);
 
+    return false;
+}
+
+bool LightTestRoom::OnMouseButtonPressedEvent(CustomSpace::MouseButtonPressedEvent& event)
+{
+    if(event.GetMouseButton() == GLFW_MOUSE_BUTTON_LEFT && m_PersController->IsFocusOnPersController())
+    {
+        CORE_INFO("Test");
+    }
     return false;
 }
 
@@ -1286,8 +1310,53 @@ void LightTestRoom::Trigger(const glm::vec3& pos)
 
     if(m_TriggerBoxes[3]->BeginOverlap(pos))
     {
-        GAME_INFO("Press button");
+        m_Interface->SetEnable(true);
         m_Interface->OnUpdate(*m_Timer);
+    }
+    else
+    {
+        m_Interface->SetEnable(false);
+    }
+}
+
+void LightTestRoom::WallCollide(glm::vec3& campos)
+{
+    if(m_InnerWallCollider[0]->BeginOverlap(campos))
+    {
+        if(m_TriggerBoxes[0]->BeginOverlap(campos) || m_TriggerBoxes[2]->BeginOverlap(campos))
+        {
+
+        }
+        else
+        {
+            if(campos.z > m_InnerWallCollider[0]->GetTransform()->GetLocalPosition().z)
+            {
+                campos.z = m_InnerWallCollider[0]->GetTR().z;
+            }
+            else
+            {
+                campos.z = m_InnerWallCollider[0]->GetBL().z;
+            }
+        }
+    }
+
+    if(m_InnerWallCollider[1]->BeginOverlap(campos))
+    {
+        if(m_TriggerBoxes[1]->BeginOverlap(campos))
+        {
+
+        }
+        else
+        {
+            if(campos.x > m_InnerWallCollider[1]->GetTransform()->GetLocalPosition().x)
+            {
+                campos.x = m_InnerWallCollider[1]->GetTR().x;
+            }
+            else
+            {
+                campos.x = m_InnerWallCollider[1]->GetBL().x;
+            }
+        }
     }
 }
 

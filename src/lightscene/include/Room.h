@@ -35,6 +35,7 @@ class LightTestRoom
         void OnEvent(CustomSpace::Event& e);
         bool OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event);
         bool OnWindowResizeEvent(CustomSpace::WindowResizeEvent& event);
+        bool OnMouseButtonPressedEvent(CustomSpace::MouseButtonPressedEvent& event);
 
         void Close();
 
@@ -71,6 +72,7 @@ class LightTestRoom
 
         std::vector<CustomSpace::Ref<CustomSpace::Shape>> m_MeshContainer;
         std::vector<CustomSpace::Ref<CustomSpace::TriggerBox>> m_TriggerBoxes;
+        CustomSpace::Ref<CustomSpace::TriggerBox> m_InnerWallCollider[2];
 
         static LightTestRoom* Instance;
         CustomSpace::Scope<CustomSpace::Windows> m_Window;
@@ -110,6 +112,7 @@ class LightTestRoom
         void RenderShadowScene();
 
         void Trigger(const glm::vec3& pos);
+        void WallCollide(glm::vec3& campos);
 
         int framebuffer_width = 0, framebuffer_height = 0;
 

@@ -57,15 +57,18 @@ namespace CustomSpace
 
     void UserInterface::OnUpdate(CoreTimer &timer)
     {
-        for (int i = 0; i < m_Buttons.size(); i++)
+        if(b_Enable)
         {
-            ShaderPool::Get().getShader(3)->Activate();
-            ShaderPool::Get().getShader(3)->SetInt("HaveTex", false);
-            if(!b_ButtonIsActive[i])
-                ShaderPool::Get().getShader(3)->SetFloat4("uColor", m_ButtonColors[i]);
-            else
-                ShaderPool::Get().getShader(3)->SetFloat4("uColor", glm::vec4(.1f, .1f, .1f, 1.f));
-            Render2D::RenderTarget(ShaderPool::Get().getShader(3), m_Buttons[i]->GetBody());
+            for (int i = 0; i < m_Buttons.size(); i++)
+            {
+                ShaderPool::Get().getShader(3)->Activate();
+                ShaderPool::Get().getShader(3)->SetInt("HaveTex", false);
+                if(!b_ButtonIsActive[i])
+                    ShaderPool::Get().getShader(3)->SetFloat4("uColor", m_ButtonColors[i]);
+                else
+                    ShaderPool::Get().getShader(3)->SetFloat4("uColor", glm::vec4(.1f, .1f, .1f, 1.f));
+                Render2D::RenderTarget(ShaderPool::Get().getShader(3), m_Buttons[i]->GetBody());
+            }
         }
     }
 
@@ -80,7 +83,7 @@ namespace CustomSpace
 
     bool UserInterface::OnMouseInput(MouseButtonPressedEvent &event)
     {
-        if (glfwGetInputMode((GLFWwindow *)LightTestRoom::Get().GetWindow().GetWindow(), GLFW_CURSOR) != GLFW_CURSOR_DISABLED && event.GetMouseButton() == GLFW_MOUSE_BUTTON_LEFT)
+        if (glfwGetInputMode((GLFWwindow *)LightTestRoom::Get().GetWindow().GetWindow(), GLFW_CURSOR) != GLFW_CURSOR_DISABLED && event.GetMouseButton() == GLFW_MOUSE_BUTTON_LEFT && b_Enable)
         {
             float normal_x = m_Aspecratio * (2.f * (float)m_MouseX / m_Width - 1.f) , normal_y = 2.f * (float)(m_Height - m_MouseY) / m_Height - 1.f;
             this->Clicked(glm::vec2(normal_x, normal_y));

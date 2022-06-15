@@ -28,6 +28,8 @@ namespace CustomSpace
         void Clicked(const glm::vec2& cpos);
         void Hovered(const glm::vec2& cpos);
 
+        void SetEnable(const bool enable) { this->b_Enable = enable; }
+
         const bool IsFocusOnInterface() const { return b_FocusInterface; }
         void UnFocus() { b_FocusInterface = false; }
 
@@ -40,7 +42,7 @@ namespace CustomSpace
         int m_Width, m_Height;
         float m_Aspecratio, m_MouseX, m_MouseY;
 
-        bool b_FocusInterface = false;
+        bool b_FocusInterface = false, b_Enable = false;
         bool b_ButtonIsActive[4] = {false};
 
         int m_LastChoose = 0;

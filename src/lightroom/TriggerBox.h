@@ -23,6 +23,11 @@ namespace CustomSpace
         bool BeginOverlap(const glm::vec3& pos);
         bool EndOverlap(const glm::vec3& pos);
 
+        Ref<Shape>& GetBody() { return this->m_Body; }
+
+        const glm::vec3& GetTR() const { return this->m_TR; }
+        const glm::vec3& GetBL() const { return this->m_BL; }
+
         private:
         Ref<Shape> m_Body;
         Ref<Transform> m_Transform;

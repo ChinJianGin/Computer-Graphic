@@ -23,6 +23,8 @@ namespace CustomSpace
         bool OnMouseMoved(MouseMovedEvent& event);
         bool OnMouseScrolled(MouseScrollEvent& event);
 
+        const bool IsFocusOnPersController() const { return this->b_Reset; }
+
         PerspectiveCamera& GetCamera() { return *this->m_Camera; }
         const PerspectiveCamera& GetCamera() const { return *this->m_Camera; }
         const glm::vec3& GetCurrentRay() const { return this->m_Raycasting->GetCurrentRay(); }
