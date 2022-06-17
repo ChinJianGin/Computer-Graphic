@@ -4,4 +4,4 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 project(lightroomobj)
 
-add_library(lightroomobj ModelObject.cpp TriggerBox.cpp)
+add_library(lightroomobj ModelObject.cpp TriggerBox.cpp 3DProjectile.cpp)

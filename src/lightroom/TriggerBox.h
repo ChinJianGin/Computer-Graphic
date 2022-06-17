@@ -12,7 +12,7 @@ namespace CustomSpace
 
         void Init();
 
-        Ref<Transform> GetTransform() { return this->m_Transform; }
+        const Ref<Transform> GetTransform() { return m_Body->GetTransform(); }
 
         void SetPosition(const glm::vec3& pos);
         void SetScale(const glm::vec3& scale);
@@ -30,7 +30,6 @@ namespace CustomSpace
 
         private:
         Ref<Shape> m_Body;
-        Ref<Transform> m_Transform;
         glm::vec3 m_TR, m_BL;
         bool b_Overlap = false;
     };

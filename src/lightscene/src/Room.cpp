@@ -74,6 +74,11 @@ void LightTestRoom::ObjectInit()
     _MM = m_Pyramid->GetTransform()->GetTranslate() * m_Pyramid->GetTransform()->GetRotate() * m_Pyramid->GetTransform()->GetScale();
     m_Pyramid->SetModelMatrix(_MM);
 
+    m_ShotPlane = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_ShotPlane->SetPosition(glm::vec3(0.f));
+    _MM = m_ShotPlane->GetTransform()->GetTranslate() * m_ShotPlane->GetTransform()->GetRotate() * m_ShotPlane->GetTransform()->GetScale();
+    m_ShotPlane->SetModelMatrix(_MM);
+
     Ref<TriggerBox> _trigger = CreateRef<TriggerBox>();
     _trigger->SetPosition(glm::vec3(2.5f, 1.25f, -2.5f));
     _trigger->SetScale(glm::vec3(5.f, 13.5f, 10.f));
@@ -102,17 +107,43 @@ void LightTestRoom::ObjectInit()
     _trigger->SetModelMatrix(_MM);
     m_TriggerBoxes.push_back(_trigger);
 
-    m_InnerWallCollider[0] = CreateRef<TriggerBox>();
-    m_InnerWallCollider[0]->SetPosition(glm::vec3(0.f, 2.5f, -2.5f));
-    m_InnerWallCollider[0]->SetScale(glm::vec3(50.f, 25.f, 5.f));
-    _MM = m_InnerWallCollider[0]->GetTransform()->GetTranslate() * m_InnerWallCollider[0]->GetTransform()->GetScale();
-    m_InnerWallCollider[0]->SetModelMatrix(_MM);
+    for(int i = 0; i < 3; i++)
+    {
+        m_InnerWallCollider[i] = CreateRef<TriggerBox>();
+        m_InnerWallCollider[i]->SetPosition(glm::vec3(0.f, 2.5f, 2.5f + (i * -5.f)));
+        m_InnerWallCollider[i]->SetScale(glm::vec3(50.f, 25.f, 2.5f));
+        _MM = m_InnerWallCollider[i]->GetTransform()->GetTranslate() * m_InnerWallCollider[i]->GetTransform()->GetScale();
+        m_InnerWallCollider[i]->SetModelMatrix(_MM);
+    }
 
-    m_InnerWallCollider[1] = CreateRef<TriggerBox>();
-    m_InnerWallCollider[1]->SetPosition(glm::vec3(0.f, 2.5f, -2.5f));
-    m_InnerWallCollider[1]->SetScale(glm::vec3(5.f, 25.f, 50.f));
-    _MM = m_InnerWallCollider[1]->GetTransform()->GetTranslate() * m_InnerWallCollider[1]->GetTransform()->GetScale();
-    m_InnerWallCollider[1]->SetModelMatrix(_MM);
+    for(int i = 0; i < 3; i++)
+    {
+        int _index = i + 3;
+        m_InnerWallCollider[_index] = CreateRef<TriggerBox>();
+        m_InnerWallCollider[_index]->SetPosition(glm::vec3(-5.f + (i * 5.f), 2.5f, -2.5f));
+        m_InnerWallCollider[_index]->SetScale(glm::vec3(2.5f, 25.f, 50.f));
+        _MM = m_InnerWallCollider[_index]->GetTransform()->GetTranslate() * m_InnerWallCollider[_index]->GetTransform()->GetScale();
+        m_InnerWallCollider[_index]->SetModelMatrix(_MM);
+    }
+
+    m_InnerWallCollider[6] = CreateRef<TriggerBox>();
+    m_InnerWallCollider[6]->SetPosition(glm::vec3(0.f, 5.f, -2.5f));
+    m_InnerWallCollider[6]->SetScale(glm::vec3(50.f, 2.5f, 50.f));
+    _MM = m_InnerWallCollider[6]->GetTransform()->GetTranslate() * m_InnerWallCollider[6]->GetTransform()->GetScale();
+    m_InnerWallCollider[6]->SetModelMatrix(_MM);
+
+    m_InnerWallCollider[7] = CreateRef<TriggerBox>();
+    m_InnerWallCollider[7]->SetPosition(glm::vec3(0.f, 0.f, -2.5f));
+    m_InnerWallCollider[7]->SetScale(glm::vec3(50.f, 2.5f, 50.f));
+    _MM = m_InnerWallCollider[7]->GetTransform()->GetTranslate() * m_InnerWallCollider[7]->GetTransform()->GetScale();
+    m_InnerWallCollider[7]->SetModelMatrix(_MM);
+
+    for(int i = 0; i < BULLETSNUM; i++)
+    {
+        Ref<Bullet> _bullet = CreateRef<Bullet>();
+        _bullet->SetScale(glm::vec3(.5f));
+        m_FreeBullets.push_back(_bullet);
+    }
 }
 
 void LightTestRoom::ModelInit()
@@ -226,12 +257,6 @@ void LightTestRoom::TextureInit()
     m_hl2_wood_door_normal = Texture2D::Create("../src/TextureSrc/wooddoor014a_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
     m_hl2_glass_window = Texture2D::Create("../src/TextureSrc/glasswindow028d.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_hl2_logo = Texture2D::Create("../src/TextureSrc/ui_logo_flip.tga", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
-    m_StoneTex = Texture2D::Create("../src/TextureSrc/stone_wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
-    m_StoneSpec = Texture2D::Create("../src/TextureSrc/stone_wall_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
-    m_WoodTex = Texture2D::Create("../src/TextureSrc/wood.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
-    m_WoodSpec = Texture2D::Create("../src/TextureSrc/wood_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
-    m_FriendCubeTex = Texture2D::Create("../src/TextureSrc/metal_box_lowres_skin001_na.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
-    m_FriendCubeSpec = Texture2D::Create("../src/TextureSrc/metal_box_lowres_skin001_a.tga", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
     m_pt2_tile = Texture2D::Create("../src/TextureSrc/black_floor_metal_001na.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_pt2_tile_spec = Texture2D::Create("../src/TextureSrc/black_floor_metal_001a-RGB.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
     m_pt2_floor_normal = Texture2D::Create("../src/TextureSrc/black_floor_metal_001a_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
@@ -243,6 +268,13 @@ void LightTestRoom::TextureInit()
     m_pt2_wall_normal = Texture2D::Create("../src/TextureSrc/white_wall_tile003b_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
     m_pt2_ceiling = Texture2D::Create("../src/TextureSrc/white_ceiling_tile002a.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_pt2_ceiling_normal = Texture2D::Create("../src/TextureSrc/white_ceiling_tile002a_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
+    m_StoneTex = Texture2D::Create("../src/TextureSrc/stone_wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_StoneSpec = Texture2D::Create("../src/TextureSrc/stone_wall_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+    m_WoodTex = Texture2D::Create("../src/TextureSrc/wood.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_WoodSpec = Texture2D::Create("../src/TextureSrc/wood_specular.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+    m_FriendCubeTex = Texture2D::Create("../src/TextureSrc/metal_box_lowres_skin001_na.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    m_FriendCubeSpec = Texture2D::Create("../src/TextureSrc/metal_box_lowres_skin001_a.tga", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+    m_Shot = Texture2D::Create("../src/TextureSrc/shot4.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
 }
 
 void LightTestRoom::LightInit()
@@ -366,6 +398,24 @@ void LightTestRoom::Run()
 
         this->RoomUpdate();
 
+        if(m_InUsedBullets.size() > 0)
+        {
+            for(int i = 0 ; i < m_InUsedBullets.size(); i++)
+            {
+                m_InUsedBullets[i]->Update(*m_Timer);
+                m_ShaderPool->getShader(4)->Activate();
+                m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(1.f, 0.f, 0.f, 1.0f));
+                CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_InUsedBullets[i]->GetBody());
+                this->BulletCollide(m_InUsedBullets[i]->GetCurrentPos(), i);
+            }
+        }
+
+        _shader->Activate();
+        m_Shot->Bind();
+        _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_ShotPlane->GetTransform()->GetModelMatrix())));
+        CustomSpace::Renderer::Submit(_shader, m_ShotPlane);
+        m_Shot->UnBind();
+
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
         {
             m_CamPosition += m_PersCamera->GetLookAt() * glm::vec3(m_Timer->GetTick());
@@ -478,7 +528,15 @@ bool LightTestRoom::OnMouseButtonPressedEvent(CustomSpace::MouseButtonPressedEve
 {
     if(event.GetMouseButton() == GLFW_MOUSE_BUTTON_LEFT && m_PersController->IsFocusOnPersController())
     {
-        CORE_INFO("Test");
+        if(m_FreeBullets.size() > 0)
+        {
+            CustomSpace::Ref<CustomSpace::Bullet> _bullet;
+            _bullet = m_FreeBullets.back();
+            _bullet->SetPosition(m_PersController->GetCamera().GetPosition());
+            _bullet->SetDirection(m_PersController->GetCurrentRay());
+            m_InUsedBullets.push_back(_bullet);
+            m_FreeBullets.pop_back();
+        }
     }
     return false;
 }
@@ -501,14 +559,15 @@ void LightTestRoom::RenderNormalScene()
     m_FriendCubeSpec->UnBind();
     m_FriendCubeTex->UnBind();
 
-    m_ShaderPool->getShader(4)->Activate();
-    m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_DirLight->GetLightData()->ambient, 1.0f));
+
+    // m_ShaderPool->getShader(4)->Activate();
+    // m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_DirLight->GetLightData()->ambient, 1.0f));
     m_DirLight->SetPosition(m_PersController->GetCurrentRay() + m_PersController->GetCamera().GetPosition());
     model = m_DirLight->GetTransform()->GetTranslate();
     m_DirLight->SetModelMatrix(model);
-    CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_DirLight->GetBody());
+    // CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_DirLight->GetBody());
 
-    m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_PointLight->GetLightData()->ambient, 1.0f));
+    // m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_PointLight->GetLightData()->ambient, 1.0f));
     if(m_Interface->IsButtonActive()[0])
     {
         m_AllTime += m_Timer->GetTick();
@@ -516,13 +575,13 @@ void LightTestRoom::RenderNormalScene()
     }
     model = m_PointLight->GetTransform()->GetTranslate() * m_PointLight->GetTransform()->GetRotate() * m_PointLight->GetTransform()->GetScale();
     m_PointLight->SetModelMatrix(model);
-    CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_PointLight->GetBody());
+    // CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_PointLight->GetBody());
 
-    for(int i = 0; i < SPOTLIGHTNUM; i++)
-    {
-        m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_SpotLight[i]->GetLightData()->ambient, 1.0f));
-        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_SpotLight[i]->GetBody());
-    }
+    // for(int i = 0; i < SPOTLIGHTNUM; i++)
+    // {
+    //     m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_SpotLight[i]->GetLightData()->ambient, 1.0f));
+    //     CustomSpace::Renderer::Submit(m_ShaderPool->getShader(4), m_SpotLight[i]->GetBody());
+    // }
 
     model = glm::mat4(1.f);
     m_ShaderPool->getShader(1)->Activate();
@@ -1321,7 +1380,7 @@ void LightTestRoom::Trigger(const glm::vec3& pos)
 
 void LightTestRoom::WallCollide(glm::vec3& campos)
 {
-    if(m_InnerWallCollider[0]->BeginOverlap(campos))
+    if(m_InnerWallCollider[1]->BeginOverlap(campos))
     {
         if(m_TriggerBoxes[0]->BeginOverlap(campos) || m_TriggerBoxes[2]->BeginOverlap(campos))
         {
@@ -1329,18 +1388,18 @@ void LightTestRoom::WallCollide(glm::vec3& campos)
         }
         else
         {
-            if(campos.z > m_InnerWallCollider[0]->GetTransform()->GetLocalPosition().z)
+            if(campos.z > m_InnerWallCollider[1]->GetTransform()->GetLocalPosition().z)
             {
-                campos.z = m_InnerWallCollider[0]->GetTR().z;
+                campos.z = m_InnerWallCollider[1]->GetTR().z;
             }
             else
             {
-                campos.z = m_InnerWallCollider[0]->GetBL().z;
+                campos.z = m_InnerWallCollider[1]->GetBL().z;
             }
         }
     }
 
-    if(m_InnerWallCollider[1]->BeginOverlap(campos))
+    if(m_InnerWallCollider[4]->BeginOverlap(campos))
     {
         if(m_TriggerBoxes[1]->BeginOverlap(campos))
         {
@@ -1348,16 +1407,88 @@ void LightTestRoom::WallCollide(glm::vec3& campos)
         }
         else
         {
-            if(campos.x > m_InnerWallCollider[1]->GetTransform()->GetLocalPosition().x)
+            if(campos.x > m_InnerWallCollider[4]->GetTransform()->GetLocalPosition().x)
             {
-                campos.x = m_InnerWallCollider[1]->GetTR().x;
+                campos.x = m_InnerWallCollider[4]->GetTR().x;
             }
             else
             {
-                campos.x = m_InnerWallCollider[1]->GetBL().x;
+                campos.x = m_InnerWallCollider[4]->GetBL().x;
             }
         }
     }
+}
+
+
+void LightTestRoom::BulletCollide(const glm::vec3& curpos, const int index)
+{
+    for(int i = 0; i < WALLCOLLIDENUM; i++)
+    {
+        if(m_InnerWallCollider[i]->BeginOverlap(curpos))
+        {
+            this->CreateBulletHole(curpos, i);
+            m_InUsedBullets[index]->Reset();
+            m_FreeBullets.push_back(m_InUsedBullets[index]);
+            m_InUsedBullets.erase(m_InUsedBullets.begin() + index);
+        }
+    }
+}
+
+void LightTestRoom::CreateBulletHole(const glm::vec3& curpos, const int index)
+{
+    glm::vec3 campos = m_PersController->GetCamera().GetPosition();
+    glm::vec3 _axis = glm::vec3(0, 1, 0);
+    float _radians = 0.f;
+    float _x = curpos.x, _y = curpos.y, _z = curpos.z;
+    if(index <= 2) // z-axis
+    {
+        if(curpos.z < campos.z)
+        {
+            _z = _z - .18f;
+            _radians = -90.f;
+            _axis = glm::vec3(1, 0, 0);
+        }
+        else
+        {
+            _z = _z + .18f;
+            _radians = 90.f;
+            _axis = glm::vec3(1, 0, 0);
+        }
+    }
+    else if(index <= 5) // x-axis
+    {
+        if(curpos.x > campos.x)
+        {
+            _x = _x + .175f;
+            _radians = -90.f;
+            _axis = glm::vec3(0, 0, 1);
+        }
+        else
+        {
+            _x = _x - .175f;
+            _radians = 90.f;
+            _axis = glm::vec3(0, 0, 1);
+        }
+    }
+    else // y-axis
+    {
+        if(curpos.y > campos.y)
+        {
+           _y = _y + .18f;
+        }
+        else
+        {
+            _y = _y - .18f;
+            _radians = 180.f;
+            _axis = glm::vec3(0, 0, 1);
+        }
+    }
+
+    m_ShotPlane->SetPosition(glm::vec3(_x, _y, _z));
+    m_ShotPlane->SetRotation(_radians, _axis);
+    m_ShotPlane->SetScale(glm::vec3(.075f));
+    glm::mat4 _MM = m_ShotPlane->GetTransform()->GetTranslate() * m_ShotPlane->GetTransform()->GetRotate() * m_ShotPlane->GetTransform()->GetScale();
+    m_ShotPlane->SetModelMatrix(_MM);
 }
 
 unsigned int quadVAO = 0;

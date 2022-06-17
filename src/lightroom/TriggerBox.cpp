@@ -16,7 +16,6 @@ namespace CustomSpace
     void TriggerBox::Init()
     {
         m_TR = glm::vec3(.1f); m_BL = glm::vec3(-.1f);
-        m_Transform = CreateRef<Transform>();
         m_Body = ShapeFactory::Get().ShapeCreator<LightBox>();
     }
 
@@ -42,17 +41,17 @@ namespace CustomSpace
 
     void TriggerBox::SetPosition(const glm::vec3& pos)
     {
-        m_Transform->SetPosition(pos);
+        m_Body->SetPosition(pos);
     }
 
     void TriggerBox::SetScale(const glm::vec3& scale)
     {
-        m_Transform->SetScaleValue(scale);
+        m_Body->SetScale(scale);
     }
 
     void TriggerBox::SetModelMatrix(const glm::mat4& model)
     {
-        m_Transform->SetModelMatrix(model);
+        m_Body->SetModelMatrix(model);
         m_TR = glm::vec3(model * glm::vec4(m_TR, 1.f));
         m_BL = glm::vec3(model * glm::vec4(m_BL, 1.f));
     }

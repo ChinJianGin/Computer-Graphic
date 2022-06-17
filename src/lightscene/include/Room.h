@@ -17,10 +17,13 @@
 #include"../../framebuffer/OmniShadowMap.h"
 #include"../../graphic/Skybox.h"
 #include"../../lightroom/TriggerBox.h"
+#include"../../lightroom/3DProjectile.h"
 
 constexpr int SPOTLIGHTNUM = 2;
 constexpr int FLOORNUM = 6;
 constexpr int CEILINGNUM = 6;
+constexpr int WALLCOLLIDENUM = 8;
+constexpr int BULLETSNUM = 7;
 const unsigned int SHADOW_MAP_WIDTH = 2048;
 const unsigned int SHADOW_MAP_HEIGHT = 2048;
 
@@ -47,12 +50,12 @@ class LightTestRoom
         CustomSpace::Ref<CustomSpace::PerspectiveCameraController> m_PersController;
 
         CustomSpace::Scope<CustomSpace::ShapeFactory> m_Factory;
-        CustomSpace::Ref<CustomSpace::Shape> m_Box;
+        CustomSpace::Ref<CustomSpace::Shape> m_Box, m_ShotPlane;
         CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
         CustomSpace::Ref<CustomSpace::Shape> m_Wall[10], m_Ground[FLOORNUM], m_Ceiling[CEILINGNUM], m_InnerWall[8], m_InnerWall_pt2[7], m_Middle_Wall[2], m_Middle_Wall_pt2, m_WoodDoor[2], m_InnerWindow[2];
         CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight[SPOTLIGHTNUM];
 
-        CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec, m_FriendCubeTex, m_FriendCubeSpec;
+        CustomSpace::Ref<CustomSpace::Texture2D> m_StoneTex, m_StoneSpec, m_WoodTex, m_WoodSpec, m_FriendCubeTex, m_FriendCubeSpec, m_Shot;
         CustomSpace::Ref<CustomSpace::Texture2D> m_hl2_ceiling, m_hl2_wall[2], m_hl2_wall_normal[2], m_hl2_wall_middle, m_hl2_wall_middle_normal, m_hl2_glass_window;
         CustomSpace::Ref<CustomSpace::Texture2D> m_hl2_tile, m_hl2_tile_spec, m_hl2_floor_normal, m_hl2_wood_door, m_hl2_wood_door_normal, m_hl2_logo;
 
@@ -72,7 +75,9 @@ class LightTestRoom
 
         std::vector<CustomSpace::Ref<CustomSpace::Shape>> m_MeshContainer;
         std::vector<CustomSpace::Ref<CustomSpace::TriggerBox>> m_TriggerBoxes;
-        CustomSpace::Ref<CustomSpace::TriggerBox> m_InnerWallCollider[2];
+        CustomSpace::Ref<CustomSpace::TriggerBox> m_InnerWallCollider[WALLCOLLIDENUM];
+
+        std::vector<CustomSpace::Ref<CustomSpace::Bullet>> m_InUsedBullets, m_FreeBullets;
 
         static LightTestRoom* Instance;
         CustomSpace::Scope<CustomSpace::Windows> m_Window;
@@ -113,6 +118,8 @@ class LightTestRoom
 
         void Trigger(const glm::vec3& pos);
         void WallCollide(glm::vec3& campos);
+        void BulletCollide(const glm::vec3& curpos, const int index);
+        void CreateBulletHole(const glm::vec3& curpos, const int index);
 
         int framebuffer_width = 0, framebuffer_height = 0;
 
