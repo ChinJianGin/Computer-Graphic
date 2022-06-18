@@ -59,6 +59,7 @@ uniform bool HavePointLight = false;
 uniform bool HaveSpotLight = false;
 uniform vec4 uColor;
 uniform sampler2D uShadowMap;
+uniform sampler2D uLightMap;
 uniform samplerCube depthMap;
 
 uniform float far_plane;
@@ -123,7 +124,12 @@ void main()
             norm = texture(uMaterial.normalmap, texCoord).rgb;
             norm = norm * 2.0 - 1.0;
             norm = normalize(TBN * norm);
+            if(!gl_FrontFacing)
+            {
+                norm = norm * -1.0;
+            }
         }
+
 
         vec3 viewDir = normalize(uViewPos - FragPos);
 
@@ -140,10 +146,11 @@ void main()
 
         if(texture(uMaterial.diffuse, texCoord).a < 0.1)
             discard;
+
         if(HavePointLight)
         FragColor = texture2D(uMaterial.diffuse, texCoord) * vec4(result, 1.0);
         else
-        FragColor = (texture2D(uMaterial.diffuse, texCoord) + vec4(texture2D(uMaterial.specular, texCoord).rgb, 1.0)) * vec4(result, 1.0);
+        FragColor = (texture2D(uMaterial.diffuse, texCoord) + vec4(texture2D(uLightMap, texCoord).rgb, 1.0)) * vec4(result, 1.0);
         // FragColor = vec4(vec3(linearizeDepth(gl_FragCoord.z) / far), 1.0);
     }
     else
@@ -249,7 +256,7 @@ vec3 CalPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     float shadow = 0.0;
 
-    shadow = ShadowCalculation(fragPos);
+    // shadow = ShadowCalculation(fragPos);
     vec3 ambient = light.ambient;// * vec3(texture(uMaterial.diffuse, texCoord));
     vec3 diffuse = light.diffuse * diff;// * vec3(texture(uMaterial.diffuse, texCoord));
     vec3 specular = light.specular * spec * vec3(texture(uMaterial.specular, texCoord));
@@ -265,8 +272,8 @@ vec3 CalSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 lightDir = normalize(light.position - fragPos);
     float theta = dot(lightDir, normalize(-light.direction));
 
-    // if(dot(lightDir, normal) > 0)
-    // {
+    if(dot(normal, lightDir) > 0)
+    {
         if(theta > light.outerCutOff)
         {
             float diff = max(dot(normal, lightDir), 0.0);
@@ -297,11 +304,11 @@ vec3 CalSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
         }
         else
         {
-            return vec3(0.0);
+            return vec3(0.0, 0.0, 0.0);
         }
-    // }
-    // else
-    // {
-    //     return vec3(0.0, 0.0, 0.0);
-    // }
+    }
+    else
+    {
+        return vec3(0.0, 0.0, 0.0);
+    }
 }

@@ -256,7 +256,7 @@ void LightTestRoom::TextureInit()
     m_hl2_wood_door = Texture2D::Create("../src/TextureSrc/wooddoor014a.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_hl2_wood_door_normal = Texture2D::Create("../src/TextureSrc/wooddoor014a_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
     m_hl2_glass_window = Texture2D::Create("../src/TextureSrc/glasswindow028d.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
-    m_hl2_logo = Texture2D::Create("../src/TextureSrc/ui_logo_flip.tga", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
+    m_hl2_logo = Texture2D::Create("../src/TextureSrc/ui_logo_flip.tga", GL_TEXTURE_2D, GL_TEXTURE11, GL_UNSIGNED_BYTE);
     m_pt2_tile = Texture2D::Create("../src/TextureSrc/black_floor_metal_001na.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
     m_pt2_tile_spec = Texture2D::Create("../src/TextureSrc/black_floor_metal_001a-RGB.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_UNSIGNED_BYTE);
     m_pt2_floor_normal = Texture2D::Create("../src/TextureSrc/black_floor_metal_001a_normal.tga", GL_TEXTURE_2D, GL_TEXTURE2, GL_UNSIGNED_BYTE);
@@ -1083,6 +1083,12 @@ void LightTestRoom::RoomUpdate()
         CustomSpace::Renderer::Submit(_shader, m_Wall[i]);
     }
 
+    _shader->SetInt("uLightMap", 11);
+    m_hl2_logo->Bind();
+    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[9]->GetTransform()->GetModelMatrix())));
+    CustomSpace::Renderer::Submit(_shader, m_Wall[9]);
+    m_hl2_logo->UnBind();
+
     glDisable(GL_CULL_FACE);
     for(int i = 0; i < 3; i++)
     {
@@ -1098,12 +1104,8 @@ void LightTestRoom::RoomUpdate()
         _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_InnerWall_pt2[i + 3]->GetTransform()->GetModelMatrix())));
         CustomSpace::Renderer::Submit(_shader, m_InnerWall_pt2[i + 3]);
     }
-    m_pt2_wall_spec->UnBind();
 
-    m_hl2_logo->Bind();
-    _shader->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(m_Wall[9]->GetTransform()->GetModelMatrix())));
-    CustomSpace::Renderer::Submit(_shader, m_Wall[9]);
-    m_hl2_logo->UnBind();
+    m_pt2_wall_spec->UnBind();
     m_pt2_wall[0]->UnBind();
     m_pt2_wall_normal->UnBind();
     
