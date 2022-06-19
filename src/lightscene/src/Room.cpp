@@ -79,6 +79,13 @@ void LightTestRoom::ObjectInit()
     _MM = m_ShotPlane->GetTransform()->GetTranslate() * m_ShotPlane->GetTransform()->GetRotate() * m_ShotPlane->GetTransform()->GetScale();
     m_ShotPlane->SetModelMatrix(_MM);
 
+    m_HealthBar = ShapeFactory::Get().ShapeCreator<Plane>();
+    m_HealthBar->SetPosition(glm::vec3(2.5f, 2.5f, -1.f));
+    m_HealthBar->SetRotation(-90.f, glm::vec3(1, 0, 0));
+    m_HealthBar->SetScale(glm::vec3(1.f, 1.f, .05f));
+    _MM = m_HealthBar->GetTransform()->GetTranslate() * m_HealthBar->GetTransform()->GetRotate() * m_HealthBar->GetTransform()->GetScale();
+    m_HealthBar->SetModelMatrix(_MM);
+
     Ref<TriggerBox> _trigger = CreateRef<TriggerBox>();
     _trigger->SetPosition(glm::vec3(2.5f, 1.25f, -2.5f));
     _trigger->SetScale(glm::vec3(5.f, 13.5f, 10.f));
@@ -138,6 +145,12 @@ void LightTestRoom::ObjectInit()
     _MM = m_InnerWallCollider[7]->GetTransform()->GetTranslate() * m_InnerWallCollider[7]->GetTransform()->GetScale();
     m_InnerWallCollider[7]->SetModelMatrix(_MM);
 
+    m_TurretCollider = CreateRef<TriggerBox>();
+    m_TurretCollider->SetPosition(glm::vec3(-2.5f, 1.25f, -5.f));
+    m_TurretCollider->SetScale(glm::vec3(5.f));
+    _MM = m_TurretCollider->GetTransform()->GetTranslate() * m_TurretCollider->GetTransform()->GetScale();
+    m_TurretCollider->SetModelMatrix(_MM);
+
     for(int i = 0; i < BULLETSNUM; i++)
     {
         Ref<Bullet> _bullet = CreateRef<Bullet>();
@@ -178,6 +191,13 @@ void LightTestRoom::ModelInit()
     model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
 
     m_Turret->SetModelMatrix(model);
+
+    m_Turret_broken = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/turret/portalturret_break.obj");
+
+    model = glm::translate(glm::mat4(1.f), glm::vec3(-2.5f, 0.f, -5.f));
+    model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+
+    m_Turret_broken->SetModelMatrix(model);
 
     m_Button = CustomSpace::CreateRef<CustomSpace::ModelObject>("../src/Model/button/combinebutton.obj");
     model = glm::translate(glm::mat4(1.f), glm::vec3(4.7f, 1.4f, -5.1f));
@@ -238,6 +258,7 @@ void LightTestRoom::ShaderInit()
     m_ShaderPool->getShader(7, "../src/shader/shadowMap_debug.vert", "../src/shader/shadowMap_debug.frag");
     m_ShaderPool->getShader(8, "../src/shader/OmniShadowMap.vert", "../src/shader/OmniShadowMap.frag", "../src/shader/OmniShadowMap.geom");
     m_ShaderPool->getShader(9, "../src/shader/Skybox.vert", "../src/shader/Skybox.frag");
+    m_ShaderPool->getShader(10, "../src/shader/Billboard.vert", "../src/shader/Billboard.frag");
     m_ShaderPool->getShader(1)->SetInt("uMaterial.diffuse", 0);
     m_ShaderPool->getShader(1)->SetInt("uMaterial.specular", 1);
     m_ShaderPool->getShader(1)->SetFloat("uMaterial.shininess", 32.f);
@@ -416,6 +437,12 @@ void LightTestRoom::Run()
         CustomSpace::Renderer::Submit(_shader, m_ShotPlane);
         m_Shot->UnBind();
 
+        m_ShaderPool->getShader(10)->Activate();
+        m_ShaderPool->getShader(10)->SetMat4("uView", m_PersCamera->GetViewMatrix());
+        glm::vec3 _particleCenter_world = glm::vec3(m_HealthBar->GetTransform()->GetModelMatrix() * glm::vec4(0.f, 0.f, 0.f, 1.f));
+        m_ShaderPool->getShader(10)->SetFloat3("particleCenter", _particleCenter_world);
+        CustomSpace::Renderer::Submit(m_ShaderPool->getShader(10), m_HealthBar);
+
         if(CustomSpace::Input::IsKeyDown(GLFW_KEY_W))
         {
             m_CamPosition += m_PersCamera->GetLookAt() * glm::vec3(m_Timer->GetTick());
@@ -559,7 +586,6 @@ void LightTestRoom::RenderNormalScene()
     m_FriendCubeSpec->UnBind();
     m_FriendCubeTex->UnBind();
 
-
     // m_ShaderPool->getShader(4)->Activate();
     // m_ShaderPool->getShader(4)->SetFloat4("lightColor", glm::vec4(m_DirLight->GetLightData()->ambient, 1.0f));
     m_DirLight->SetPosition(m_PersController->GetCurrentRay() + m_PersController->GetCamera().GetPosition());
@@ -605,11 +631,22 @@ void LightTestRoom::RenderNormalScene()
     m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
     m_PortalGun->Update(*m_ShaderPool->getShader(1));
 
-    model = m_Turret->GetTransform()->GetModelMatrix();
-    m_ShaderPool->getShader(1)->SetMat4("uMV", model);
-    m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
-    m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
-    m_Turret->Update(*m_ShaderPool->getShader(1));
+    if(!b_TurretBroken)
+    {
+        model = m_Turret->GetTransform()->GetModelMatrix();
+        m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+        m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+        m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+        m_Turret->Update(*m_ShaderPool->getShader(1));
+    }
+    else
+    {
+        model = m_Turret_broken->GetTransform()->GetModelMatrix();
+        m_ShaderPool->getShader(1)->SetMat4("uMV", model);
+        m_ShaderPool->getShader(1)->SetInt("HaveTex", true);
+        m_ShaderPool->getShader(1)->SetMat3("uULMM", glm::inverseTranspose(glm::mat3(model)));
+        m_Turret_broken->Update(*m_ShaderPool->getShader(1));
+    }
 
     model = m_portal_root_door[0]->GetTransform()->GetModelMatrix();
     m_ShaderPool->getShader(1)->SetMat4("uMV", model);
@@ -666,9 +703,19 @@ void LightTestRoom::RenderShadowScene()
     _shader->SetMat4("uMV", model);
     m_PortalGun->Update(*_shader);
 
-    model = m_Turret->GetTransform()->GetModelMatrix();
-    _shader->SetMat4("uMV", model);
-    m_Turret->Update(*_shader);
+    if(!b_TurretBroken)
+    {
+        model = m_Turret->GetTransform()->GetModelMatrix();
+        _shader->SetMat4("uMV", model);
+        m_Turret->Update(*_shader);
+    }
+    else
+    {
+        model = m_Turret_broken->GetTransform()->GetModelMatrix();
+        _shader->SetMat4("uMV", model);
+        m_Turret_broken->Update(*_shader);
+    }
+
 
     model = m_Button->GetTransform()->GetModelMatrix();
     _shader->SetMat4("uMV", model);
@@ -1135,13 +1182,13 @@ void LightTestRoom::LightControl()
 {
     CustomSpace::Ref<Shader> _shader = m_ShaderPool->getShader(1);
     _shader->Activate();
-    // _shader->SetInt("HaveDirLight", true);
+    _shader->SetInt("HaveDirLight", true);
     _shader->SetFloat3("uDirLight.position", m_DirLight->GetTransform()->GetLocalPosition());
     _shader->SetFloat3("uDirLight.direction", m_DirLight->GetLightData()->direction);
     _shader->SetFloat3("uDirLight.ambient", m_DirLight->GetLightData()->ambient);
     _shader->SetFloat3("uDirLight.diffuse", m_DirLight->GetLightData()->diffuse);
     _shader->SetFloat3("uDirLight.specular", m_DirLight->GetLightData()->specular);
-    // _shader->SetInt("HavePointLight", true);
+    _shader->SetInt("HavePointLight", true);
     _shader->SetFloat3("uPointLight[0].position", m_PointLight->GetBody()->GetTransform()->GetLocalPosition());
     _shader->SetFloat3("uPointLight[0].ambient", m_PointLight->GetLightData()->ambient);
     _shader->SetFloat3("uPointLight[0].diffuse", m_PointLight->GetLightData()->diffuse);
@@ -1189,8 +1236,9 @@ void LightTestRoom::LightControl()
 
     if(b_Flashlight)
     {
-        _shader->SetInt("HaveDirLight", false);
-        _shader->SetInt("HavePointLight", false);
+        // _shader->SetInt("HaveDirLight", false);
+        _shader->SetInt("FlashLightOff", false);
+        // _shader->SetInt("HavePointLight", false);
         _shader->SetFloat3(("uSpotLight[2].position"), m_PersController->GetCamera().GetPosition());
         _shader->SetFloat3(("uSpotLight[2].direction"), m_PersController->GetCamera().GetLookAt());
         _shader->SetFloat3(("uSpotLight[2].ambient"), m_SpotLight[1]->GetLightData()->ambient);
@@ -1205,8 +1253,9 @@ void LightTestRoom::LightControl()
     }
     else
     {
-        _shader->SetInt("HaveDirLight", true);
-        _shader->SetInt("HavePointLight", true);
+        // _shader->SetInt("HaveDirLight", true);
+        _shader->SetInt("FlashLightOff", true);
+        // _shader->SetInt("HavePointLight", true);
         _shader->SetFloat3(("uSpotLight[2].position"), glm::vec3(0.f));
         _shader->SetFloat3(("uSpotLight[2].direction"), glm::vec3(0.f));
         _shader->SetFloat3(("uSpotLight[2].ambient"), glm::vec3(0.f));
@@ -1433,6 +1482,14 @@ void LightTestRoom::BulletCollide(const glm::vec3& curpos, const int index)
             m_FreeBullets.push_back(m_InUsedBullets[index]);
             m_InUsedBullets.erase(m_InUsedBullets.begin() + index);
         }
+    }
+
+    if(m_TurretCollider->BeginOverlap(curpos))
+    {
+        GAME_INFO("Hit turret");
+        m_InUsedBullets[index]->Reset();
+        m_FreeBullets.push_back(m_InUsedBullets[index]);
+        m_InUsedBullets.erase(m_InUsedBullets.begin() + index);
     }
 }
 

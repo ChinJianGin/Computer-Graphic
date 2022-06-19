@@ -57,6 +57,7 @@ uniform bool HaveNormal = false;
 uniform bool HaveDirLight = false;
 uniform bool HavePointLight = false;
 uniform bool HaveSpotLight = false;
+uniform bool FlashLightOff = true;
 uniform vec4 uColor;
 uniform sampler2D uShadowMap;
 uniform sampler2D uLightMap;
@@ -147,10 +148,10 @@ void main()
         if(texture(uMaterial.diffuse, texCoord).a < 0.1)
             discard;
 
-        if(HavePointLight)
+        // if(FlashLightOff)
         FragColor = texture2D(uMaterial.diffuse, texCoord) * vec4(result, 1.0);
-        else
-        FragColor = (texture2D(uMaterial.diffuse, texCoord) + vec4(texture2D(uLightMap, texCoord).rgb, 1.0)) * vec4(result, 1.0);
+        // else
+        // FragColor = (texture2D(uMaterial.diffuse, texCoord) + vec4(texture2D(uLightMap, texCoord).rgb, 1.0)) * vec4(result, 1.0);
         // FragColor = vec4(vec3(linearizeDepth(gl_FragCoord.z) / far), 1.0);
     }
     else
@@ -256,7 +257,7 @@ vec3 CalPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     float shadow = 0.0;
 
-    // shadow = ShadowCalculation(fragPos);
+    shadow = ShadowCalculation(fragPos);
     vec3 ambient = light.ambient;// * vec3(texture(uMaterial.diffuse, texCoord));
     vec3 diffuse = light.diffuse * diff;// * vec3(texture(uMaterial.diffuse, texCoord));
     vec3 specular = light.specular * spec * vec3(texture(uMaterial.specular, texCoord));
@@ -291,7 +292,15 @@ vec3 CalSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
             vec3 ambient = light.ambient;// * vec3(texture(uMaterial.diffuse, texCoord));
             vec3 diffuse = light.diffuse * diff;// * vec3(texture(uMaterial.diffuse, texCoord));
-            vec3 specular = light.specular * spec * vec3(texture(uMaterial.specular, texCoord));
+            vec3 specular;
+            if(FlashLightOff)
+            {
+                specular = light.specular * spec * vec3(texture(uMaterial.specular, texCoord));
+            }
+            else
+            {
+                specular = light.specular * spec * vec3(texture(uMaterial.specular, texCoord)) + vec3(texture2D(uLightMap, texCoord).rgb);
+            }
 
             float epsilon = light.innerCutOff - light.outerCutOff;
             float intensity = smoothstep(0.0, 1.0, (theta - light.outerCutOff) / epsilon);

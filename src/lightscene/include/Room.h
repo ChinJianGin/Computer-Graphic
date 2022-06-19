@@ -50,7 +50,7 @@ class LightTestRoom
         CustomSpace::Ref<CustomSpace::PerspectiveCameraController> m_PersController;
 
         CustomSpace::Scope<CustomSpace::ShapeFactory> m_Factory;
-        CustomSpace::Ref<CustomSpace::Shape> m_Box, m_ShotPlane;
+        CustomSpace::Ref<CustomSpace::Shape> m_Box, m_ShotPlane, m_HealthBar;
         CustomSpace::Ref<CustomSpace::Shape> m_Pyramid;
         CustomSpace::Ref<CustomSpace::Shape> m_Wall[10], m_Ground[FLOORNUM], m_Ceiling[CEILINGNUM], m_InnerWall[8], m_InnerWall_pt2[7], m_Middle_Wall[2], m_Middle_Wall_pt2, m_WoodDoor[2], m_InnerWindow[2];
         CustomSpace::Ref<CustomSpace::Light> m_DirLight, m_PointLight, m_SpotLight[SPOTLIGHTNUM];
@@ -76,13 +76,14 @@ class LightTestRoom
         std::vector<CustomSpace::Ref<CustomSpace::Shape>> m_MeshContainer;
         std::vector<CustomSpace::Ref<CustomSpace::TriggerBox>> m_TriggerBoxes;
         CustomSpace::Ref<CustomSpace::TriggerBox> m_InnerWallCollider[WALLCOLLIDENUM];
+        CustomSpace::Ref<CustomSpace::TriggerBox> m_TurretCollider;
 
         std::vector<CustomSpace::Ref<CustomSpace::Bullet>> m_InUsedBullets, m_FreeBullets;
 
         static LightTestRoom* Instance;
         CustomSpace::Scope<CustomSpace::Windows> m_Window;
 
-        bool b_Running = true, b_Flashlight = false;
+        bool b_Running = true, b_Flashlight = false, b_TurretBroken = false;
 
         glm::vec3 m_CamPosition, m_OriginDoorPos[3];
 
@@ -127,5 +128,5 @@ class LightTestRoom
         void OmniShadowMapUpdate();
 
         // Model
-        CustomSpace::Ref<CustomSpace::ModelObject> m_HeadCrab, m_Crowbar, m_PortalGun, m_Turret, m_portal_left_door[2], m_portal_right_door[2], m_portal_root_door[2], m_Button;
+        CustomSpace::Ref<CustomSpace::ModelObject> m_HeadCrab, m_Crowbar, m_PortalGun, m_Turret, m_Turret_broken, m_portal_left_door[2], m_portal_right_door[2], m_portal_root_door[2], m_Button;
 };
