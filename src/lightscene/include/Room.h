@@ -85,6 +85,8 @@ class LightTestRoom
 
         bool b_Running = true, b_Flashlight = false, b_TurretBroken = false;
 
+        int TurretHealth;
+
         glm::vec3 m_CamPosition, m_OriginDoorPos[3];
 
         glm::vec3 m_OriginAmbient[4], m_PointLightPos;
@@ -128,5 +130,5 @@ class LightTestRoom
         void OmniShadowMapUpdate();
 
         // Model
-        CustomSpace::Ref<CustomSpace::ModelObject> m_HeadCrab, m_Crowbar, m_PortalGun, m_Turret, m_Turret_broken, m_portal_left_door[2], m_portal_right_door[2], m_portal_root_door[2], m_Button;
+        CustomSpace::Ref<CustomSpace::ModelObject> m_HeadCrab, m_Crowbar, m_PortalGun, m_Turret, m_Turret_broken, m_portal_left_door[2], m_portal_right_door[2], m_portal_root_door[2], m_Button, m_Weapon;
 };

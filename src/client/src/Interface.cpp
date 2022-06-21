@@ -30,26 +30,33 @@ namespace CustomSpace
         button->SetModelMatrix(_MM);
         m_Buttons.push_back(button);
 
-        button = CreateRef<Button>();
-        button->SetPosition(glm::vec3(-_x, _y, _z));
-        button->SetScale(glm::vec3(_xscale, _yscale, 1.f));
-        _MM = button->GetBody()->GetTransform()->GetTranslate() * button->GetBody()->GetTransform()->GetScale();
-        button->SetModelMatrix(_MM);
-        m_Buttons.push_back(button);
+        m_Crosshair = ShapeFactory::Get().ShapeCreator<Quad>();
+        m_Crosshair->SetPosition(glm::vec3(0.f));
+        m_Crosshair->SetScale(glm::vec3(.25f, .25f, 1.f));
+        _MM = m_Crosshair->GetTransform()->GetTranslate() * m_Crosshair->GetTransform()->GetScale();
+        m_Crosshair->SetModelMatrix(_MM);
+        m_CrosshairTex = Texture2D::Create("../src/TextureSrc/crosshair1.tga", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
 
-        button = CreateRef<Button>();
-        button->SetPosition(glm::vec3(-_x, -_y, _z));
-        button->SetScale(glm::vec3(_xscale, _yscale, 1.f));
-        _MM = button->GetBody()->GetTransform()->GetTranslate() * button->GetBody()->GetTransform()->GetScale();
-        button->SetModelMatrix(_MM);
-        m_Buttons.push_back(button);
+        // button = CreateRef<Button>();
+        // button->SetPosition(glm::vec3(-_x, _y, _z));
+        // button->SetScale(glm::vec3(_xscale, _yscale, 1.f));
+        // _MM = button->GetBody()->GetTransform()->GetTranslate() * button->GetBody()->GetTransform()->GetScale();
+        // button->SetModelMatrix(_MM);
+        // m_Buttons.push_back(button);
 
-        button = CreateRef<Button>();
-        button->SetPosition(glm::vec3(_x, -_y, _z));
-        button->SetScale(glm::vec3(_xscale, _yscale, 1.f));
-        _MM = button->GetBody()->GetTransform()->GetTranslate() * button->GetBody()->GetTransform()->GetScale();
-        button->SetModelMatrix(_MM);
-        m_Buttons.push_back(button);
+        // button = CreateRef<Button>();
+        // button->SetPosition(glm::vec3(-_x, -_y, _z));
+        // button->SetScale(glm::vec3(_xscale, _yscale, 1.f));
+        // _MM = button->GetBody()->GetTransform()->GetTranslate() * button->GetBody()->GetTransform()->GetScale();
+        // button->SetModelMatrix(_MM);
+        // m_Buttons.push_back(button);
+
+        // button = CreateRef<Button>();
+        // button->SetPosition(glm::vec3(_x, -_y, _z));
+        // button->SetScale(glm::vec3(_xscale, _yscale, 1.f));
+        // _MM = button->GetBody()->GetTransform()->GetTranslate() * button->GetBody()->GetTransform()->GetScale();
+        // button->SetModelMatrix(_MM);
+        // m_Buttons.push_back(button);
 
         glfwGetWindowSize((GLFWwindow*)LightTestRoom::Get().GetWindow().GetWindow(), &m_Width, &m_Height);
         m_Aspecratio = (float)m_Width / m_Height;
@@ -57,11 +64,16 @@ namespace CustomSpace
 
     void UserInterface::OnUpdate(CoreTimer &timer)
     {
+        ShaderPool::Get().getShader(3)->Activate();
+        ShaderPool::Get().getShader(3)->SetInt("HaveTex", true);
+        ShaderPool::Get().getShader(3)->SetInt("tex0", 0);
+        m_CrosshairTex->Bind();
+        Render2D::RenderTarget(ShaderPool::Get().getShader(3), m_Crosshair);
+        m_CrosshairTex->UnBind();
         if(b_Enable)
         {
             for (int i = 0; i < m_Buttons.size(); i++)
             {
-                ShaderPool::Get().getShader(3)->Activate();
                 ShaderPool::Get().getShader(3)->SetInt("HaveTex", false);
                 if(!b_ButtonIsActive[i])
                     ShaderPool::Get().getShader(3)->SetFloat4("uColor", m_ButtonColors[i]);

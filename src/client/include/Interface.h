@@ -4,6 +4,7 @@
 #include "../../core/include/Event.h"
 #include "../../core/include/MouseEvent.h"
 #include "../../core/include/WindowEvent.h"
+#include "../../graphic/Texture.h"
 
 namespace CustomSpace
 {
@@ -38,6 +39,7 @@ namespace CustomSpace
         void Reset();
     private:
         std::vector<Ref<Button>> m_Buttons;
+        Ref<Shape> m_Crosshair;
 
         int m_Width, m_Height;
         float m_Aspecratio, m_MouseX, m_MouseY;
@@ -50,5 +52,7 @@ namespace CustomSpace
         glm::vec3 m_OrignScale;
 
         std::vector<glm::vec4> m_ButtonColors; 
+
+        Ref<Texture2D> m_CrosshairTex;
     };
 }
