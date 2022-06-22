@@ -58,6 +58,7 @@ uniform bool HaveDirLight = false;
 uniform bool HavePointLight = false;
 uniform bool HaveSpotLight = false;
 uniform bool FlashLightOff = true;
+uniform bool Foggy = false;
 uniform vec4 uColor;
 uniform sampler2D uShadowMap;
 uniform sampler2D uLightMap;
@@ -101,12 +102,20 @@ vec3 sampleOffsetDirections[20] = vec3[]
    vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
 );
 
-// float near = 0.1;
-// float far = 10.0;
-// float linearizeDepth(float depth)
-// {
-//     return (2.0 * near * far) / (far + near - (depth * 2.0 - 1.0) * (far - near));
-// }
+float near = 4.5;
+float far = 10.0;
+float linearizeDepth(float depth)
+{
+    return (2.0 * near * far) / (far + near - (depth * 2.0 - 1.0) * (far - near));
+}
+
+float steepness = 0.5;
+float offset = 5.0;
+float logisticDepth(float depth)
+{
+    float zValue = linearizeDepth(depth);
+    return (1 / (1 + exp(-steepness * (zValue - offset))));
+}
 
 void main()
 {
@@ -131,8 +140,9 @@ void main()
             }
         }
 
-
         vec3 viewDir = normalize(uViewPos - FragPos);
+
+        float depth = logisticDepth(gl_FragCoord.z);
 
         if(HaveDirLight)
             result = CalDirLight(uDirLight, norm, viewDir);
@@ -148,8 +158,15 @@ void main()
         if(texture(uMaterial.diffuse, texCoord).a < 0.1)
             discard;
 
-        // if(FlashLightOff)
-        FragColor = texture2D(uMaterial.diffuse, texCoord) * vec4(result, 1.0);
+        if(Foggy)
+        {
+            vec3 FinalResult = texture2D(uMaterial.diffuse, texCoord).rgb * result * (1.0 - depth) + vec3(depth * vec3(0.85, 0.85, 0.9));
+            FragColor = vec4(FinalResult, texture2D(uMaterial.diffuse, texCoord).a);
+        }
+        else
+        {
+            FragColor = texture2D(uMaterial.diffuse, texCoord) * vec4(result, 1.0);
+        }
         // else
         // FragColor = (texture2D(uMaterial.diffuse, texCoord) + vec4(texture2D(uLightMap, texCoord).rgb, 1.0)) * vec4(result, 1.0);
         // FragColor = vec4(vec3(linearizeDepth(gl_FragCoord.z) / far), 1.0);

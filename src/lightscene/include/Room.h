@@ -83,7 +83,7 @@ class LightTestRoom
         static LightTestRoom* Instance;
         CustomSpace::Scope<CustomSpace::Windows> m_Window;
 
-        bool b_Running = true, b_Flashlight = false, b_TurretBroken = false;
+        bool b_Running = true, b_Flashlight = false, b_TurretBroken = false, b_Foggy = false;
 
         int TurretHealth;
 

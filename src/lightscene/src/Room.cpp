@@ -311,7 +311,7 @@ void LightTestRoom::LightInit()
     using namespace CustomSpace;
     glm::mat4 _MM = glm::mat4(1.f);
     m_DirLight = CreateRef<DirectionLight>();
-    m_DirLight->SetAmbient(glm::vec3(.0f, .0f, .0f));
+    m_DirLight->SetAmbient(glm::vec3(.094f, .092f, .078f));
     // m_DirLight->SetAmbient(glm::vec3(.94f, .92f, .78f));
     m_DirLight->SetSpecular(glm::vec3(.1f, .1f, .1f));
     m_DirLight->SetDirection(glm::vec3(-2.f, 4.f, -1.f));
@@ -373,7 +373,7 @@ void LightTestRoom::Run()
 
         m_Timer->CalculateTimer();
 
-        CustomSpace::RenderCommand::SetClearColor(glm::vec4(.1f, .1f, .1f, 1.f));
+        CustomSpace::RenderCommand::SetClearColor(glm::vec4(0.85f, 0.85f, 0.9f, 1.f));
         CustomSpace::RenderCommand::Clear();
         // Shadow map update
         // this->ShadowMapUpdate();
@@ -548,6 +548,11 @@ bool LightTestRoom::OnKeyPressedEvent(CustomSpace::KeyPressedEvent& event)
     if(event.GetKeyCode() == GLFW_KEY_F)
     {
         b_Flashlight = !b_Flashlight;
+    }
+
+    if(event.GetKeyCode() == GLFW_KEY_M)
+    {
+        b_Foggy = !b_Foggy;
     }
 
     return false;
@@ -1203,13 +1208,13 @@ void LightTestRoom::LightControl()
 {
     CustomSpace::Ref<Shader> _shader = m_ShaderPool->getShader(1);
     _shader->Activate();
-    _shader->SetInt("HaveDirLight", true);
+    // _shader->SetInt("HaveDirLight", true);
     _shader->SetFloat3("uDirLight.position", m_DirLight->GetTransform()->GetLocalPosition());
     _shader->SetFloat3("uDirLight.direction", m_DirLight->GetLightData()->direction);
     _shader->SetFloat3("uDirLight.ambient", m_DirLight->GetLightData()->ambient);
     _shader->SetFloat3("uDirLight.diffuse", m_DirLight->GetLightData()->diffuse);
     _shader->SetFloat3("uDirLight.specular", m_DirLight->GetLightData()->specular);
-    _shader->SetInt("HavePointLight", true);
+    // _shader->SetInt("HavePointLight", true);
     _shader->SetFloat3("uPointLight[0].position", m_PointLight->GetBody()->GetTransform()->GetLocalPosition());
     _shader->SetFloat3("uPointLight[0].ambient", m_PointLight->GetLightData()->ambient);
     _shader->SetFloat3("uPointLight[0].diffuse", m_PointLight->GetLightData()->diffuse);
@@ -1254,12 +1259,21 @@ void LightTestRoom::LightControl()
         }
     }
 
+    if(b_Foggy)
+    {
+        _shader->SetInt("Foggy", true);
+        _shader->SetInt("HaveDirLight", false);
+        _shader->SetInt("HavePointLight", false);
+    }
+    else
+    {
+        _shader->SetInt("HaveDirLight", true);
+        _shader->SetInt("HavePointLight", true);
+    }
 
     if(b_Flashlight)
     {
-        // _shader->SetInt("HaveDirLight", false);
         _shader->SetInt("FlashLightOff", false);
-        // _shader->SetInt("HavePointLight", false);
         _shader->SetFloat3(("uSpotLight[2].position"), m_PersController->GetCamera().GetPosition());
         _shader->SetFloat3(("uSpotLight[2].direction"), m_PersController->GetCamera().GetLookAt());
         _shader->SetFloat3(("uSpotLight[2].ambient"), m_SpotLight[1]->GetLightData()->ambient);
@@ -1274,9 +1288,7 @@ void LightTestRoom::LightControl()
     }
     else
     {
-        // _shader->SetInt("HaveDirLight", true);
         _shader->SetInt("FlashLightOff", true);
-        // _shader->SetInt("HavePointLight", true);
         _shader->SetFloat3(("uSpotLight[2].position"), glm::vec3(0.f));
         _shader->SetFloat3(("uSpotLight[2].direction"), glm::vec3(0.f));
         _shader->SetFloat3(("uSpotLight[2].ambient"), glm::vec3(0.f));
@@ -1511,7 +1523,11 @@ void LightTestRoom::BulletCollide(const glm::vec3& curpos, const int index)
         m_FreeBullets.push_back(m_InUsedBullets[index]);
         m_InUsedBullets.erase(m_InUsedBullets.begin() + index);
         TurretHealth--;
-        if(TurretHealth <= 0) b_TurretBroken = true;
+        if(TurretHealth <= 0)
+        {
+            b_TurretBroken = true;
+            b_Foggy = true;
+        }
     }
 }
 
